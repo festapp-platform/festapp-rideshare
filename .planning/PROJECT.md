@@ -30,13 +30,14 @@ Drivers and passengers can find each other for shared rides quickly and effortle
 - [ ] Push notifications for bookings, ride updates, flexible ride alerts
 - [ ] App suggests fair price based on distance/fuel cost (users settle payment in cash)
 - [ ] Suggested pickup points along the route
+- [ ] Event pages — users create events (concerts, festivals, meetups), admin approves, dedicated page with ride listings
+- [ ] AI & Voice — natural language ride creation/search/booking, voice input, MCP server for external AI assistants
 
 ### Out of Scope
 
 - In-app payment processing — users settle in cash, app only suggests price
-- Festapp/festival event integration — deferred to a future milestone
+- Festapp platform API integration — manual event creation only in v1, API import in v2
 - Real-time ride-hailing (Uber-style) — this is pre-planned carpooling, not on-demand
-- Admin/moderation panel — defer to v2
 - Bus/public transport integration — focus on carpooling only
 
 ## Context
@@ -59,7 +60,10 @@ Drivers and passengers can find each other for shared rides quickly and effortle
 - **Architecture:** TypeScript monorepo (shared types, validation, Supabase queries between web and mobile)
 - **Maps:** Google Maps or MapLibre — to be decided during implementation
 - **Auth:** Supabase Auth with phone number as primary method (email, social login also available)
-- **Cost:** Minimize infrastructure costs (Supabase free tier, open-source map options)
+- **SMS:** AWS SNS via custom Supabase Auth hook (cheapest SMS to CZ/SK at ~$0.035/SMS)
+- **Email:** AWS SES for transactional emails ($0.10/1000 emails)
+- **Push:** OneSignal for push notifications (mobile + web push)
+- **Cost:** Minimize infrastructure costs (Supabase free tier, AWS for email/SMS, open-source map options)
 
 ## Key Decisions
 
@@ -72,6 +76,10 @@ Drivers and passengers can find each other for shared rides quickly and effortle
 | No in-app payments | Simplifies v1 enormously, avoids payment processor fees, aligns with free/donation model | — Pending |
 | Cash between users | App suggests price, users settle themselves. No payment processing overhead | — Pending |
 | Phone auth as primary | Verified phone = more trust. Supabase supports it out of the box | — Pending |
+| AWS SNS for SMS | Cheapest SMS provider to CZ/SK (~$0.035/SMS vs $0.065 Twilio). Custom Supabase Auth hook required | — Pending |
+| AWS SES for email | Cheapest email ($0.10/1K). User has AWS experience. Transactional emails via Edge Functions | — Pending |
+| OneSignal for push | Web push + mobile push + scheduling. Better than Expo Push for PWA-first strategy | — Pending |
+| Web + PWA first, app stores later | Launch web as PWA first. Mobile native apps released to stores in a later phase. Faster to market, iterate on web, then polish for stores | — Pending |
 
 ---
 *Last updated: 2026-02-15 after initialization*

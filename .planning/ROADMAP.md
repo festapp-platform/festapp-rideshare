@@ -2,7 +2,7 @@
 
 ## Overview
 
-Festapp Rideshare is built as a web-first PWA with a shared TypeScript monorepo, then extended to native mobile. The roadmap moves from foundation (monorepo + auth) through the core ride marketplace loop (post, search, book), then layers communication, trust, and differentiating features (live location, flexible rides, gamification). Web-specific optimizations (SEO, PWA) form their own phase since the launch strategy is web-first. The final phase covers testing infrastructure, internationalization, and app store preparation for the native release.
+Festapp Rideshare is built as a web-first PWA with a shared TypeScript monorepo, then extended to native mobile. The roadmap moves from foundation (monorepo + auth) through the core ride marketplace loop (post, search, book), then layers communication, trust, and differentiating features (live location, flexible rides, gamification). An AI & Voice phase adds natural language control and MCP server for external AI assistants. Web-specific optimizations (SEO, PWA) form their own phase since the launch strategy is web-first. The final phase covers internationalization, accessibility, and app store preparation. Testing (unit, integration, UI verification) is continuous — each phase includes tests for the features it delivers, with CI pipeline set up from Phase 1.
 
 ## Phases
 
@@ -19,16 +19,17 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 5: Communication & Notifications** - In-app chat, contact sharing, push and email notifications
 - [ ] **Phase 6: Ratings, Trust & Safety** - Mutual ratings/reviews, reporting, blocking, admin moderation panel
 - [ ] **Phase 7: Live Location** - Real-time driver location sharing for pickup coordination
-- [ ] **Phase 8: Flexible Rides & Gamification** - Route intents with subscriber alerts, impact dashboard, badges, levels
-- [ ] **Phase 9: Web Platform & SEO** - PWA features, SSR for ride pages, social meta tags, web push, service worker
-- [ ] **Phase 10: Polish, Testing & Launch** - Test suite, i18n, accessibility, error monitoring, app store assets, launch prep
+- [ ] **Phase 8: Events, Flexible Rides & Gamification** - Event pages with ride listings, route intents with subscriber alerts, impact dashboard, badges, levels
+- [ ] **Phase 9: AI & Voice** - In-app AI assistant, natural language ride operations, voice input, MCP server for external AI
+- [ ] **Phase 10: Web Platform & SEO** - PWA features, SSR for ride pages, social meta tags, web push, service worker
+- [ ] **Phase 11: Polish, Testing & Launch** - Test suite, i18n, accessibility, error monitoring, app store assets, launch prep
 
 ## Phase Details
 
 ### Phase 1: Foundation & Auth
 **Goal**: Users can sign up, log in, and navigate the app shell on both web and mobile
 **Depends on**: Nothing (first phase)
-**Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05, AUTH-06, ONBR-01, ONBR-05, ONBR-06, ONBR-07, NAV-01, NAV-02, NAV-03, NAV-04, NAV-05, NAV-06, PLAT-01, PLAT-10
+**Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05, AUTH-06, ONBR-01, ONBR-05, ONBR-06, ONBR-07, NAV-01, NAV-02, NAV-03, NAV-04, NAV-05, NAV-06, PLAT-01, PLAT-10, TEST-04, TEST-10
 **Success Criteria** (what must be TRUE):
   1. User can sign up with phone number (SMS verification) and land on the home screen
   2. User can sign up and log in with email, Google, or Apple
@@ -158,27 +159,48 @@ Plans:
 - [ ] 07-03: Adaptive GPS and battery optimization
 - [ ] 07-04: Auto-stop logic and pickup confirmation
 
-### Phase 8: Flexible Rides & Gamification
-**Goal**: Drivers can post route intents that passengers subscribe to, and users are motivated by impact stats and achievement badges
-**Depends on**: Phase 4
-**Requirements**: RIDE-06, FLEX-01, FLEX-02, FLEX-03, FLEX-04, NOTF-03, GAME-01, GAME-02, GAME-03, GAME-04, GAME-05, GAME-06, GAME-07, GAME-08
+### Phase 8: Events, Flexible Rides & Gamification
+**Goal**: Users can create events with ride listings, drivers can post route intents that passengers subscribe to, and users are motivated by impact stats and achievement badges
+**Depends on**: Phase 6 (needs admin approval for events)
+**Requirements**: EVNT-01, EVNT-02, EVNT-03, EVNT-04, EVNT-05, EVNT-06, RIDE-06, FLEX-01, FLEX-02, FLEX-03, FLEX-04, NOTF-03, GAME-01, GAME-02, GAME-03, GAME-04, GAME-05, GAME-06, GAME-07, GAME-08
 **Success Criteria** (what must be TRUE):
-  1. Driver can create a flexible ride (route intent without a specific date) and later confirm a date
-  2. Passenger can subscribe to a route intent and receives a push notification when the driver confirms a date
-  3. Subscribers can book a seat on the confirmed ride through the normal booking flow
+  1. User can create an event (name, location, date), admin approves it, and the event page shows all rides offered to that event
+  2. Driver can post a ride linked to an event and it appears on both search results and the event page
+  3. Driver can create a flexible ride (route intent without a specific date) and later confirm a date, notifying subscribers
   4. User can view their personal impact dashboard (CO2 saved, money saved, rides completed) and share it
   5. Users earn achievement badges and levels (New through Ambassador) displayed on their profile and in search results
 **Plans**: TBD
 
 Plans:
-- [ ] 08-01: Flexible ride creation and route intent UI
-- [ ] 08-02: Subscription system and notification triggers
-- [ ] 08-03: Flexible ride confirmation and booking bridge
-- [ ] 08-04: Impact dashboard and stats calculation
-- [ ] 08-05: Achievement badges, levels, and route streaks
-- [ ] 08-06: Community stats page and social sharing
+- [ ] 08-01: Event creation, admin approval flow, and event page
+- [ ] 08-02: Event-linked rides and event ride browsing
+- [ ] 08-03: Flexible ride creation and route intent UI
+- [ ] 08-04: Subscription system and notification triggers
+- [ ] 08-05: Flexible ride confirmation and booking bridge
+- [ ] 08-06: Impact dashboard and stats calculation
+- [ ] 08-07: Achievement badges, levels, and route streaks
+- [ ] 08-08: Community stats page and social sharing
 
-### Phase 9: Web Platform & SEO
+### Phase 9: AI & Voice
+**Goal**: Users can interact with the app via natural language (text or voice) for all core flows, and external AI assistants can operate the app via MCP tools
+**Depends on**: Phase 8 (needs all core features to exist for AI to operate on)
+**Requirements**: AIVC-01, AIVC-02, AIVC-03, AIVC-04, AIVC-05, AIVC-06, AIVC-07, AIVC-08, AIVC-09, AIVC-10
+**Success Criteria** (what must be TRUE):
+  1. User can open an AI assistant chat and create a ride by typing or speaking a natural language description (e.g., "Jedu zítra z Prahy do Brna ve 3, mám 3 místa")
+  2. User can search for rides, book seats, and manage rides through the AI assistant with confirmation before each action
+  3. Voice input works via speech-to-text on both mobile and web, feeding into the same AI processing pipeline
+  4. AI assistant correctly handles Czech, Slovak, and English input
+  5. MCP server exposes authenticated tools for ride posting, search, booking, and management that external AI assistants (Claude, ChatGPT) can use
+**Plans**: TBD
+
+Plans:
+- [ ] 09-01: AI assistant chat UI and natural language processing pipeline
+- [ ] 09-02: AI ride creation and search from natural language
+- [ ] 09-03: AI booking and ride management actions with confirmation flow
+- [ ] 09-04: Speech-to-text integration (mobile + web)
+- [ ] 09-05: MCP server with authenticated ride operation tools
+
+### Phase 10: Web Platform & SEO
 **Goal**: The web app is a fully-featured PWA with SEO-optimized ride pages that drive organic traffic and convert visitors
 **Depends on**: Phase 5
 **Requirements**: WEB-01, WEB-02, WEB-03, WEB-04, WEB-05, WEB-06, WEB-07, WEB-08, WEB-09, PLAT-18
@@ -191,40 +213,38 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 09-01: PWA manifest, service worker, and offline support
-- [ ] 09-02: SSR/SSG for ride pages and SEO optimization
-- [ ] 09-03: Open Graph meta tags and social preview cards
-- [ ] 09-04: Responsive design audit and short URL routing
-- [ ] 09-05: Web push notifications and web-to-app banner
-- [ ] 09-06: API rate limiting on public endpoints
+- [ ] 10-01: PWA manifest, service worker, and offline support
+- [ ] 10-02: SSR/SSG for ride pages and SEO optimization
+- [ ] 10-03: Open Graph meta tags and social preview cards
+- [ ] 10-04: Responsive design audit and short URL routing
+- [ ] 10-05: Web push notifications and web-to-app banner
+- [ ] 10-06: API rate limiting on public endpoints
 
-### Phase 10: Polish, Testing & Launch
-**Goal**: The app is production-ready with a full test suite, multi-language support, accessibility, error monitoring, and app store assets
+### Phase 11: Polish, Testing & Launch
+**Goal**: The app is production-ready with multi-language support, accessibility, error monitoring, and app store assets
 **Depends on**: All previous phases
-**Requirements**: TEST-01, TEST-02, TEST-03, TEST-04, TEST-05, TEST-06, TEST-07, TEST-08, TEST-09, TEST-10, PLAT-02, PLAT-03, PLAT-04, PLAT-05, PLAT-06, PLAT-07, PLAT-08, PLAT-09, PLAT-11, PLAT-12, PLAT-13, PLAT-14, PLAT-15, PLAT-16
+**Requirements**: PLAT-02, PLAT-03, PLAT-04, PLAT-05, PLAT-06, PLAT-07, PLAT-08, PLAT-09, PLAT-11, PLAT-12, PLAT-13, PLAT-14, PLAT-15, PLAT-16
 **Success Criteria** (what must be TRUE):
-  1. Unit, integration, and E2E tests cover all critical flows and CI pipeline runs them on every PR
-  2. App supports Czech, Slovak, and English languages with correct translations
-  3. App handles offline/poor connectivity gracefully, shows skeleton loading states, and has meaningful empty states and error pages
-  4. Crash reporting (Sentry), anonymous analytics, GDPR compliance (data export, cookie consent), and force-update mechanism are operational
+  1. App supports Czech, Slovak, and English languages with correct translations
+  2. App handles offline/poor connectivity gracefully, shows skeleton loading states, and has meaningful empty states and error pages
+  3. Crash reporting (Sentry), anonymous analytics, GDPR compliance (data export, cookie consent), and force-update mechanism are operational
+  4. Accessibility audit passes (screen reader labels, color contrast, touch targets)
   5. App store assets (screenshots, descriptions, metadata), terms of service, privacy policy, help/FAQ, donation prompt, and invite-friends flow are complete
 **Plans**: TBD
 
 Plans:
-- [ ] 10-01: Shared package and Edge Function unit tests
-- [ ] 10-02: Integration tests (auth, booking, core flows, RLS)
-- [ ] 10-03: UI component tests and E2E tests (web + mobile)
-- [ ] 10-04: CI pipeline setup
-- [ ] 10-05: Internationalization (Czech, Slovak, English)
-- [ ] 10-06: Offline handling, loading states, and error pages
-- [ ] 10-07: Crash reporting, analytics, and GDPR compliance
-- [ ] 10-08: Accessibility audit and polish
-- [ ] 10-09: App store assets, legal pages, help/FAQ, and launch prep
+- [ ] 11-01: Internationalization (Czech, Slovak, English)
+- [ ] 11-02: Offline handling, loading states, and error pages
+- [ ] 11-03: Crash reporting, analytics, and GDPR compliance
+- [ ] 11-04: Accessibility audit and polish
+- [ ] 11-05: App store assets, legal pages, help/FAQ, and launch prep
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -> 8 -> 9 -> 10
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -> 8 (after 6) -> 9 -> 10 -> 11
+
+**Testing Strategy:** Each phase includes unit tests, integration tests, and UI verification as part of its plans. Testing is continuous, not deferred.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -235,6 +255,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -
 | 5. Communication & Notifications | 0/6 | Not started | - |
 | 6. Ratings, Trust & Safety | 0/5 | Not started | - |
 | 7. Live Location | 0/4 | Not started | - |
-| 8. Flexible Rides & Gamification | 0/6 | Not started | - |
-| 9. Web Platform & SEO | 0/6 | Not started | - |
-| 10. Polish, Testing & Launch | 0/9 | Not started | - |
+| 8. Events, Flexible Rides & Gamification | 0/8 | Not started | - |
+| 9. AI & Voice | 0/5 | Not started | - |
+| 10. Web Platform & SEO | 0/6 | Not started | - |
+| 11. Polish, Testing & Launch | 0/5 | Not started | - |

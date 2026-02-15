@@ -9,7 +9,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Authentication
 
-- [ ] **AUTH-01**: User can sign up and log in with phone number + SMS verification (primary method)
+- [ ] **AUTH-01**: User can sign up and log in with phone number + SMS verification (primary method, via AWS SNS custom Supabase Auth hook)
 - [ ] **AUTH-02**: User can sign up and log in with email, Google, or Apple (via Supabase Auth)
 - [ ] **AUTH-03**: User session persists across app restarts and browser refresh
 - [ ] **AUTH-04**: User can log out from any screen
@@ -81,7 +81,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **NOTF-05**: Push notifications managed via OneSignal (mobile + web)
 - [ ] **NOTF-06**: User can manage notification preferences (toggle categories on/off)
 - [ ] **NOTF-07**: User receives ride reminder notification before departure ("Your ride is in 1 hour")
-- [ ] **NOTF-08**: User receives email notification for important events (booking confirmation, ride reminder, cancellation)
+- [ ] **NOTF-08**: User receives email notification for important events (booking confirmation, ride reminder, cancellation) via AWS SES
 - [ ] **NOTF-09**: Email notifications respect user's notification preferences
 
 ### Live Location
@@ -119,7 +119,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Web Platform
 
-- [ ] **WEB-01**: Web app is a PWA (Progressive Web App) -- installable on mobile and desktop
+- [ ] **WEB-01**: Web app is a PWA (Progressive Web App) -- installable on mobile and desktop with app icon, splash screen, and standalone window (no browser chrome)
 - [ ] **WEB-02**: Web app has full feature parity with mobile app for core flows (search, book, chat, profile)
 - [ ] **WEB-03**: Ride pages are SEO-optimized and indexable by search engines (SSR/SSG)
 - [ ] **WEB-04**: Responsive design -- works seamlessly on mobile browsers, tablets, and desktop
@@ -128,6 +128,19 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **WEB-07**: Service worker with caching strategy for offline PWA support and fast page loads
 - [ ] **WEB-08**: Short URL structure with random IDs (e.g., `/ride/x7k9m2`, `/u/a3b8f1`)
 - [ ] **WEB-09**: API rate limiting on all public endpoints (web + mobile) to prevent abuse and spam
+
+### AI & Voice
+
+- [ ] **AIVC-01**: In-app AI assistant chat interface where users type or speak natural language commands
+- [ ] **AIVC-02**: AI can create rides from natural language input (e.g., "Jedu zítra z Prahy do Brna ve 3, mám 3 místa")
+- [ ] **AIVC-03**: AI can search rides from natural language input (e.g., "Hledám svezení do Brna v pátek")
+- [ ] **AIVC-04**: AI can handle booking actions (book a seat, cancel booking) via natural language
+- [ ] **AIVC-05**: AI can handle ride management (edit ride, complete ride) via natural language
+- [ ] **AIVC-06**: AI shows parsed intent for user confirmation before executing any action
+- [ ] **AIVC-07**: Voice input via speech-to-text that feeds into the AI assistant (mobile + web)
+- [ ] **AIVC-08**: AI assistant supports Czech, Slovak, and English input
+- [ ] **AIVC-09**: MCP server exposing ride operations as tools for external AI assistants (Claude, ChatGPT, etc.)
+- [ ] **AIVC-10**: MCP server supports ride posting, search, booking, and ride management tools with authenticated user context
 
 ### Admin Panel
 
@@ -188,7 +201,16 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **PLAT-15**: Basic accessibility -- screen reader labels, sufficient color contrast, touch target sizes
 - [ ] **PLAT-16**: App store assets -- screenshots, descriptions, and metadata for iOS App Store and Google Play
 - [ ] **PLAT-17**: Image optimization -- avatar and car photos are compressed and thumbnailed on upload (Supabase Storage)
-- [ ] **PLAT-18**: Smart web-to-app banner -- "Open in app" prompt when visiting web on a mobile device
+- [ ] **PLAT-18**: Prominent PWA install prompt -- "Install on your phone" banner/button on mobile browsers that triggers the native PWA install flow (beforeinstallprompt API). After install, app runs as standalone PWA. In v2 (when native apps exist), this becomes a smart web-to-app banner.
+
+### Events
+
+- [ ] **EVNT-01**: User can create an event (name, location, date) — submitted for admin approval
+- [ ] **EVNT-02**: Admin must approve an event before it becomes visible to other users
+- [ ] **EVNT-03**: Event has a dedicated page showing name, location, date, and list of rides offered to this event
+- [ ] **EVNT-04**: Driver can post a ride linked to a specific event (ride appears on both search results and event page)
+- [ ] **EVNT-05**: Passenger can browse and search rides for a specific event from the event page
+- [ ] **EVNT-06**: Event can be shared via deep link
 
 ## v2 Requirements
 
@@ -196,9 +218,7 @@ Deferred to future release. Tracked but not in current roadmap.
 
 ### Event Integration
 
-- **EVNT-01**: User can create a ride group for a specific event/festival
-- **EVNT-02**: Events can be imported from Festapp platform API
-- **EVNT-03**: Passengers can browse rides by event
+- **EVNT-V2-01**: Events can be imported from Festapp platform API
 
 ### Advanced Features
 
@@ -303,29 +323,45 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GAME-06 | Phase 8 | Pending |
 | GAME-07 | Phase 8 | Pending |
 | GAME-08 | Phase 8 | Pending |
-| WEB-01 | Phase 9 | Pending |
-| WEB-02 | Phase 9 | Pending |
-| WEB-03 | Phase 9 | Pending |
-| WEB-04 | Phase 9 | Pending |
-| WEB-05 | Phase 9 | Pending |
-| WEB-06 | Phase 9 | Pending |
-| WEB-07 | Phase 9 | Pending |
-| WEB-08 | Phase 9 | Pending |
-| WEB-09 | Phase 9 | Pending |
+| EVNT-01 | Phase 8 | Pending |
+| EVNT-02 | Phase 8 | Pending |
+| EVNT-03 | Phase 8 | Pending |
+| EVNT-04 | Phase 8 | Pending |
+| EVNT-05 | Phase 8 | Pending |
+| EVNT-06 | Phase 8 | Pending |
+| AIVC-01 | Phase 9 | Pending |
+| AIVC-02 | Phase 9 | Pending |
+| AIVC-03 | Phase 9 | Pending |
+| AIVC-04 | Phase 9 | Pending |
+| AIVC-05 | Phase 9 | Pending |
+| AIVC-06 | Phase 9 | Pending |
+| AIVC-07 | Phase 9 | Pending |
+| AIVC-08 | Phase 9 | Pending |
+| AIVC-09 | Phase 9 | Pending |
+| AIVC-10 | Phase 9 | Pending |
+| WEB-01 | Phase 10 | Pending |
+| WEB-02 | Phase 10 | Pending |
+| WEB-03 | Phase 10 | Pending |
+| WEB-04 | Phase 10 | Pending |
+| WEB-05 | Phase 10 | Pending |
+| WEB-06 | Phase 10 | Pending |
+| WEB-07 | Phase 10 | Pending |
+| WEB-08 | Phase 10 | Pending |
+| WEB-09 | Phase 10 | Pending |
 | ADMN-01 | Phase 6 | Pending |
 | ADMN-02 | Phase 6 | Pending |
 | ADMN-03 | Phase 6 | Pending |
 | ADMN-04 | Phase 6 | Pending |
-| TEST-01 | Phase 10 | Pending |
-| TEST-02 | Phase 10 | Pending |
-| TEST-03 | Phase 10 | Pending |
-| TEST-04 | Phase 10 | Pending |
-| TEST-05 | Phase 10 | Pending |
-| TEST-06 | Phase 10 | Pending |
-| TEST-07 | Phase 10 | Pending |
-| TEST-08 | Phase 10 | Pending |
-| TEST-09 | Phase 10 | Pending |
-| TEST-10 | Phase 10 | Pending |
+| TEST-01 | Continuous (each phase) | Pending |
+| TEST-02 | Continuous (each phase) | Pending |
+| TEST-03 | Continuous (each phase) | Pending |
+| TEST-04 | Phase 1 | Pending |
+| TEST-05 | Continuous (each phase) | Pending |
+| TEST-06 | Continuous (each phase) | Pending |
+| TEST-07 | Continuous (each phase) | Pending |
+| TEST-08 | Continuous (each phase) | Pending |
+| TEST-09 | Continuous (each phase) | Pending |
+| TEST-10 | Phase 1 | Pending |
 | ONBR-01 | Phase 1 | Pending |
 | ONBR-02 | Phase 2 | Pending |
 | ONBR-03 | Phase 2 | Pending |
@@ -341,27 +377,27 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NAV-06 | Phase 1 | Pending |
 | NAV-07 | Phase 3 | Pending |
 | PLAT-01 | Phase 1 | Pending |
-| PLAT-02 | Phase 10 | Pending |
-| PLAT-03 | Phase 10 | Pending |
-| PLAT-04 | Phase 10 | Pending |
-| PLAT-05 | Phase 10 | Pending |
-| PLAT-06 | Phase 10 | Pending |
-| PLAT-07 | Phase 10 | Pending |
-| PLAT-08 | Phase 10 | Pending |
-| PLAT-09 | Phase 10 | Pending |
+| PLAT-02 | Phase 11 | Pending |
+| PLAT-03 | Phase 11 | Pending |
+| PLAT-04 | Phase 11 | Pending |
+| PLAT-05 | Phase 11 | Pending |
+| PLAT-06 | Phase 11 | Pending |
+| PLAT-07 | Phase 11 | Pending |
+| PLAT-08 | Phase 11 | Pending |
+| PLAT-09 | Phase 11 | Pending |
 | PLAT-10 | Phase 1 | Pending |
-| PLAT-11 | Phase 10 | Pending |
-| PLAT-12 | Phase 10 | Pending |
-| PLAT-13 | Phase 10 | Pending |
-| PLAT-14 | Phase 10 | Pending |
-| PLAT-15 | Phase 10 | Pending |
-| PLAT-16 | Phase 10 | Pending |
+| PLAT-11 | Phase 11 | Pending |
+| PLAT-12 | Phase 11 | Pending |
+| PLAT-13 | Phase 11 | Pending |
+| PLAT-14 | Phase 11 | Pending |
+| PLAT-15 | Phase 11 | Pending |
+| PLAT-16 | Phase 11 | Pending |
 | PLAT-17 | Phase 2 | Pending |
-| PLAT-18 | Phase 9 | Pending |
+| PLAT-18 | Phase 10 | Pending |
 
 **Coverage:**
-- v1 requirements: 132 total
-- Mapped to phases: 132
+- v1 requirements: 148 total
+- Mapped to phases: 148
 - Unmapped: 0
 
 ---
