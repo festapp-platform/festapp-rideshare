@@ -1,0 +1,3 @@
+export const OTP_LENGTH = 6;
+export const OTP_EXPIRY_SECONDS = 3600;
+export const SESSION_REFRESH_THRESHOLD_SECONDS = 300;
