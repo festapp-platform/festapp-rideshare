@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 3 of 11 (Ride Posting & Search)
-Plan: 5 of 7 in current phase
-Status: Executing
-Last activity: 2026-02-15 -- Completed 03-05 (ride search page)
+Plan: 7 of 7 in current phase
+Status: Phase Complete
+Last activity: 2026-02-15 -- Completed 03-07 (UX polish, FAB, favorites, recurring rides)
 
 Progress: [████░░░░░░] 24%
 
@@ -39,6 +39,7 @@ Progress: [████░░░░░░] 24%
 | Phase 03 P02 | 2min | 2 tasks | 9 files |
 | Phase 03 P04 | 7min | 2 tasks | 10 files |
 | Phase 03 P05 | 4min | 2 tasks | 4 files |
+| Phase 03 P07 | 4min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,10 @@ Recent decisions affecting current work:
 - [03-05]: Client-side filtering on RPC results for price/mode/seats refinement; RPC handles spatial filtering
 - [03-05]: URL search params persist coordinates and date for shareable/bookmarkable searches
 - [03-05]: Skeleton cards as loading state instead of spinner for better perceived performance
+- [03-07]: FAB positioned bottom-20 on mobile (above bottom nav) and bottom-8 on desktop
+- [03-07]: Favorite routes match by address string (not coordinates) for deduplication simplicity
+- [03-07]: Skipped Share button on ride-detail.tsx since 03-06 runs in parallel
+- [03-07]: Recurring ride form uses local state (not react-hook-form) for simpler one-off page
 
 ### Pending Todos
 
@@ -108,5 +113,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 03-05-PLAN.md (ride search page)
+Stopped at: Completed 03-07-PLAN.md (UX polish, FAB, favorites, recurring rides)
 Resume file: None
