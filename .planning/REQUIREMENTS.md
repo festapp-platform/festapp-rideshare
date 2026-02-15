@@ -1,7 +1,7 @@
 # Requirements: Festapp Rideshare
 
 **Defined:** 2026-02-15
-**Core Value:** Drivers and passengers can find each other for shared rides quickly and effortlessly — simpler, more trustworthy, and completely free.
+**Core Value:** Drivers and passengers can find each other for shared rides quickly and effortlessly -- simpler, more trustworthy, and completely free.
 
 ## v1 Requirements
 
@@ -36,13 +36,13 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **RIDE-03**: Driver can adjust the suggested price within reasonable limits
 - [ ] **RIDE-04**: App suggests pickup points along the route
 - [ ] **RIDE-05**: Driver can choose between instant booking or request-and-approve mode per ride
-- [ ] **RIDE-06**: Driver can post a flexible ride (route intent — "I'll drive this route but don't know when yet")
+- [ ] **RIDE-06**: Driver can post a flexible ride (route intent -- "I'll drive this route but don't know when yet")
 - [ ] **RIDE-07**: Driver can edit a ride's details before departure (time, seats, price, pickup points)
 - [ ] **RIDE-08**: Driver can delete a ride (notifies all booked passengers)
 - [ ] **RIDE-09**: Ride displays estimated trip duration and distance
 - [ ] **RIDE-10**: Rides with past departure dates are automatically expired and archived
 - [ ] **RIDE-11**: Origin and destination input uses address autocomplete (Google Places or equivalent)
-- [ ] **RIDE-12**: Ride has clear status flow: Upcoming → In Progress → Completed / Cancelled
+- [ ] **RIDE-12**: Ride has clear status flow: Upcoming -> In Progress -> Completed / Cancelled
 
 ### Ride Search & Details
 
@@ -88,7 +88,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **LIVE-01**: Driver can activate live location sharing when approaching the pickup point
 - [ ] **LIVE-02**: Passenger can see driver's real-time position on a map during pickup
-- [ ] **LIVE-03**: Location sharing uses adaptive GPS (battery-efficient — balanced accuracy, distance filtering)
+- [ ] **LIVE-03**: Location sharing uses adaptive GPS (battery-efficient -- balanced accuracy, distance filtering)
 - [ ] **LIVE-04**: Location sharing automatically stops after pickup is confirmed or ride begins
 
 ### Ratings & Trust
@@ -111,20 +111,20 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **GAME-01**: Personal impact dashboard showing total CO2 saved, money saved, and rides completed
 - [ ] **GAME-02**: Achievement badges earned through real activity (e.g., "First Ride", "Road Buddy" at 10 rides, "Highway Hero" at 50 rides, "Eco Champion" at 100 kg CO2 saved, "Trusted Driver" at 20 rides with 4.5+ rating, "Explorer" for 5+ different routes)
 - [ ] **GAME-03**: Badges are displayed on user profile and visible to other users
-- [ ] **GAME-04**: User levels based on completed rides + average rating: New → Regular → Experienced → Ambassador
+- [ ] **GAME-04**: User levels based on completed rides + average rating: New -> Regular -> Experienced -> Ambassador
 - [ ] **GAME-05**: User level is shown on profile and in search results (builds trust with strangers)
-- [ ] **GAME-06**: Route streaks — track consecutive weeks of sharing a specific route
-- [ ] **GAME-07**: Community stats page — platform-wide totals (total CO2 saved, total rides shared, total money saved by community)
-- [ ] **GAME-08**: Impact stats are shareable — user can share their personal impact to social media or as a link
+- [ ] **GAME-06**: Route streaks -- track consecutive weeks of sharing a specific route
+- [ ] **GAME-07**: Community stats page -- platform-wide totals (total CO2 saved, total rides shared, total money saved by community)
+- [ ] **GAME-08**: Impact stats are shareable -- user can share their personal impact to social media or as a link
 
 ### Web Platform
 
-- [ ] **WEB-01**: Web app is a PWA (Progressive Web App) — installable on mobile and desktop
+- [ ] **WEB-01**: Web app is a PWA (Progressive Web App) -- installable on mobile and desktop
 - [ ] **WEB-02**: Web app has full feature parity with mobile app for core flows (search, book, chat, profile)
 - [ ] **WEB-03**: Ride pages are SEO-optimized and indexable by search engines (SSR/SSG)
-- [ ] **WEB-04**: Responsive design — works seamlessly on mobile browsers, tablets, and desktop
-- [ ] **WEB-05**: Open Graph / social meta tags — shared ride links show rich preview on WhatsApp, Facebook, Twitter (route, price, seats, driver)
-- [ ] **WEB-06**: Web push notifications via OneSignal (booking updates, messages, reminders — for users without native app)
+- [ ] **WEB-04**: Responsive design -- works seamlessly on mobile browsers, tablets, and desktop
+- [ ] **WEB-05**: Open Graph / social meta tags -- shared ride links show rich preview on WhatsApp, Facebook, Twitter (route, price, seats, driver)
+- [ ] **WEB-06**: Web push notifications via OneSignal (booking updates, messages, reminders -- for users without native app)
 - [ ] **WEB-07**: Service worker with caching strategy for offline PWA support and fast page loads
 - [ ] **WEB-08**: Short URL structure with random IDs (e.g., `/ride/x7k9m2`, `/u/a3b8f1`)
 - [ ] **WEB-09**: API rate limiting on all public endpoints (web + mobile) to prevent abuse and spam
@@ -142,16 +142,16 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **TEST-02**: Unit tests for Supabase query builders and data transformations
 - [ ] **TEST-03**: Integration tests for Supabase Edge Functions (booking, notifications, pricing)
 - [ ] **TEST-04**: Integration tests for auth flows (sign up, login, session persistence, logout, delete account)
-- [ ] **TEST-05**: Integration tests for core business flows (post ride → search → book → complete → rate)
+- [ ] **TEST-05**: Integration tests for core business flows (post ride -> search -> book -> complete -> rate)
 - [ ] **TEST-06**: UI/component tests for critical screens (ride search, ride detail, booking, chat, profile)
-- [ ] **TEST-07**: E2E tests for the full user journey on web (Next.js — using Playwright or Cypress)
-- [ ] **TEST-08**: E2E tests for the full user journey on mobile (Expo — using Detox or Maestro)
+- [ ] **TEST-07**: E2E tests for the full user journey on web (Next.js -- using Playwright or Cypress)
+- [ ] **TEST-08**: E2E tests for the full user journey on mobile (Expo -- using Detox or Maestro)
 - [ ] **TEST-09**: Database tests for RLS policies (verify access control works correctly)
 - [ ] **TEST-10**: CI pipeline runs all tests on every PR
 
 ### Onboarding
 
-- [ ] **ONBR-01**: Sign-up flow is minimal — phone number or social login on one screen
+- [ ] **ONBR-01**: Sign-up flow is minimal -- phone number or social login on one screen
 - [ ] **ONBR-02**: After sign-up, user creates profile (name + photo) on one screen
 - [ ] **ONBR-03**: User selects their role: "I want to drive", "I want to ride", or "Both"
 - [ ] **ONBR-04**: If driver role selected, user is prompted to add vehicle info + car photo (one screen, can skip and add later)
@@ -171,24 +171,24 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Platform & UX
 
-- [ ] **PLAT-01**: Clean, minimal UI with a friendly, playful pastel color palette — approachable and warm feel
+- [ ] **PLAT-01**: Clean, minimal UI with a friendly, playful pastel color palette -- approachable and warm feel
 - [ ] **PLAT-02**: App supports Czech, Slovak, and English languages
 - [ ] **PLAT-03**: Terms of service and privacy policy pages (required for app stores)
-- [ ] **PLAT-04**: Donation prompt — subtle way for users to support the platform ("Buy us a coffee")
+- [ ] **PLAT-04**: Donation prompt -- subtle way for users to support the platform ("Buy us a coffee")
 - [ ] **PLAT-05**: App handles offline/poor connectivity gracefully (queue actions, show cached data)
-- [ ] **PLAT-06**: GDPR compliance — user can export their data, cookie consent on web
-- [ ] **PLAT-07**: Meaningful empty states ("No rides found — try a different date") and error pages (404, network error)
+- [ ] **PLAT-06**: GDPR compliance -- user can export their data, cookie consent on web
+- [ ] **PLAT-07**: Meaningful empty states ("No rides found -- try a different date") and error pages (404, network error)
 - [ ] **PLAT-08**: Help / FAQ page with common questions and contact/support option
 - [ ] **PLAT-09**: User can invite friends / share the app via link
 - [ ] **PLAT-10**: Splash screen and app icon with Festapp Rideshare branding
 - [ ] **PLAT-11**: Skeleton loading states for lists and screens (feels fast while data loads)
 - [ ] **PLAT-12**: Crash reporting and error monitoring in production (Sentry or equivalent)
 - [ ] **PLAT-13**: Anonymous usage analytics to understand user behavior and inform product decisions
-- [ ] **PLAT-14**: Force update mechanism — prompt users to update when a critical new version is available
-- [ ] **PLAT-15**: Basic accessibility — screen reader labels, sufficient color contrast, touch target sizes
-- [ ] **PLAT-16**: App store assets — screenshots, descriptions, and metadata for iOS App Store and Google Play
-- [ ] **PLAT-17**: Image optimization — avatar and car photos are compressed and thumbnailed on upload (Supabase Storage)
-- [ ] **PLAT-18**: Smart web-to-app banner — "Open in app" prompt when visiting web on a mobile device
+- [ ] **PLAT-14**: Force update mechanism -- prompt users to update when a critical new version is available
+- [ ] **PLAT-15**: Basic accessibility -- screen reader labels, sufficient color contrast, touch target sizes
+- [ ] **PLAT-16**: App store assets -- screenshots, descriptions, and metadata for iOS App Store and Google Play
+- [ ] **PLAT-17**: Image optimization -- avatar and car photos are compressed and thumbnailed on upload (Supabase Storage)
+- [ ] **PLAT-18**: Smart web-to-app banner -- "Open in app" prompt when visiting web on a mobile device
 
 ## v2 Requirements
 
@@ -215,7 +215,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | In-app payment processing | Users settle in cash. Avoids payment processor complexity and fees. Aligns with free model. |
 | Real-time ride-hailing (Uber-style) | This is pre-planned carpooling, not on-demand taxi service |
 | Bus/public transport integration | Focus on carpooling only |
-| Video calls | Unnecessary for ride coordination — chat + phone is sufficient |
+| Video calls | Unnecessary for ride coordination -- chat + phone is sufficient |
 | Group chat | 1:1 between driver and each passenger is sufficient for v1 |
 | Full internationalization (i18n) | Czech + English hardcoded for v1. Proper i18n framework in v2. |
 | In-app donation processing | v1 uses external link (Ko-fi, GitHub Sponsors, etc.). In-app mechanism in v2. |
@@ -226,149 +226,144 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | TBD | Pending |
-| AUTH-02 | TBD | Pending |
-| AUTH-03 | TBD | Pending |
-| AUTH-04 | TBD | Pending |
-| AUTH-05 | TBD | Pending |
-| PROF-01 | TBD | Pending |
-| PROF-02 | TBD | Pending |
-| PROF-03 | TBD | Pending |
-| PROF-04 | TBD | Pending |
-| PROF-05 | TBD | Pending |
-| PROF-06 | TBD | Pending |
-| PROF-07 | TBD | Pending |
-| PROF-08 | TBD | Pending |
-| PROF-09 | TBD | Pending |
-| RIDE-01 | TBD | Pending |
-| RIDE-02 | TBD | Pending |
-| RIDE-03 | TBD | Pending |
-| RIDE-04 | TBD | Pending |
-| RIDE-05 | TBD | Pending |
-| RIDE-06 | TBD | Pending |
-| RIDE-07 | TBD | Pending |
-| RIDE-08 | TBD | Pending |
-| RIDE-09 | TBD | Pending |
-| SRCH-01 | TBD | Pending |
-| SRCH-02 | TBD | Pending |
-| SRCH-03 | TBD | Pending |
-| SRCH-04 | TBD | Pending |
-| SRCH-05 | TBD | Pending |
-| SRCH-06 | TBD | Pending |
-| BOOK-01 | TBD | Pending |
-| BOOK-02 | TBD | Pending |
-| BOOK-03 | TBD | Pending |
-| BOOK-04 | TBD | Pending |
-| BOOK-05 | TBD | Pending |
-| BOOK-06 | TBD | Pending |
-| BOOK-07 | TBD | Pending |
-| CHAT-01 | TBD | Pending |
-| CHAT-02 | TBD | Pending |
-| CHAT-03 | TBD | Pending |
-| CHAT-04 | TBD | Pending |
-| NOTF-01 | TBD | Pending |
-| NOTF-02 | TBD | Pending |
-| NOTF-03 | TBD | Pending |
-| NOTF-04 | TBD | Pending |
-| NOTF-05 | TBD | Pending |
-| NOTF-06 | TBD | Pending |
-| LIVE-01 | TBD | Pending |
-| LIVE-02 | TBD | Pending |
-| LIVE-03 | TBD | Pending |
-| LIVE-04 | TBD | Pending |
-| RATE-01 | TBD | Pending |
-| RATE-02 | TBD | Pending |
-| RATE-03 | TBD | Pending |
-| RATE-04 | TBD | Pending |
-| FLEX-01 | TBD | Pending |
-| FLEX-02 | TBD | Pending |
-| FLEX-03 | TBD | Pending |
-| FLEX-04 | TBD | Pending |
-| WEB-01 | TBD | Pending |
-| WEB-02 | TBD | Pending |
-| TEST-01 | TBD | Pending |
-| TEST-02 | TBD | Pending |
-| TEST-03 | TBD | Pending |
-| TEST-04 | TBD | Pending |
-| TEST-05 | TBD | Pending |
-| TEST-06 | TBD | Pending |
-| TEST-07 | TBD | Pending |
-| TEST-08 | TBD | Pending |
-| TEST-09 | TBD | Pending |
-| TEST-10 | TBD | Pending |
-| PLAT-01 | TBD | Pending |
-| PLAT-02 | TBD | Pending |
-| PLAT-03 | TBD | Pending |
-| PLAT-04 | TBD | Pending |
-| PLAT-05 | TBD | Pending |
-| PROF-10 | TBD | Pending |
-| RIDE-10 | TBD | Pending |
-| SRCH-07 | TBD | Pending |
-| NOTF-07 | TBD | Pending |
-| RATE-05 | TBD | Pending |
-| WEB-03 | TBD | Pending |
-| ADMN-01 | TBD | Pending |
-| ADMN-02 | TBD | Pending |
-| ADMN-03 | TBD | Pending |
-| ADMN-04 | TBD | Pending |
-| ONBR-01 | TBD | Pending |
-| ONBR-02 | TBD | Pending |
-| ONBR-03 | TBD | Pending |
-| ONBR-04 | TBD | Pending |
-| ONBR-05 | TBD | Pending |
-| ONBR-06 | TBD | Pending |
-| ONBR-07 | TBD | Pending |
-| NAV-01 | TBD | Pending |
-| NAV-02 | TBD | Pending |
-| NAV-03 | TBD | Pending |
-| NAV-04 | TBD | Pending |
-| NAV-05 | TBD | Pending |
-| NAV-06 | TBD | Pending |
-| NAV-07 | TBD | Pending |
-| PLAT-01 | TBD | Pending |
-| PLAT-02 | TBD | Pending |
-| PLAT-03 | TBD | Pending |
-| PLAT-04 | TBD | Pending |
-| PLAT-05 | TBD | Pending |
-| PLAT-06 | TBD | Pending |
-| PLAT-07 | TBD | Pending |
-| PLAT-08 | TBD | Pending |
-| PLAT-09 | TBD | Pending |
-| PLAT-10 | TBD | Pending |
-| RIDE-11 | TBD | Pending |
-| RIDE-12 | TBD | Pending |
-| SRCH-08 | TBD | Pending |
-| PLAT-11 | TBD | Pending |
-| PLAT-12 | TBD | Pending |
-| PLAT-13 | TBD | Pending |
-| PLAT-14 | TBD | Pending |
-| PLAT-15 | TBD | Pending |
-| AUTH-06 | TBD | Pending |
-| NOTF-08 | TBD | Pending |
-| NOTF-09 | TBD | Pending |
-| PLAT-16 | TBD | Pending |
-| PLAT-17 | TBD | Pending |
-| GAME-01 | TBD | Pending |
-| GAME-02 | TBD | Pending |
-| GAME-03 | TBD | Pending |
-| GAME-04 | TBD | Pending |
-| GAME-05 | TBD | Pending |
-| GAME-06 | TBD | Pending |
-| GAME-07 | TBD | Pending |
-| GAME-08 | TBD | Pending |
-| WEB-04 | TBD | Pending |
-| WEB-05 | TBD | Pending |
-| WEB-06 | TBD | Pending |
-| WEB-07 | TBD | Pending |
-| WEB-08 | TBD | Pending |
-| WEB-09 | TBD | Pending |
-| PLAT-18 | TBD | Pending |
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Pending |
+| AUTH-05 | Phase 1 | Pending |
+| AUTH-06 | Phase 1 | Pending |
+| PROF-01 | Phase 2 | Pending |
+| PROF-02 | Phase 2 | Pending |
+| PROF-03 | Phase 2 | Pending |
+| PROF-04 | Phase 2 | Pending |
+| PROF-05 | Phase 2 | Pending |
+| PROF-06 | Phase 4 | Pending |
+| PROF-07 | Phase 2 | Pending |
+| PROF-08 | Phase 2 | Pending |
+| PROF-09 | Phase 2 | Pending |
+| PROF-10 | Phase 2 | Pending |
+| RIDE-01 | Phase 3 | Pending |
+| RIDE-02 | Phase 3 | Pending |
+| RIDE-03 | Phase 3 | Pending |
+| RIDE-04 | Phase 3 | Pending |
+| RIDE-05 | Phase 3 | Pending |
+| RIDE-06 | Phase 8 | Pending |
+| RIDE-07 | Phase 3 | Pending |
+| RIDE-08 | Phase 3 | Pending |
+| RIDE-09 | Phase 3 | Pending |
+| RIDE-10 | Phase 3 | Pending |
+| RIDE-11 | Phase 3 | Pending |
+| RIDE-12 | Phase 3 | Pending |
+| SRCH-01 | Phase 3 | Pending |
+| SRCH-02 | Phase 3 | Pending |
+| SRCH-03 | Phase 3 | Pending |
+| SRCH-04 | Phase 3 | Pending |
+| SRCH-05 | Phase 3 | Pending |
+| SRCH-06 | Phase 3 | Pending |
+| SRCH-07 | Phase 3 | Pending |
+| SRCH-08 | Phase 3 | Pending |
+| BOOK-01 | Phase 4 | Pending |
+| BOOK-02 | Phase 4 | Pending |
+| BOOK-03 | Phase 4 | Pending |
+| BOOK-04 | Phase 4 | Pending |
+| BOOK-05 | Phase 4 | Pending |
+| BOOK-06 | Phase 4 | Pending |
+| BOOK-07 | Phase 4 | Pending |
+| CHAT-01 | Phase 5 | Pending |
+| CHAT-02 | Phase 5 | Pending |
+| CHAT-03 | Phase 5 | Pending |
+| CHAT-04 | Phase 5 | Pending |
+| NOTF-01 | Phase 5 | Pending |
+| NOTF-02 | Phase 5 | Pending |
+| NOTF-03 | Phase 8 | Pending |
+| NOTF-04 | Phase 5 | Pending |
+| NOTF-05 | Phase 5 | Pending |
+| NOTF-06 | Phase 5 | Pending |
+| NOTF-07 | Phase 5 | Pending |
+| NOTF-08 | Phase 5 | Pending |
+| NOTF-09 | Phase 5 | Pending |
+| LIVE-01 | Phase 7 | Pending |
+| LIVE-02 | Phase 7 | Pending |
+| LIVE-03 | Phase 7 | Pending |
+| LIVE-04 | Phase 7 | Pending |
+| RATE-01 | Phase 6 | Pending |
+| RATE-02 | Phase 6 | Pending |
+| RATE-03 | Phase 6 | Pending |
+| RATE-04 | Phase 6 | Pending |
+| RATE-05 | Phase 6 | Pending |
+| FLEX-01 | Phase 8 | Pending |
+| FLEX-02 | Phase 8 | Pending |
+| FLEX-03 | Phase 8 | Pending |
+| FLEX-04 | Phase 8 | Pending |
+| GAME-01 | Phase 8 | Pending |
+| GAME-02 | Phase 8 | Pending |
+| GAME-03 | Phase 8 | Pending |
+| GAME-04 | Phase 8 | Pending |
+| GAME-05 | Phase 8 | Pending |
+| GAME-06 | Phase 8 | Pending |
+| GAME-07 | Phase 8 | Pending |
+| GAME-08 | Phase 8 | Pending |
+| WEB-01 | Phase 9 | Pending |
+| WEB-02 | Phase 9 | Pending |
+| WEB-03 | Phase 9 | Pending |
+| WEB-04 | Phase 9 | Pending |
+| WEB-05 | Phase 9 | Pending |
+| WEB-06 | Phase 9 | Pending |
+| WEB-07 | Phase 9 | Pending |
+| WEB-08 | Phase 9 | Pending |
+| WEB-09 | Phase 9 | Pending |
+| ADMN-01 | Phase 6 | Pending |
+| ADMN-02 | Phase 6 | Pending |
+| ADMN-03 | Phase 6 | Pending |
+| ADMN-04 | Phase 6 | Pending |
+| TEST-01 | Phase 10 | Pending |
+| TEST-02 | Phase 10 | Pending |
+| TEST-03 | Phase 10 | Pending |
+| TEST-04 | Phase 10 | Pending |
+| TEST-05 | Phase 10 | Pending |
+| TEST-06 | Phase 10 | Pending |
+| TEST-07 | Phase 10 | Pending |
+| TEST-08 | Phase 10 | Pending |
+| TEST-09 | Phase 10 | Pending |
+| TEST-10 | Phase 10 | Pending |
+| ONBR-01 | Phase 1 | Pending |
+| ONBR-02 | Phase 2 | Pending |
+| ONBR-03 | Phase 2 | Pending |
+| ONBR-04 | Phase 2 | Pending |
+| ONBR-05 | Phase 1 | Pending |
+| ONBR-06 | Phase 1 | Pending |
+| ONBR-07 | Phase 1 | Pending |
+| NAV-01 | Phase 1 | Pending |
+| NAV-02 | Phase 1 | Pending |
+| NAV-03 | Phase 1 | Pending |
+| NAV-04 | Phase 1 | Pending |
+| NAV-05 | Phase 1 | Pending |
+| NAV-06 | Phase 1 | Pending |
+| NAV-07 | Phase 3 | Pending |
+| PLAT-01 | Phase 1 | Pending |
+| PLAT-02 | Phase 10 | Pending |
+| PLAT-03 | Phase 10 | Pending |
+| PLAT-04 | Phase 10 | Pending |
+| PLAT-05 | Phase 10 | Pending |
+| PLAT-06 | Phase 10 | Pending |
+| PLAT-07 | Phase 10 | Pending |
+| PLAT-08 | Phase 10 | Pending |
+| PLAT-09 | Phase 10 | Pending |
+| PLAT-10 | Phase 1 | Pending |
+| PLAT-11 | Phase 10 | Pending |
+| PLAT-12 | Phase 10 | Pending |
+| PLAT-13 | Phase 10 | Pending |
+| PLAT-14 | Phase 10 | Pending |
+| PLAT-15 | Phase 10 | Pending |
+| PLAT-16 | Phase 10 | Pending |
+| PLAT-17 | Phase 2 | Pending |
+| PLAT-18 | Phase 9 | Pending |
 
 **Coverage:**
-- v1 requirements: 123 total
-- Mapped to phases: 0
-- Unmapped: 123 ⚠️
+- v1 requirements: 132 total
+- Mapped to phases: 132
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-15*
-*Last updated: 2026-02-15 after initial definition*
+*Last updated: 2026-02-15 after roadmap creation*
