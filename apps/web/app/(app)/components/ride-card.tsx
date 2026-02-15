@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
+import { getUserLevel } from '@festapp/shared';
 import type { NearbyRideResult } from '@festapp/shared';
 import { StarRating } from './star-rating';
 
@@ -43,9 +44,15 @@ export function RideCard({ ride }: RideCardProps) {
             )}
           </div>
           <div>
-            <p className="text-sm font-semibold text-text-main">
-              {ride.driver_name}
-            </p>
+            <div className="flex items-center gap-1.5">
+              <p className="text-sm font-semibold text-text-main">
+                {ride.driver_name}
+              </p>
+              <DriverLevelPill
+                completedRides={ride.driver_completed_rides_count ?? 0}
+                rating={ride.driver_rating}
+              />
+            </div>
             <StarRating
               rating={ride.driver_rating}
               count={ride.driver_rating_count}
@@ -145,5 +152,32 @@ export function RideCard({ ride }: RideCardProps) {
         </div>
       </div>
     </Link>
+  );
+}
+
+const LEVEL_PILL_STYLES: Record<string, string> = {
+  New: 'bg-gray-100 text-gray-500 border-gray-200',
+  Regular: 'bg-blue-50 text-blue-600 border-blue-200',
+  Experienced: 'bg-purple-50 text-purple-600 border-purple-200',
+  Ambassador: 'bg-amber-50 text-amber-600 border-amber-200',
+};
+
+function DriverLevelPill({
+  completedRides,
+  rating,
+}: {
+  completedRides: number;
+  rating: number;
+}) {
+  const level = getUserLevel(completedRides, rating);
+  // Don't show "New" level in search -- it's the default and not informative
+  if (level.name === 'New') return null;
+  const style = LEVEL_PILL_STYLES[level.name] ?? LEVEL_PILL_STYLES.New;
+  return (
+    <span
+      className={`inline-flex rounded-full border px-1.5 py-0.5 text-[10px] font-semibold leading-none ${style}`}
+    >
+      {level.name}
+    </span>
   );
 }

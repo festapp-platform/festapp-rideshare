@@ -11,6 +11,8 @@ import { ReviewList } from "../../components/review-list";
 import { RatingModal } from "../../components/rating-modal";
 import { ReportDialog } from "../../components/report-dialog";
 import { BlockButton } from "../../components/block-button";
+import { LevelBadge } from "../components/level-badge";
+import { BadgesSection } from "../components/badges-section";
 
 interface PublicProfile {
   id: string;
@@ -361,6 +363,15 @@ export default function PublicProfilePage() {
             {profile?.display_name || "User"}
           </h2>
 
+          {/* User level badge (large variant) */}
+          <div className="mt-2 w-full max-w-xs">
+            <LevelBadge
+              completedRides={profile?.completed_rides_count ?? 0}
+              ratingAvg={profile?.rating_avg ?? 0}
+              variant="large"
+            />
+          </div>
+
           {/* Rating display */}
           <div className="mt-2">
             <StarRating
@@ -465,6 +476,11 @@ export default function PublicProfilePage() {
           </div>
         </div>
       )}
+
+      {/* Achievement badges */}
+      <div className="mb-4 rounded-2xl border border-border-pastel bg-surface p-6">
+        <BadgesSection userId={profileId} />
+      </div>
 
       {/* Reviews section */}
       <div className="mb-4">
