@@ -169,17 +169,13 @@ Plans:
   3. Driver can create a flexible ride (route intent without a specific date) and later confirm a date, notifying subscribers
   4. User can view their personal impact dashboard (CO2 saved, money saved, rides completed) and share it
   5. Users earn achievement badges and levels (New through Ambassador) displayed on their profile and in search results
-**Plans**: TBD
+**Plans:** 4 plans
 
 Plans:
-- [ ] 08-01: Event creation, admin approval flow, and event page
-- [ ] 08-02: Event-linked rides and event ride browsing
-- [ ] 08-03: Flexible ride creation and route intent UI
-- [ ] 08-04: Subscription system and notification triggers
-- [ ] 08-05: Flexible ride confirmation and booking bridge
-- [ ] 08-06: Impact dashboard and stats calculation
-- [ ] 08-07: Achievement badges, levels, and route streaks
-- [ ] 08-08: Community stats page and social sharing
+- [ ] 08-01-PLAN.md — Events: DB migration, admin approval RPCs, event creation/browsing/detail pages, event-linked rides
+- [ ] 08-02-PLAN.md — Flexible rides: route intents DB, subscriptions, route intent UI, date confirmation with subscriber notifications
+- [ ] 08-03-PLAN.md — Gamification: badges, levels, route streaks, impact dashboard, profile/search integration
+- [ ] 08-04-PLAN.md — Community stats page, share component, event deep links, unit tests
 
 ### Phase 9: AI & Voice
 **Goal**: Users can interact with the app via natural language (text or voice) for all core flows, and external AI assistants can operate the app via MCP tools
@@ -255,7 +251,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -
 | 5. Communication & Notifications | 0/6 | Not started | - |
 | 6. Ratings, Trust & Safety | 0/5 | Not started | - |
 | 7. Live Location | 0/4 | Not started | - |
-| 8. Events, Flexible Rides & Gamification | 0/8 | Not started | - |
+| 8. Events, Flexible Rides & Gamification | 0/4 | Not started | - |
 | 9. AI & Voice | 0/5 | Not started | - |
 | 10. Web Platform & SEO | 0/6 | Not started | - |
 | 11. Polish, Testing & Launch | 0/5 | Not started | - |
