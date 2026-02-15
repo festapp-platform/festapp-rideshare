@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { AppNav } from "./app-nav";
-import { GoogleMapsProvider } from "@/lib/google-maps-provider";
+import { MapProvider } from "@/lib/map-provider";
 import { PostRideFab } from "./components/post-ride-fab";
 import { Toaster } from "sonner";
 
@@ -41,7 +41,7 @@ export default async function AppLayout({
   }
 
   return (
-    <GoogleMapsProvider>
+    <MapProvider>
       <div className="flex min-h-screen flex-col bg-background md:flex-row">
         {/* Desktop sidebar */}
         <AppNav />
@@ -57,6 +57,6 @@ export default async function AppLayout({
         {/* Toast notifications */}
         <Toaster position="top-right" richColors closeButton />
       </div>
-    </GoogleMapsProvider>
+    </MapProvider>
   );
 }

@@ -222,7 +222,7 @@ export function ManageRideContent({ ride, bookings }: ManageRideContentProps) {
         >
           Complete Ride
           <span className="block text-xs font-normal mt-0.5">
-            Available after departure time
+            Cannot complete before departure ({formattedDate} at {formattedTime})
           </span>
         </div>
       )}

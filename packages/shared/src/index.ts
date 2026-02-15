@@ -50,8 +50,6 @@ export {
   STORAGE_BUCKETS,
   IMAGE_CONSTRAINTS,
   ALLOWED_IMAGE_TYPES,
-  getAvatarPath,
-  getVehiclePhotoPath,
 } from './constants/storage';
 
 // Constants - pricing

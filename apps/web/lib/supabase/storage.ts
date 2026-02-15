@@ -1,25 +1,47 @@
 /**
- * Web image compression and Supabase Storage upload helpers.
+ * Web image compression and upload helpers.
  *
- * Compresses images client-side with browser-image-compression before
- * uploading to Supabase Storage buckets. Used for avatar and vehicle photos.
+ * Compresses images client-side with browser-image-compression, then uploads
+ * via the upload-image Edge Function (service_role, random UUID filenames).
  */
 import imageCompression from "browser-image-compression";
 import { createClient } from "@/lib/supabase/client";
-import {
-  STORAGE_BUCKETS,
-  IMAGE_CONSTRAINTS,
-  getAvatarPath,
-  getVehiclePhotoPath,
-} from "@festapp/shared";
+import { STORAGE_BUCKETS, IMAGE_CONSTRAINTS } from "@festapp/shared";
 
 /**
- * Compress and upload an avatar image to Supabase Storage.
+ * Upload a file via the upload-image Edge Function.
+ * Returns the public URL of the uploaded file.
+ */
+async function invokeUpload(
+  file: File | Blob,
+  bucket: string,
+  folder?: string,
+): Promise<string> {
+  const supabase = createClient();
+
+  const formData = new FormData();
+  formData.append("file", file, file instanceof File ? file.name : "image.jpg");
+  formData.append("bucket", bucket);
+  if (folder) formData.append("folder", folder);
+
+  const { data, error } = await supabase.functions.invoke("upload-image", {
+    body: formData,
+  });
+
+  if (error) {
+    throw new Error(`Upload failed: ${error.message}`);
+  }
+
+  if (!data?.publicUrl) {
+    throw new Error("Upload failed: no public URL returned");
+  }
+
+  return data.publicUrl;
+}
+
+/**
+ * Compress and upload an avatar image.
  * Updates the user's profile avatar_url with the new public URL.
- *
- * @param file - The image file to upload
- * @param userId - The authenticated user's ID
- * @returns The public URL of the uploaded avatar
  */
 export async function uploadAvatar(
   file: File,
@@ -41,23 +63,8 @@ export async function uploadAvatar(
     );
   }
 
-  // Upload to storage
-  const path = getAvatarPath(userId);
-  const { error: uploadError } = await supabase.storage
-    .from(STORAGE_BUCKETS.avatars)
-    .upload(path, compressed, {
-      upsert: true,
-      contentType: "image/jpeg",
-    });
-
-  if (uploadError) {
-    throw new Error(`Failed to upload avatar: ${uploadError.message}`);
-  }
-
-  // Get public URL
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from(STORAGE_BUCKETS.avatars).getPublicUrl(path);
+  // Upload via Edge Function
+  const publicUrl = await invokeUpload(compressed, STORAGE_BUCKETS.avatars, userId);
 
   // Update profile with new avatar URL
   const { error: updateError } = await supabase
@@ -75,20 +82,13 @@ export async function uploadAvatar(
 }
 
 /**
- * Compress and upload a vehicle photo to Supabase Storage.
- *
- * @param file - The image file to upload
- * @param userId - The authenticated user's ID
- * @param vehicleId - The vehicle's ID
- * @returns The public URL of the uploaded vehicle photo
+ * Compress and upload a vehicle photo.
  */
 export async function uploadVehiclePhoto(
   file: File,
   userId: string,
   vehicleId: string,
 ): Promise<string> {
-  const supabase = createClient();
-
   // Compress image client-side
   let compressed: File;
   try {
@@ -103,23 +103,33 @@ export async function uploadVehiclePhoto(
     );
   }
 
-  // Upload to storage
-  const path = getVehiclePhotoPath(userId, vehicleId);
-  const { error: uploadError } = await supabase.storage
-    .from(STORAGE_BUCKETS.vehicles)
-    .upload(path, compressed, {
-      upsert: true,
-      contentType: "image/jpeg",
-    });
+  // Upload via Edge Function — folder is userId for ownership grouping
+  const publicUrl = await invokeUpload(compressed, STORAGE_BUCKETS.vehicles, userId);
 
-  if (uploadError) {
-    throw new Error(`Failed to upload vehicle photo: ${uploadError.message}`);
+  return publicUrl;
+}
+
+/**
+ * Upload an ID document image via Edge Function.
+ */
+export async function uploadIdDocument(
+  file: File,
+  userId: string,
+): Promise<string> {
+  // Compress image client-side
+  let compressed: File;
+  try {
+    compressed = await imageCompression(file, {
+      maxSizeMB: IMAGE_CONSTRAINTS.avatar.maxSizeMB,
+      maxWidthOrHeight: IMAGE_CONSTRAINTS.avatar.maxWidthOrHeight,
+      useWebWorker: true,
+    });
+  } catch (error) {
+    throw new Error(
+      `Failed to compress ID document: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
 
-  // Get public URL
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from(STORAGE_BUCKETS.vehicles).getPublicUrl(path);
-
+  const publicUrl = await invokeUpload(compressed, STORAGE_BUCKETS.avatars, userId);
   return publicUrl;
 }

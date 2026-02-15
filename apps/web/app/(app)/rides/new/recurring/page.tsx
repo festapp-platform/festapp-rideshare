@@ -6,9 +6,9 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { PRICING, calculateSuggestedPrice } from '@festapp/shared';
 import {
-  AddressAutocomplete,
+  AddressInput,
   type PlaceResult,
-} from '../../../components/address-autocomplete';
+} from '../../../components/address-input';
 
 const DAYS_OF_WEEK = [
   { value: 1, label: 'Monday' },
@@ -232,12 +232,12 @@ export default function RecurringRidePage() {
         <section className="rounded-2xl border border-border-pastel bg-surface p-6">
           <h2 className="mb-4 text-lg font-semibold text-text-main">Route</h2>
           <div className="space-y-3">
-            <AddressAutocomplete
+            <AddressInput
               label="From"
               placeholder="Pickup location"
               onPlaceSelect={setOrigin}
             />
-            <AddressAutocomplete
+            <AddressInput
               label="To"
               placeholder="Destination"
               onPlaceSelect={setDestination}

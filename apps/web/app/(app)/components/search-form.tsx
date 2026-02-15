@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { AddressAutocomplete, type PlaceResult } from './address-autocomplete';
+import { AddressInput, type PlaceResult } from './address-input';
 import type { SearchParams } from '@festapp/shared';
 
 /**
@@ -67,13 +67,13 @@ export function SearchForm({
     >
       {/* Origin and Destination - side by side on desktop, stacked on mobile */}
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
-        <AddressAutocomplete
+        <AddressInput
           label="From"
           placeholder="Pickup location"
           value={initialOrigin}
           onSelect={setOrigin}
         />
-        <AddressAutocomplete
+        <AddressInput
           label="To"
           placeholder="Destination"
           value={initialDestination}

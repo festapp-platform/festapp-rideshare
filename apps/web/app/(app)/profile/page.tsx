@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ProfileUpdateSchema, SocialLinksSchema } from "@festapp/shared";
 import type { ProfileUpdate, SocialLinks } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/client";
-import { uploadAvatar } from "@/lib/supabase/storage";
+import { uploadAvatar, uploadIdDocument } from "@/lib/supabase/storage";
 
 interface Profile {
   id: string;
@@ -131,22 +131,8 @@ export default function ProfilePage() {
     try {
       const supabaseClient = createClient();
 
-      // Upload to avatars bucket under userId/id-document path
-      const path = `${userId}/id-document-${Date.now()}.jpg`;
-      const { error: uploadError } = await supabaseClient.storage
-        .from("avatars")
-        .upload(path, file, {
-          upsert: true,
-          contentType: file.type || "image/jpeg",
-        });
-
-      if (uploadError) {
-        throw new Error(`Failed to upload ID: ${uploadError.message}`);
-      }
-
-      const {
-        data: { publicUrl },
-      } = supabaseClient.storage.from("avatars").getPublicUrl(path);
+      // Upload via Edge Function (random UUID filename, service_role)
+      const publicUrl = await uploadIdDocument(file, userId);
 
       // Update profile with ID document URL and set verified
       const { error: updateError } = await supabaseClient

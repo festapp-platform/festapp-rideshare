@@ -16,7 +16,17 @@ export function ReliabilityBadge({ reliability }: ReliabilityBadgeProps) {
 
   const totalRides =
     reliability.total_rides_completed + reliability.total_rides_cancelled;
-  if (totalRides === 0) return null;
+
+  // No rides yet — show "no rating" instead of hiding
+  if (totalRides === 0) {
+    return (
+      <div className="flex items-center text-xs">
+        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 font-medium text-text-secondary">
+          No rating yet
+        </span>
+      </div>
+    );
+  }
 
   const cancellationRate = Number(reliability.cancellation_rate);
   const rateColor =
@@ -45,6 +55,12 @@ export function ReliabilityBadge({ reliability }: ReliabilityBadgeProps) {
         {reliability.total_rides_completed} ride
         {reliability.total_rides_completed !== 1 ? "s" : ""} completed
       </span>
+      {reliability.total_bookings_received > 0 && (
+        <span className="inline-flex items-center rounded-full bg-primary/5 px-2.5 py-1 font-medium text-text-secondary">
+          {reliability.total_bookings_received} passenger
+          {reliability.total_bookings_received !== 1 ? "s" : ""} served
+        </span>
+      )}
       {cancellationRate > 0 && (
         <span
           className={`inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 font-medium ${rateColor}`}

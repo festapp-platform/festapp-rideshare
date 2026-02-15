@@ -18,14 +18,17 @@
     "@vis.gl/react-google-maps": "^1.7.1",
     "browser-image-compression": "^2.0.2",
     "date-fns": "^4.1.0",
+    "leaflet": "^1.9.4",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.1",
+    "react-leaflet": "^5.0.0",
     "sonner": "^2.0.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

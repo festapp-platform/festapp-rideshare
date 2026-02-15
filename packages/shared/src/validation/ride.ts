@@ -19,8 +19,7 @@ export const CreateRideSchema = z.object({
   destination: LocationSchema,
   departureTime: z.string().datetime(),
   seatsTotal: z.number().int().min(1).max(8),
-  priceCzk: z.number().min(0).max(10000).optional(),
-  luggageSize: z.enum(['none', 'small', 'medium', 'large']),
+  priceCzk: z.number().min(0).max(5000).optional(),
   bookingMode: z.enum(['instant', 'request']),
   preferences: z
     .object({

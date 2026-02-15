@@ -2,18 +2,14 @@
  * Mobile image picking, compression, and upload helpers.
  *
  * Uses expo-image-picker for selection and expo-image-manipulator for
- * client-side resizing before uploading to Supabase Storage.
+ * client-side resizing. Uploads via the upload-image Edge Function
+ * (service_role, random UUID filenames).
  */
 import * as ImagePicker from "expo-image-picker";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { Alert } from "react-native";
 import { supabase } from "@/lib/supabase";
-import {
-  STORAGE_BUCKETS,
-  IMAGE_CONSTRAINTS,
-  getAvatarPath,
-  getVehiclePhotoPath,
-} from "@festapp/shared";
+import { STORAGE_BUCKETS, IMAGE_CONSTRAINTS } from "@festapp/shared";
 
 /**
  * Request media library permissions. Shows alert if denied.
@@ -35,11 +31,42 @@ async function requestPermission(): Promise<boolean> {
 }
 
 /**
+ * Upload a blob via the upload-image Edge Function.
+ * Returns the public URL of the uploaded file.
+ */
+async function invokeUpload(
+  blob: Blob,
+  bucket: string,
+  folder?: string,
+  fileName?: string,
+): Promise<string> {
+  const formData = new FormData();
+  formData.append("file", {
+    uri: URL.createObjectURL(blob),
+    type: "image/jpeg",
+    name: fileName || "image.jpg",
+  } as unknown as Blob);
+  formData.append("bucket", bucket);
+  if (folder) formData.append("folder", folder);
+
+  const { data, error } = await supabase.functions.invoke("upload-image", {
+    body: formData,
+  });
+
+  if (error) {
+    throw new Error(`Upload failed: ${error.message}`);
+  }
+
+  if (!data?.publicUrl) {
+    throw new Error("Upload failed: no public URL returned");
+  }
+
+  return data.publicUrl;
+}
+
+/**
  * Pick an image from the library, resize it, and upload as avatar.
  * Updates the user's profile avatar_url with the new public URL.
- *
- * @param userId - The authenticated user's ID
- * @returns The public URL of the uploaded avatar, or null if cancelled
  */
 export async function pickAndUploadAvatar(
   userId: string,
@@ -69,23 +96,8 @@ export async function pickAndUploadAvatar(
   const response = await fetch(manipulated.uri);
   const blob = await response.blob();
 
-  // Upload to storage
-  const path = getAvatarPath(userId);
-  const { error: uploadError } = await supabase.storage
-    .from(STORAGE_BUCKETS.avatars)
-    .upload(path, blob, {
-      upsert: true,
-      contentType: "image/jpeg",
-    });
-
-  if (uploadError) {
-    throw new Error(`Failed to upload avatar: ${uploadError.message}`);
-  }
-
-  // Get public URL
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from(STORAGE_BUCKETS.avatars).getPublicUrl(path);
+  // Upload via Edge Function
+  const publicUrl = await invokeUpload(blob, STORAGE_BUCKETS.avatars, userId, "avatar.jpg");
 
   // Update profile with new avatar URL
   const { error: updateError } = await supabase
@@ -104,10 +116,6 @@ export async function pickAndUploadAvatar(
 
 /**
  * Pick an image from the library, resize it, and upload as vehicle photo.
- *
- * @param userId - The authenticated user's ID
- * @param vehicleId - The vehicle's ID
- * @returns The public URL of the uploaded vehicle photo, or null if cancelled
  */
 export async function pickAndUploadVehiclePhoto(
   userId: string,
@@ -138,23 +146,8 @@ export async function pickAndUploadVehiclePhoto(
   const response = await fetch(manipulated.uri);
   const blob = await response.blob();
 
-  // Upload to storage
-  const path = getVehiclePhotoPath(userId, vehicleId);
-  const { error: uploadError } = await supabase.storage
-    .from(STORAGE_BUCKETS.vehicles)
-    .upload(path, blob, {
-      upsert: true,
-      contentType: "image/jpeg",
-    });
-
-  if (uploadError) {
-    throw new Error(`Failed to upload vehicle photo: ${uploadError.message}`);
-  }
-
-  // Get public URL
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from(STORAGE_BUCKETS.vehicles).getPublicUrl(path);
+  // Upload via Edge Function
+  const publicUrl = await invokeUpload(blob, STORAGE_BUCKETS.vehicles, userId, "vehicle.jpg");
 
   return publicUrl;
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import type { PlaceResult } from './address-autocomplete';
+import type { PlaceResult } from './address-input';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 

@@ -7,7 +7,7 @@ import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 import { RIDE_STATUS, type BookingStatus } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/client";
-import { RideMap } from "./ride-map";
+import { RouteMap } from "./route-map";
 import { RideStatusBadge } from "./ride-status-badge";
 import { BookingButton } from "./booking-button";
 import { PassengerList } from "./passenger-list";
@@ -51,7 +51,6 @@ interface RideData {
   distance_meters: number | null;
   duration_seconds: number | null;
   route_encoded_polyline: string | null;
-  luggage_size: string;
   booking_mode: string;
   preferences: Record<string, unknown>;
   notes: string | null;
@@ -96,13 +95,6 @@ function formatDuration(seconds: number): string {
 function formatDistance(meters: number): string {
   return `${(meters / 1000).toFixed(1)} km`;
 }
-
-const luggageLabels: Record<string, string> = {
-  none: "No luggage",
-  small: "Small (backpack)",
-  medium: "Medium (carry-on)",
-  large: "Large (suitcase)",
-};
 
 const preferenceIcons: { key: string; label: string; icon: string }[] = [
   { key: "smoking", label: "Smoking allowed", icon: "🚬" },
@@ -214,7 +206,7 @@ export function RideDetail({
 
       {/* Map */}
       {ride.route_encoded_polyline && (
-        <RideMap
+        <RouteMap
           encodedPolyline={ride.route_encoded_polyline}
           originLat={originLat}
           originLng={originLng}
@@ -245,12 +237,6 @@ export function RideDetail({
               </span>
             </div>
           )}
-          <div className="rounded-lg bg-primary/5 px-3 py-1.5">
-            <span className="text-text-secondary">Luggage: </span>
-            <span className="font-medium text-text-main">
-              {luggageLabels[ride.luggage_size] ?? ride.luggage_size}
-            </span>
-          </div>
         </div>
       </section>
 
@@ -516,7 +502,7 @@ export function RideDetail({
               >
                 Complete Ride
                 <span className="block text-xs font-normal mt-0.5">
-                  Available after departure time
+                  Cannot complete before departure ({formattedDate} at {formattedTime})
                 </span>
               </div>
             )

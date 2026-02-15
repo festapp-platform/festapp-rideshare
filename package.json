@@ -16,5 +16,9 @@
   "devDependencies": {
     "turbo": "^2.8",
     "typescript": "^5.7"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^5.0.0"
   }
 }

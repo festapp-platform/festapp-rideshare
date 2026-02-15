@@ -14,11 +14,8 @@ import {
 } from "@festapp/shared";
 import { decode as decodePolyline } from "@googlemaps/polyline-codec";
 import { createClient } from "@/lib/supabase/client";
-import {
-  AddressAutocomplete,
-  type PlaceResult,
-} from "./address-autocomplete";
-import { RideMap } from "./ride-map";
+import { AddressInput, type PlaceResult } from "./address-input";
+import { RouteMap } from "./route-map";
 
 interface RideProfile {
   display_name: string;
@@ -50,7 +47,6 @@ interface RideData {
   distance_meters: number | null;
   duration_seconds: number | null;
   route_encoded_polyline: string | null;
-  luggage_size: string;
   booking_mode: string;
   preferences: Record<string, unknown>;
   notes: string | null;
@@ -154,7 +150,6 @@ export function EditRideForm({ ride }: EditRideFormProps) {
       departureTime: ride.departure_time,
       seatsTotal: ride.seats_total,
       priceCzk: ride.price_czk ?? undefined,
-      luggageSize: (ride.luggage_size as CreateRide["luggageSize"]) ?? "medium",
       bookingMode: (ride.booking_mode as CreateRide["bookingMode"]) ?? "request",
       preferences: ride.preferences as CreateRide["preferences"],
       notes: ride.notes ?? "",
@@ -233,7 +228,6 @@ export function EditRideForm({ ride }: EditRideFormProps) {
         departure_time: new Date(values.departureTime).toISOString(),
         seats_total: values.seatsTotal,
         price_czk: values.priceCzk ?? null,
-        luggage_size: values.luggageSize,
         booking_mode: values.bookingMode,
         preferences: values.preferences ?? {},
         notes: values.notes ?? null,
@@ -313,13 +307,13 @@ export function EditRideForm({ ride }: EditRideFormProps) {
         <section className="rounded-2xl border border-border-pastel bg-surface p-6">
           <h2 className="mb-4 text-lg font-semibold text-text-main">Route</h2>
           <div className="space-y-3">
-            <AddressAutocomplete
+            <AddressInput
               label="From"
               placeholder="Pickup location"
               defaultValue={ride.origin_address}
               onPlaceSelect={handleOriginChange}
             />
-            <AddressAutocomplete
+            <AddressInput
               label="To"
               placeholder="Destination"
               defaultValue={ride.destination_address}
@@ -372,7 +366,7 @@ export function EditRideForm({ ride }: EditRideFormProps) {
                   </span>
                 </div>
               </div>
-              <RideMap
+              <RouteMap
                 encodedPolyline={routeInfo.encodedPolyline}
                 originLat={origin.lat}
                 originLng={origin.lng}
@@ -469,26 +463,6 @@ export function EditRideForm({ ride }: EditRideFormProps) {
                   {form.formState.errors.seatsTotal.message}
                 </p>
               )}
-            </div>
-
-            {/* Luggage */}
-            <div>
-              <label
-                htmlFor="luggage"
-                className="mb-1 block text-sm font-medium text-text-main"
-              >
-                Luggage size
-              </label>
-              <select
-                id="luggage"
-                {...form.register("luggageSize")}
-                className="w-full rounded-xl border border-border-pastel bg-background px-4 py-3 text-sm text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-              >
-                <option value="none">No luggage</option>
-                <option value="small">Small (backpack)</option>
-                <option value="medium">Medium (carry-on)</option>
-                <option value="large">Large (suitcase)</option>
-              </select>
             </div>
 
             {/* Booking mode */}
