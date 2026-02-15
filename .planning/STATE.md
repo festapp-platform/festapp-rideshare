@@ -11,27 +11,27 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 Phase: 2 of 11 (Profiles & Identity)
 Plan: 5 of 5 in current phase
-Status: Executing (02-04 running in parallel)
-Last activity: 2026-02-15 -- Completed 02-05 (profile onboarding extension)
+Status: Phase Complete
+Last activity: 2026-02-15 -- Completed 02-04 (verification badges, social links, public profiles)
 
 Progress: [███░░░░░░░] 20%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 6min
-- Total execution time: 0.9 hours
+- Total execution time: 1.0 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-auth | 5/5 | 33min | 7min |
-| 02-profiles-identity | 4/5 | 22min | 6min |
+| 02-profiles-identity | 5/5 | 28min | 6min |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 3min, 7min, 8min, 4min
+- Last 5 plans: 3min, 7min, 8min, 4min, 6min
 - Trend: improving
 
 *Updated after each plan completion*
@@ -68,6 +68,9 @@ Recent decisions affecting current work:
 - [02-02]: Avatar upload on web previews locally, uploads on save; mobile uploads immediately on pick
 - [02-03]: Mobile photo upload offered after save (vehicle ID needed for storage path); web uploads inline
 - [02-03]: Web inline confirm-on-second-click for delete; mobile uses native Alert dialog
+- [02-04]: ID documents stored in avatars bucket under userId/id-document path -- private bucket in polish phase
+- [02-04]: ID upload auto-verifies (id_verified=true) -- production requires admin review
+- [02-04]: Public profile fetches phone verification via is_phone_verified RPC in parallel with profile data
 - [02-05]: Separate PROFILE_ONBOARDING_COMPLETED_KEY for backward compat -- existing users keep their completed state but see new profile steps
 - [02-05]: Mobile vehicle photo upload offered via Alert after save (consistent with 02-03 pattern)
 - [02-05]: FlatList Option A: scrollEnabled disabled for form steps, re-enabled for passive steps
@@ -87,5 +90,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 02-05-PLAN.md (profile onboarding extension)
+Stopped at: Completed 02-04-PLAN.md (verification badges, social links, public profiles) -- Phase 2 complete
 Resume file: None
