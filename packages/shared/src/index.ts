@@ -1,20 +1,46 @@
-// Validation schemas
+// Validation schemas - auth
 export {
   PhoneSchema,
   EmailSchema,
   OtpSchema,
   PasswordSchema,
-  DisplayNameSchema,
   SignUpSchema,
   LoginSchema,
 } from './validation/auth';
 
-// Constants
+// Validation schemas - profile & vehicle
+export {
+  DisplayNameSchema,
+  BioSchema,
+  SocialLinksSchema,
+  UserRoleSchema,
+  ProfileUpdateSchema,
+  VehicleSchema,
+} from './validation/profile';
+export type {
+  DisplayName,
+  Bio,
+  SocialLinks,
+  UserRole,
+  ProfileUpdate,
+  Vehicle,
+} from './validation/profile';
+
+// Constants - auth
 export {
   OTP_LENGTH,
   OTP_EXPIRY_SECONDS,
   SESSION_REFRESH_THRESHOLD_SECONDS,
 } from './constants/auth';
+
+// Constants - storage
+export {
+  STORAGE_BUCKETS,
+  IMAGE_CONSTRAINTS,
+  ALLOWED_IMAGE_TYPES,
+  getAvatarPath,
+  getVehiclePhotoPath,
+} from './constants/storage';
 
 // Design system
 export { colors, tabs } from './constants/design';

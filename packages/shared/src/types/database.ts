@@ -21,6 +21,9 @@ export interface Database {
           social_links: Record<string, unknown>;
           rating_avg: number;
           rating_count: number;
+          user_role: string;
+          id_verified: boolean;
+          id_document_url: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -33,6 +36,9 @@ export interface Database {
           social_links?: Record<string, unknown>;
           rating_avg?: number;
           rating_count?: number;
+          user_role?: string;
+          id_verified?: boolean;
+          id_document_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -45,6 +51,9 @@ export interface Database {
           social_links?: Record<string, unknown>;
           rating_avg?: number;
           rating_count?: number;
+          user_role?: string;
+          id_verified?: boolean;
+          id_document_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -58,9 +67,61 @@ export interface Database {
           },
         ];
       };
+      vehicles: {
+        Row: {
+          id: string;
+          owner_id: string;
+          make: string;
+          model: string;
+          color: string;
+          license_plate: string;
+          photo_url: string | null;
+          is_primary: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          make: string;
+          model: string;
+          color: string;
+          license_plate: string;
+          photo_url?: string | null;
+          is_primary?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          make?: string;
+          model?: string;
+          color?: string;
+          license_plate?: string;
+          photo_url?: string | null;
+          is_primary?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      is_phone_verified: {
+        Args: { user_id: string };
+        Returns: boolean;
+      };
+    };
     Enums: Record<string, never>;
   };
 }

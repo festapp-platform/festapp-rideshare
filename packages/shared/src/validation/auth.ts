@@ -1,4 +1,9 @@
 import { z } from 'zod';
+import { DisplayNameSchema } from './profile';
+
+// Re-export DisplayNameSchema for backward compatibility with existing imports.
+// Single source of truth is in profile.ts.
+export { DisplayNameSchema };
 
 export const PhoneSchema = z
   .string()
@@ -14,8 +19,6 @@ export const OtpSchema = z
 export const PasswordSchema = z
   .string()
   .min(6, 'Password must be at least 6 characters');
-
-export const DisplayNameSchema = z.string().min(1).max(50);
 
 export const SignUpSchema = z.object({
   display_name: DisplayNameSchema,
