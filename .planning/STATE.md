@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 4 of 11 (Booking & Ride Management)
-Plan: 2 of 5 in current phase
+Plan: 3 of 5 in current phase
 Status: Executing
-Last activity: 2026-02-15 -- Completed 04-02 (instant booking UI)
+Last activity: 2026-02-15 -- Completed 04-03 (request & approve booking flow)
 
 Progress: [█████░░░░░] 30%
 
@@ -43,6 +43,7 @@ Progress: [█████░░░░░] 30%
 | Phase 03 P07 | 4min | 2 tasks | 6 files |
 | Phase 04 P01 | 3min | 2 tasks | 7 files |
 | Phase 04 P02 | 5min | 2 tasks | 6 files |
+| Phase 04 P03 | 6min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -107,6 +108,8 @@ Recent decisions affecting current work:
 - [04-01]: expire_past_rides collects expired ride IDs into array first, then batch-updates bookings
 - [04-02]: Installed sonner for toast notifications (no existing toast library); Toaster in app layout
 - [04-02]: PostgREST FK hint !bookings_passenger_id_fkey for profiles disambiguation (passenger_id vs cancelled_by)
+- [04-03]: ManageRideContent as separate client component for clean server/client split
+- [04-03]: Manage Bookings link shown when booking_mode is 'request' OR any pending bookings exist
 
 ### Pending Todos
 
@@ -123,5 +126,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 04-02-PLAN.md (instant booking UI)
+Stopped at: Completed 04-03-PLAN.md (request & approve booking flow)
 Resume file: None
