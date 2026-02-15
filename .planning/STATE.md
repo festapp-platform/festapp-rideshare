@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 1 of 10 (Foundation & Auth)
-Plan: 2 of 5 in current phase
+Plan: 3 of 5 in current phase
 Status: Executing
-Last activity: 2026-02-15 -- Completed 01-02 Supabase setup
+Last activity: 2026-02-15 -- Completed 01-03 Auth flows
 
-Progress: [██░░░░░░░░] 4%
+Progress: [██░░░░░░░░] 6%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 9min
-- Total execution time: 0.30 hours
+- Total plans completed: 3
+- Average duration: 8min
+- Total execution time: 0.40 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-auth | 2/5 | 18min | 9min |
+| 01-foundation-auth | 3/5 | 24min | 8min |
 
 **Recent Trend:**
-- Last 5 plans: 14min, 4min
+- Last 5 plans: 14min, 4min, 6min
 - Trend: improving
 
 *Updated after each plan completion*
@@ -50,6 +50,9 @@ Recent decisions affecting current work:
 - [01-02]: Enabled SMS signup with test OTP for local dev; production uses Send SMS Hook via AWS SNS
 - [01-02]: Used getUser() in middleware (not getClaims()) -- proven pattern per research
 - [01-02]: Added .env.local.example exception to web .gitignore
+- [01-03]: Used Supabase OAuth redirect for web social auth instead of dedicated SDK components
+- [01-03]: Mobile social auth buttons with TODO for native SDK config; signInWithIdToken API is correct
+- [01-03]: Auth gate uses getUser() for initial validation, getSession() only after user confirmed valid
 
 ### Pending Todos
 
@@ -63,5 +66,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 01-02-PLAN.md (Supabase setup)
-Resume file: .planning/phases/01-foundation-auth/01-02-SUMMARY.md
+Stopped at: Completed 01-03-PLAN.md (Auth flows)
+Resume file: .planning/phases/01-foundation-auth/01-03-SUMMARY.md
