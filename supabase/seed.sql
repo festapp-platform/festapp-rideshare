@@ -1,0 +1,15 @@
+-- Seed data for Festapp Rideshare
+--
+-- Test data is created via auth signup (profiles are auto-created by the
+-- on_auth_user_created trigger). No manual seed data needed for the profiles table.
+--
+-- To create test users locally:
+--   1. Start local Supabase: supabase start
+--   2. Open Studio: http://localhost:54323
+--   3. Create users via Authentication tab or use the API:
+--      curl -X POST 'http://localhost:54321/auth/v1/signup' \
+--        -H 'apikey: <anon-key>' \
+--        -H 'Content-Type: application/json' \
+--        -d '{"email": "test@example.com", "password": "testpassword123"}'
+--
+-- The profiles row will be created automatically by the trigger.
