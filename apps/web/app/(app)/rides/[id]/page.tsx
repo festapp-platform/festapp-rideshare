@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { format, parseISO } from "date-fns";
-import { getRideById, getRideWaypoints } from "@festapp/shared";
+import { getRideById, getRideWaypoints, getBookingsForRide, type BookingStatus } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/server";
 import { RideDetail } from "../../components/ride-detail";
 
@@ -74,20 +74,33 @@ export default async function RideDetailPage({ params }: PageProps) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: ride }, { data: waypoints }] = await Promise.all([
-    getRideById(supabase, id),
-    getRideWaypoints(supabase, id),
-  ]);
+  const [{ data: ride }, { data: waypoints }, { data: bookings }] =
+    await Promise.all([
+      getRideById(supabase, id),
+      getRideWaypoints(supabase, id),
+      getBookingsForRide(supabase, id),
+    ]);
 
   if (!ride) {
     notFound();
   }
 
-  // Determine ownership
+  // Determine ownership and current user
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const isOwner = user?.id === ride.driver_id;
+  const currentUserId = user?.id ?? null;
+  const isOwner = currentUserId === ride.driver_id;
+
+  // Find current user's existing booking (if any)
+  const currentUserBooking =
+    currentUserId && bookings
+      ? bookings.find(
+          (b) =>
+            b.passenger_id === currentUserId &&
+            (b.status === "confirmed" || b.status === "pending"),
+        ) ?? null
+      : null;
 
   // Parse coordinates from PostGIS geography columns
   const origin = parsePoint(ride.origin_location);
@@ -103,6 +116,16 @@ export default async function RideDetailPage({ params }: PageProps) {
         originLng={origin?.lng ?? 14.43}
         destLat={dest?.lat ?? 49.19}
         destLng={dest?.lng ?? 16.61}
+        bookings={(bookings ?? []) as Parameters<typeof RideDetail>[0]["bookings"]}
+        currentUserBooking={
+          currentUserBooking
+            ? {
+                status: currentUserBooking.status as BookingStatus,
+                seats_booked: currentUserBooking.seats_booked,
+              }
+            : null
+        }
+        currentUserId={currentUserId}
       />
     </div>
   );

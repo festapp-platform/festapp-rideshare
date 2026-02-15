@@ -4,10 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
-import { updateRide, deleteRide, RIDE_STATUS } from "@festapp/shared";
+import { updateRide, deleteRide, RIDE_STATUS, type BookingStatus } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/client";
 import { RideMap } from "./ride-map";
 import { RideStatusBadge } from "./ride-status-badge";
+import { BookingButton } from "./booking-button";
+import { PassengerList } from "./passenger-list";
 
 interface RideProfile {
   display_name: string;
@@ -55,6 +57,18 @@ interface RideData {
   vehicles: RideVehicle | null;
 }
 
+interface BookingData {
+  id: string;
+  passenger_id: string;
+  seats_booked: number;
+  status: BookingStatus;
+  profiles: {
+    display_name: string;
+    avatar_url: string | null;
+    rating_avg: number;
+  } | null;
+}
+
 interface RideDetailProps {
   ride: RideData;
   isOwner: boolean;
@@ -63,6 +77,9 @@ interface RideDetailProps {
   originLng: number;
   destLat: number;
   destLng: number;
+  bookings: BookingData[];
+  currentUserBooking: { status: BookingStatus; seats_booked: number } | null;
+  currentUserId: string | null;
 }
 
 function formatDuration(seconds: number): string {
@@ -98,6 +115,9 @@ export function RideDetail({
   originLng,
   destLat,
   destLng,
+  bookings,
+  currentUserBooking,
+  currentUserId,
 }: RideDetailProps) {
   const router = useRouter();
   const supabase = createClient();
@@ -351,24 +371,67 @@ export function RideDetail({
           </span>
         </div>
         {!isOwner && ride.status === RIDE_STATUS.upcoming && (
-          <button
-            disabled
-            className="mt-4 w-full rounded-xl bg-primary px-6 py-3 text-base font-semibold text-surface opacity-50"
-          >
-            Book this ride (coming soon)
-          </button>
+          <BookingButton
+            rideId={ride.id}
+            bookingMode={ride.booking_mode as "instant" | "request"}
+            seatsAvailable={ride.seats_available}
+            driverId={ride.driver_id}
+            currentUserId={currentUserId}
+            existingBooking={currentUserBooking}
+          />
         )}
       </section>
 
-      {/* Co-passengers placeholder */}
-      <section className="rounded-2xl border border-border-pastel bg-surface p-5">
-        <h2 className="mb-2 text-base font-semibold text-text-main">
-          Passengers
-        </h2>
-        <p className="text-sm text-text-secondary">
-          Passengers will appear here after booking
-        </p>
-      </section>
+      {/* Passengers */}
+      <PassengerList
+        bookings={
+          isOwner
+            ? bookings.filter(
+                (b) => b.status === "confirmed" || b.status === "pending",
+              )
+            : bookings.filter((b) => b.status === "confirmed")
+        }
+        seatsTotal={ride.seats_total}
+      />
+
+      {/* Manage Bookings link for driver with request-mode rides or pending bookings */}
+      {isOwner &&
+        ride.status === RIDE_STATUS.upcoming &&
+        (ride.booking_mode === "request" ||
+          bookings.some((b) => b.status === "pending")) && (
+          <Link
+            href={`/rides/${ride.id}/manage`}
+            className="flex items-center justify-between rounded-2xl border border-border-pastel bg-surface p-5 transition-colors hover:bg-primary/5"
+          >
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-primary">
+                Manage Bookings
+              </span>
+              {bookings.filter((b) => b.status === "pending").length > 0 && (
+                <span className="rounded-full bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning">
+                  {bookings.filter((b) => b.status === "pending").length}{" "}
+                  pending{" "}
+                  {bookings.filter((b) => b.status === "pending").length === 1
+                    ? "request"
+                    : "requests"}
+                </span>
+              )}
+            </div>
+            <svg
+              className="h-5 w-5 text-text-secondary"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </Link>
+        )}
 
       {/* Owner actions */}
       {isOwner && ride.status === RIDE_STATUS.upcoming && (
