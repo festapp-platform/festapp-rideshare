@@ -20,5 +20,9 @@ export {
 export { colors, tabs } from './constants/design';
 export type { ColorScheme, ColorTokens, TabName } from './constants/design';
 
+// Onboarding
+export { onboardingSteps, ONBOARDING_COMPLETED_KEY } from './constants/onboarding';
+export type { OnboardingStep, OnboardingStepType } from './constants/onboarding';
+
 // Types
 export type { Database } from './types/database';

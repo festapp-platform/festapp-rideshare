@@ -1,11 +1,17 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { AppNav } from "./app-nav";
 
 /**
  * Authenticated app layout (NAV-01).
  * Server component that checks auth and redirects to /login if no session.
+ * Also checks onboarding completion status.
  * Renders responsive navigation: sidebar on desktop, bottom tabs on mobile.
+ *
+ * Onboarding check uses user_metadata flag. The client sets localStorage
+ * and the onboarding page itself is within this layout so it renders
+ * without the nav chrome (handled by the onboarding page's full-screen layout).
  */
 export default async function AppLayout({
   children,
@@ -19,6 +25,16 @@ export default async function AppLayout({
 
   if (!user) {
     redirect("/login");
+  }
+
+  // Check if the current path is the onboarding page
+  const headersList = await headers();
+  const pathname = headersList.get("x-next-pathname") || "";
+  const isOnboarding = pathname.startsWith("/onboarding");
+
+  // Onboarding page renders full-screen without nav
+  if (isOnboarding) {
+    return <>{children}</>;
   }
 
   return (
