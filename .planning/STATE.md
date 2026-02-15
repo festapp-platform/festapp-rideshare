@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 1 of 10 (Foundation & Auth)
-Plan: 3 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: Executing
-Last activity: 2026-02-15 -- Completed 01-03 Auth flows
+Last activity: 2026-02-15 -- Completed 01-04 App shell & navigation
 
-Progress: [██░░░░░░░░] 6%
+Progress: [██░░░░░░░░] 8%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 8min
-- Total execution time: 0.40 hours
+- Total plans completed: 4
+- Average duration: 7min
+- Total execution time: 0.48 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-auth | 3/5 | 24min | 8min |
+| 01-foundation-auth | 4/5 | 29min | 7min |
 
 **Recent Trend:**
-- Last 5 plans: 14min, 4min, 6min
+- Last 5 plans: 14min, 4min, 6min, 5min
 - Trend: improving
 
 *Updated after each plan completion*
@@ -53,6 +53,9 @@ Recent decisions affecting current work:
 - [01-03]: Used Supabase OAuth redirect for web social auth instead of dedicated SDK components
 - [01-03]: Mobile social auth buttons with TODO for native SDK config; signInWithIdToken API is correct
 - [01-03]: Auth gate uses getUser() for initial validation, getSession() only after user confirmed valid
+- [01-04]: Used inline style props with design tokens for mobile (not only NativeWind classes) for exact palette colors
+- [01-04]: Web nav split: server component layout (auth check) + client component app-nav.tsx (active state)
+- [01-04]: ColorTokens type uses {[K]: string} instead of literal types for light/dark union compatibility
 
 ### Pending Todos
 
@@ -66,5 +69,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 01-03-PLAN.md (Auth flows)
-Resume file: .planning/phases/01-foundation-auth/01-03-SUMMARY.md
+Stopped at: Completed 01-04-PLAN.md (App shell & navigation)
+Resume file: .planning/phases/01-foundation-auth/01-04-SUMMARY.md
