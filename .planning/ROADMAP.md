@@ -74,16 +74,16 @@ Plans:
   3. Search results display driver profile, rating, vehicle info, price, seats, and departure time with filter/sort options
   4. Passenger can open a ride detail page showing route on map, driver profile, pickup points, co-passengers, and a booking action
   5. Rides can be shared via deep link, favorite routes can be saved, and the "Post a ride" button is accessible from any screen
-**Plans**: TBD
+**Plans:** 7 plans
 
 Plans:
-- [ ] 03-01: Ride posting form with address autocomplete and price suggestion
-- [ ] 03-02: PostGIS geospatial search and ride matching
-- [ ] 03-03: Search results UI with filtering and sorting
-- [ ] 03-04: Ride detail page with map, driver info, and pickup points
-- [ ] 03-05: Ride management (edit, delete, expiry, status flow)
-- [ ] 03-06: Deep links, favorite routes, and post-ride FAB
-- [ ] 03-07: Recurring ride patterns and auto-generation
+- [ ] 03-01-PLAN.md — Database foundation: PostGIS, rides table, waypoints, recurring patterns, favorite routes, RLS, search RPC, expiry cron
+- [ ] 03-02-PLAN.md — Shared schemas, types, constants, and query builders for rides
+- [ ] 03-03-PLAN.md — Edge Function: compute-route proxy for Google Routes API + price suggestion
+- [ ] 03-04-PLAN.md — Ride posting form with Google Places autocomplete, route map, and price suggestion
+- [ ] 03-05-PLAN.md — Search results page with geospatial matching, ride cards, filtering and sorting
+- [ ] 03-06-PLAN.md — Ride detail page with SSR/OG metadata, ride editing, cancellation, and My Rides management
+- [ ] 03-07-PLAN.md — Post-a-Ride FAB, favorite routes, recurring ride patterns, deep link sharing
 
 ### Phase 4: Booking & Ride Management
 **Goal**: Passengers can book seats and both parties can manage their upcoming and past rides
