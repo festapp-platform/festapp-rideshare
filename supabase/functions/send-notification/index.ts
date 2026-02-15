@@ -275,8 +275,13 @@ Deno.serve(async (req) => {
     // Fetch user preferences
     const prefs = await getNotificationPreferences(payload.user_id);
 
+    const supabase = createAdminClient();
     let pushSent = false;
     let emailSent = false;
+
+    // Extract ride_id / booking_id from data for logging
+    const rideId = payload.data?.ride_id ?? payload.ride_data?.ride_id ?? null;
+    const bookingId = payload.data?.booking_id ?? null;
 
     // Send push notification if enabled
     if (shouldSendPush(prefs, payload.type)) {
@@ -286,6 +291,16 @@ Deno.serve(async (req) => {
         body: payload.body,
         data: payload.data,
         url: payload.url,
+      });
+
+      // Log push notification
+      await supabase.from("log_notifications").insert({
+        user_id: payload.user_id,
+        type: payload.type,
+        channel: "push",
+        status: pushSent ? "sent" : "failed",
+        ride_id: rideId,
+        booking_id: bookingId,
       });
     }
 
@@ -307,7 +322,6 @@ Deno.serve(async (req) => {
 
     // Send email if content available and enabled by preferences
     if (emailHtml && shouldSendEmail(prefs, payload.type)) {
-      const supabase = createAdminClient();
       const { data: userData, error: userError } =
         await supabase.auth.admin.getUserById(payload.user_id);
 
@@ -321,6 +335,16 @@ Deno.serve(async (req) => {
           to: userData.user.email,
           subject: emailSubject,
           html: emailHtml,
+        });
+
+        // Log email
+        await supabase.from("log_emails").insert({
+          user_id: payload.user_id,
+          type: payload.type,
+          recipient_email: userData.user.email,
+          status: emailSent ? "sent" : "failed",
+          ride_id: rideId,
+          booking_id: bookingId,
         });
       }
     }
