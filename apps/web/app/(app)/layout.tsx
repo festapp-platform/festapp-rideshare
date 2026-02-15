@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { AppNav } from "./app-nav";
 import { GoogleMapsProvider } from "@/lib/google-maps-provider";
 import { PostRideFab } from "./components/post-ride-fab";
+import { Toaster } from "sonner";
 
 /**
  * Authenticated app layout (NAV-01).
@@ -52,6 +53,9 @@ export default async function AppLayout({
 
         {/* Post-a-Ride FAB on all authenticated pages (NAV-07) */}
         <PostRideFab />
+
+        {/* Toast notifications */}
+        <Toaster position="top-right" richColors closeButton />
       </div>
     </GoogleMapsProvider>
   );
