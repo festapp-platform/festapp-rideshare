@@ -49,6 +49,7 @@ Progress: [████████░░] 40%
 | Phase 05 P01 | 3min | 2 tasks | 9 files |
 | Phase 05 P02 | 3min | 2 tasks | 8 files |
 | Phase 05 P04 | 2min | 2 tasks | 3 files |
+| Phase 05 P03 | 5min | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -130,6 +131,9 @@ Recent decisions affecting current work:
 - [05-04]: _notify() helper function extracts pg_net HTTP POST pattern for reuse across triggers
 - [05-04]: 75-minute reminder window to handle 15-min cron intervals without missing rides
 - [05-04]: reminder_sent_at column on rides table (simpler than separate tracking table)
+- [Phase 05]: Optimistic message sending with client-side UUID and dedup on Realtime delivery (Pitfall 6)
+- [Phase 05]: UnreadBadge subscribes globally to chat_messages INSERT/UPDATE for real-time count
+- [Phase 05]: ContactShareButton integrated into ChatView action bar for onSendMessage callback access
 
 ### Pending Todos
 
@@ -148,5 +152,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 05-04-PLAN.md (push notification triggers)
+Stopped at: Completed 05-03-PLAN.md (chat web UI)
 Resume file: None
