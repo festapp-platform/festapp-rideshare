@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 import { RIDE_STATUS, type BookingStatus } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/client";
+import { useLiveLocation } from "@/app/(app)/hooks/use-live-location";
 import { RouteMap } from "./route-map";
+import { LiveLocationMap } from "./live-location-map";
 import { RideStatusBadge } from "./ride-status-badge";
 import { BookingButton } from "./booking-button";
 import { PassengerList } from "./passenger-list";
@@ -192,6 +194,9 @@ export function RideDetail({
   const [isCompleting, setIsCompleting] = useState(false);
   const [showRating, setShowRating] = useState(initialShowRatingModal);
   const [hasReviewed, setHasReviewed] = useState(hasExistingReview);
+  const [liveLocationEnabled, setLiveLocationEnabled] = useState(false);
+  const [isStartingRide, setIsStartingRide] = useState(false);
+  const [localRideStatus, setLocalRideStatus] = useState(ride.status);
 
   const departureDate = parseISO(ride.departure_time);
   const formattedDate = format(departureDate, "EEE, MMM d, yyyy");
@@ -199,11 +204,70 @@ export function RideDetail({
   const profile = ride.profiles;
   const vehicle = ride.vehicles;
   const isPastDeparture = new Date() > departureDate;
+
+  // Passenger auto-enables live location when ride is in_progress and they have a confirmed booking
+  const passengerAutoEnabled =
+    !isOwner &&
+    localRideStatus === "in_progress" &&
+    currentUserBooking?.status === "confirmed";
+
+  const { driverPosition, isSharing, error: locationError, stopSharing } =
+    useLiveLocation({
+      rideId: ride.id,
+      isDriver: isOwner,
+      enabled: liveLocationEnabled || passengerAutoEnabled,
+    });
+
+  // Show LiveLocationMap when driver is sharing or passenger has active tracking
+  const showLiveMap =
+    (isOwner && isSharing) ||
+    (!isOwner && passengerAutoEnabled && driverPosition !== null);
+
+  // Show share location button for driver
+  const canShareLocation =
+    isOwner &&
+    (localRideStatus === RIDE_STATUS.upcoming || localRideStatus === "in_progress") &&
+    isPastDeparture;
+
   const isCompletable =
     isOwner &&
-    (ride.status === RIDE_STATUS.upcoming || ride.status === "in_progress") &&
+    (localRideStatus === RIDE_STATUS.upcoming || localRideStatus === "in_progress") &&
     isPastDeparture;
-  const isCompleted = ride.status === RIDE_STATUS.completed;
+  const isCompleted = localRideStatus === RIDE_STATUS.completed;
+
+  // Show location errors as toast
+  useEffect(() => {
+    if (locationError) {
+      toast.error(locationError);
+    }
+  }, [locationError]);
+
+  async function handleShareLocation() {
+    if (localRideStatus === "in_progress") {
+      // Already in progress, just enable tracking
+      setLiveLocationEnabled(true);
+      return;
+    }
+
+    setIsStartingRide(true);
+    try {
+      const { error } = await supabase.rpc("start_ride", {
+        p_ride_id: ride.id,
+        p_driver_id: currentUserId!,
+      });
+      if (error) {
+        toast.error("Failed to start ride");
+        return;
+      }
+      setLocalRideStatus("in_progress");
+      setLiveLocationEnabled(true);
+      toast.success("Location sharing started");
+    } catch {
+      toast.error("Failed to start ride");
+    } finally {
+      setIsStartingRide(false);
+    }
+  }
 
   async function handleComplete() {
     if (!completeConfirm) {
@@ -274,15 +338,24 @@ export function RideDetail({
         </div>
       )}
 
-      {/* Map */}
-      {ride.route_encoded_polyline && (
-        <RouteMap
-          encodedPolyline={ride.route_encoded_polyline}
-          originLat={originLat}
-          originLng={originLng}
-          destLat={destLat}
-          destLng={destLng}
+      {/* Map -- live location map replaces route map during active sharing */}
+      {showLiveMap ? (
+        <LiveLocationMap
+          pickupLat={originLat}
+          pickupLng={originLng}
+          driverPosition={driverPosition}
+          isDriver={isOwner}
         />
+      ) : (
+        ride.route_encoded_polyline && (
+          <RouteMap
+            encodedPolyline={ride.route_encoded_polyline}
+            originLat={originLat}
+            originLng={originLng}
+            destLat={destLat}
+            destLng={destLng}
+          />
+        )
       )}
 
       {/* Trip info */}
@@ -568,10 +641,88 @@ export function RideDetail({
           </Link>
         )}
 
+      {/* Live location sharing for driver */}
+      {canShareLocation && (
+        <section className="rounded-2xl border border-border-pastel bg-surface p-5">
+          <h2 className="mb-3 text-base font-semibold text-text-main">
+            Live Location
+          </h2>
+          {!liveLocationEnabled || !isSharing ? (
+            <button
+              onClick={handleShareLocation}
+              disabled={isStartingRide}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50"
+            >
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+              {isStartingRide ? "Starting..." : "Share My Location"}
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                stopSharing();
+                setLiveLocationEnabled(false);
+              }}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-300 px-6 py-3 font-semibold text-red-600 transition-colors hover:bg-red-50"
+            >
+              Stop Sharing
+            </button>
+          )}
+        </section>
+      )}
+
+      {/* Passenger live location banner (when ride in_progress but no driver position yet) */}
+      {!isOwner &&
+        passengerAutoEnabled &&
+        !driverPosition && (
+          <section className="rounded-2xl border border-border-pastel bg-blue-50 p-4">
+            <div className="flex items-center gap-2 text-sm text-blue-700">
+              <svg
+                className="h-4 w-4 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                />
+              </svg>
+              <span className="font-medium">
+                Ride is in progress -- waiting for driver&apos;s location...
+              </span>
+            </div>
+          </section>
+        )}
+
       {/* Owner actions */}
       {isOwner &&
-        (ride.status === RIDE_STATUS.upcoming ||
-          ride.status === "in_progress") && (
+        (localRideStatus === RIDE_STATUS.upcoming ||
+          localRideStatus === "in_progress") && (
         <div className="space-y-3">
           {/* Complete ride button */}
           {isCompletable ? (
