@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 5 of 11 (Communication & Notifications)
-Plan: 1 of 6 in current phase
+Plan: 2 of 6 in current phase
 Status: Executing
-Last activity: 2026-02-15 -- Completed 05-01 (chat & notification DB foundation)
+Last activity: 2026-02-15 -- Completed 05-02 (push notification infrastructure)
 
-Progress: [████████░░] 39%
+Progress: [████████░░] 40%
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ Progress: [████████░░] 39%
 | Phase 04 P04 | 5min | 2 tasks | 3 files |
 | Phase 04 P05 | 4min | 2 tasks | 4 files |
 | Phase 05 P01 | 3min | 2 tasks | 9 files |
+| Phase 05 P02 | 3min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -122,6 +123,9 @@ Recent decisions affecting current work:
 - [05-01]: Lazy conversation creation with ON CONFLICT for race-safe deduplication
 - [05-01]: get_unread_count as SQL function (STABLE) for optimal nav badge performance
 - [05-01]: ChatMessage Zod type aliased as ChatMessageValidated in index to avoid collision with Database derived type
+- [05-02]: Service_role Bearer token auth for send-notification (server-to-server only, not user-facing)
+- [05-02]: SES client lazily instantiated and cached at module level (singleton per invocation)
+- [05-02]: Null notification preferences treated as all-enabled for graceful first-use (Pitfall 7)
 
 ### Pending Todos
 
@@ -140,5 +144,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 05-01-PLAN.md (chat & notification DB foundation)
+Stopped at: Completed 05-02-PLAN.md (push notification infrastructure)
 Resume file: None
