@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { UnreadBadge } from "./components/unread-badge";
 
 const navItems = [
   {
@@ -68,13 +69,16 @@ export function AppNav() {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+              className={`relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive(item.href)
                   ? "bg-primary/10 text-primary"
                   : "text-text-secondary hover:bg-primary/5 hover:text-text-main"
               }`}
             >
-              {item.icon}
+              <span className="relative">
+                {item.icon}
+                {item.name === "Messages" && <UnreadBadge />}
+              </span>
               {item.name}
             </Link>
           ))}
@@ -92,7 +96,10 @@ export function AppNav() {
                 isActive(item.href) ? "text-tab-active" : "text-tab-inactive"
               }`}
             >
-              {item.icon}
+              <span className="relative">
+                {item.icon}
+                {item.name === "Messages" && <UnreadBadge />}
+              </span>
               <span>{item.name}</span>
             </Link>
           ))}

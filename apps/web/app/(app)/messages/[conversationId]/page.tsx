@@ -70,6 +70,10 @@ export default async function ConversationPage({ params }: PageProps) {
     status: string;
   } | null;
 
+  // Show contact share for confirmed bookings (not cancelled/completed)
+  const showContactShare =
+    ride?.status === "upcoming" || ride?.status === "in_progress";
+
   return (
     <div className="flex h-[calc(100vh-6rem)] flex-col md:h-[calc(100vh-3rem)]">
       {/* Header */}
@@ -122,6 +126,7 @@ export default async function ConversationPage({ params }: PageProps) {
         otherUserName={otherParty?.display_name ?? "Unknown"}
         initialMessages={(messages ?? []).reverse()}
         rideStatus={ride?.status ?? "upcoming"}
+        showContactShare={showContactShare}
       />
     </div>
   );

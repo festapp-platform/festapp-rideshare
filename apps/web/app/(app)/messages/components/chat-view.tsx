@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { MessageBubble } from "./message-bubble";
 import { ChatInput } from "./chat-input";
 import { TypingIndicator } from "./typing-indicator";
+import { ContactShareButton } from "./contact-share-button";
 
 interface Message {
   id: string;
@@ -22,6 +23,7 @@ interface ChatViewProps {
   otherUserName: string;
   initialMessages: Message[];
   rideStatus: string;
+  showContactShare?: boolean;
 }
 
 /**
@@ -36,6 +38,7 @@ export function ChatView({
   otherUserName,
   initialMessages,
   rideStatus,
+  showContactShare = false,
 }: ChatViewProps) {
   const supabase = createClient();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
@@ -219,6 +222,16 @@ export function ChatView({
 
   return (
     <>
+      {/* Contact share action bar */}
+      {showContactShare && (
+        <div className="flex items-center justify-end border-b border-border-pastel bg-surface/50 px-4 py-1.5">
+          <ContactShareButton
+            conversationId={conversationId}
+            onSendMessage={handleSendMessage}
+          />
+        </div>
+      )}
+
       {/* Messages area */}
       <div
         ref={scrollRef}

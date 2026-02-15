@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
@@ -102,6 +102,61 @@ const preferenceIcons: { key: string; label: string; icon: string }[] = [
   { key: "music", label: "Music on", icon: "🎵" },
   { key: "chat", label: "Chatty", icon: "💬" },
 ];
+
+/** Button that creates/opens a conversation from a ride detail page (CHAT-04). */
+function MessageRideButton({
+  bookingId,
+  otherPartyName,
+}: {
+  bookingId: string;
+  otherPartyName: string;
+}) {
+  const router = useRouter();
+  const supabase = createClient();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const { data: conversationId, error } = await supabase.rpc(
+        "get_or_create_conversation",
+        { p_booking_id: bookingId },
+      );
+      if (error) {
+        toast.error("Could not open conversation");
+        return;
+      }
+      router.push(`/messages/${conversationId}`);
+    } catch {
+      toast.error("Could not open conversation");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [bookingId, router, supabase]);
+
+  return (
+    <button
+      onClick={handleClick}
+      disabled={isLoading}
+      className="flex w-full items-center justify-center gap-2 rounded-2xl border border-primary bg-surface px-5 py-3 font-semibold text-primary transition-colors hover:bg-primary/5 disabled:opacity-50"
+    >
+      <svg
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+        />
+      </svg>
+      {isLoading ? "Opening..." : `Message ${otherPartyName}`}
+    </button>
+  );
+}
 
 export function RideDetail({
   ride,
@@ -419,6 +474,33 @@ export function RideDetail({
             </button>
           )}
       </section>
+
+      {/* Message button for confirmed bookings (CHAT-04) */}
+      {!isOwner &&
+        currentUserBooking?.status === "confirmed" &&
+        currentUserId && (
+          <MessageRideButton
+            bookingId={currentUserBooking.id}
+            otherPartyName={profile?.display_name ?? "driver"}
+          />
+        )}
+      {isOwner &&
+        bookings.some((b) => b.status === "confirmed") &&
+        currentUserId && (
+          <div className="space-y-2">
+            {bookings
+              .filter((b) => b.status === "confirmed")
+              .map((booking) => (
+                <MessageRideButton
+                  key={booking.id}
+                  bookingId={booking.id}
+                  otherPartyName={
+                    booking.profiles?.display_name ?? "passenger"
+                  }
+                />
+              ))}
+          </div>
+        )}
 
       {/* Passengers */}
       <PassengerList
