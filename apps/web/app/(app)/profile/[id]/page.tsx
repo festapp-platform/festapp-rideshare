@@ -4,7 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import type { SocialLinks } from "@festapp/shared";
+import type { SocialLinks, PendingReview } from "@festapp/shared";
+import { StarRating } from "../../components/star-rating";
+import { ExperiencedBadge } from "../../components/experienced-badge";
+import { ReviewList } from "../../components/review-list";
+import { RatingModal } from "../../components/rating-modal";
+import { ReportDialog } from "../../components/report-dialog";
+import { BlockButton } from "../../components/block-button";
 
 interface PublicProfile {
   id: string;
@@ -15,6 +21,9 @@ interface PublicProfile {
   id_verified: boolean;
   rating_avg: number | null;
   rating_count: number;
+  account_status: string | null;
+  suspended_until: string | null;
+  completed_rides_count: number;
   created_at: string;
 }
 
@@ -35,12 +44,19 @@ export default function PublicProfilePage() {
   const [primaryVehicle, setPrimaryVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [pendingReviews, setPendingReviews] = useState<PendingReview[]>([]);
+  const [ratingModalReview, setRatingModalReview] = useState<PendingReview | null>(null);
+  const [reviewListKey, setReviewListKey] = useState(0);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [showActionsMenu, setShowActionsMenu] = useState(false);
 
   const fetchProfile = useCallback(async () => {
-    const [profileResult, phoneResult, vehicleResult] = await Promise.all([
+    const [profileResult, phoneResult, vehicleResult, userResult] = await Promise.all([
       supabase
         .from("profiles")
-        .select("id, display_name, bio, avatar_url, social_links, id_verified, rating_avg, rating_count, created_at")
+        .select("id, display_name, bio, avatar_url, social_links, id_verified, rating_avg, rating_count, account_status, suspended_until, completed_rides_count, created_at")
         .eq("id", profileId)
         .single(),
       supabase.rpc("is_phone_verified", { user_id: profileId }),
@@ -50,6 +66,7 @@ export default function PublicProfilePage() {
         .eq("owner_id", profileId)
         .eq("is_primary", true)
         .maybeSingle(),
+      supabase.auth.getUser(),
     ]);
 
     if (profileResult.error || !profileResult.data) {
@@ -61,6 +78,29 @@ export default function PublicProfilePage() {
     setProfile(profileResult.data);
     setPhoneVerified(phoneResult.data === true);
     setPrimaryVehicle(vehicleResult.data || null);
+
+    const userId = userResult.data.user?.id ?? null;
+    setCurrentUserId(userId);
+
+    // If viewing own profile, check for pending reviews
+    if (userId && userId === profileId) {
+      const { data: pending } = await supabase.rpc("get_pending_reviews");
+      if (pending) {
+        setPendingReviews(pending as PendingReview[]);
+      }
+    }
+
+    // If viewing another user's profile, check block status
+    if (userId && userId !== profileId) {
+      const { data: blockData } = await supabase
+        .from("user_blocks")
+        .select("id")
+        .eq("blocker_id", userId)
+        .eq("blocked_id", profileId)
+        .maybeSingle();
+      setIsBlocked(!!blockData);
+    }
+
     setLoading(false);
   }, [supabase, profileId]);
 
@@ -96,6 +136,38 @@ export default function PublicProfilePage() {
     );
   }
 
+  const isOwnProfile = currentUserId === profileId;
+
+  // Banned user: show minimal info to visitors
+  if (!isOwnProfile && profile?.account_status === "banned") {
+    return (
+      <div>
+        <h1 className="mb-6 text-2xl font-bold text-text-main">Profile</h1>
+        <div className="rounded-2xl border border-border-pastel bg-surface p-8 text-center">
+          <svg
+            className="mx-auto mb-3 h-12 w-12 text-text-secondary/30"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+            />
+          </svg>
+          <h2 className="mb-2 text-lg font-bold text-text-main">
+            This account has been suspended
+          </h2>
+          <p className="text-sm text-text-secondary">
+            This user&apos;s profile is not available.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const socialLinks = profile?.social_links as SocialLinks | null;
   const memberSince = profile?.created_at
     ? new Date(profile.created_at).toLocaleDateString("en-US", {
@@ -106,7 +178,155 @@ export default function PublicProfilePage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-text-main">Profile</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-text-main">Profile</h1>
+
+        {/* Actions menu (three dots) - only on other users' profiles */}
+        {!isOwnProfile && currentUserId && (
+          <div className="relative">
+            <button
+              onClick={() => setShowActionsMenu(!showActionsMenu)}
+              className="rounded-lg p-2 text-text-secondary transition-colors hover:bg-background"
+              aria-label="Profile actions"
+            >
+              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+              </svg>
+            </button>
+
+            {showActionsMenu && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowActionsMenu(false)}
+                />
+                <div className="absolute right-0 z-50 mt-1 w-44 rounded-xl border border-border-pastel bg-surface py-1 shadow-lg">
+                  <button
+                    onClick={() => {
+                      setShowActionsMenu(false);
+                      setShowReportDialog(true);
+                    }}
+                    className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-text-main transition-colors hover:bg-primary/5"
+                  >
+                    <svg
+                      className="h-4 w-4 text-text-secondary"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+                      />
+                    </svg>
+                    Report
+                  </button>
+                  <div className="px-4 py-1">
+                    <BlockButton
+                      userId={profileId}
+                      userName={profile?.display_name || undefined}
+                      initialBlocked={isBlocked}
+                      onBlockChange={(blocked) => setIsBlocked(blocked)}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Suspension banner for own profile */}
+      {isOwnProfile && profile?.account_status === "suspended" && profile?.suspended_until && (
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <div className="flex items-start gap-3">
+            <svg
+              className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+            <div>
+              <p className="text-sm font-semibold text-amber-800">Your account is suspended</p>
+              <p className="mt-1 text-sm text-amber-700">
+                You cannot post rides or make bookings until{" "}
+                {new Date(profile.suspended_until).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                })}
+                .
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Block banner when viewing a blocked user */}
+      {!isOwnProfile && isBlocked && (
+        <div className="mb-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <svg
+                className="h-5 w-5 text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                />
+              </svg>
+              <span className="text-sm font-medium text-gray-700">You have blocked this user</span>
+            </div>
+            <BlockButton
+              userId={profileId}
+              userName={profile?.display_name || undefined}
+              initialBlocked={true}
+              onBlockChange={(blocked) => setIsBlocked(blocked)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Pending ratings banner (own profile only) */}
+      {currentUserId === profileId && pendingReviews.length > 0 && (
+        <div className="mb-4 rounded-xl border border-warning/30 bg-warning/10 p-4">
+          <p className="text-sm font-medium text-warning">
+            You have {pendingReviews.length} ride{pendingReviews.length !== 1 ? "s" : ""} to rate
+          </p>
+          <div className="mt-2 space-y-2">
+            {pendingReviews.map((pr) => (
+              <button
+                key={pr.booking_id}
+                onClick={() => setRatingModalReview(pr)}
+                className="flex w-full items-center gap-2 rounded-lg bg-surface px-3 py-2 text-left text-sm text-text-main transition-colors hover:bg-primary/5"
+              >
+                <span className="truncate">
+                  {pr.origin_address} &rarr; {pr.destination_address}
+                </span>
+                <span className="ml-auto flex-shrink-0 text-xs font-medium text-primary">
+                  Rate {pr.other_user_name}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Profile card */}
       <div className="mb-6 rounded-2xl border border-border-pastel bg-surface p-8">
@@ -141,7 +361,16 @@ export default function PublicProfilePage() {
             {profile?.display_name || "User"}
           </h2>
 
-          {/* Verification badges */}
+          {/* Rating display */}
+          <div className="mt-2">
+            <StarRating
+              rating={profile?.rating_avg ?? null}
+              count={profile?.rating_count ?? 0}
+              size="md"
+            />
+          </div>
+
+          {/* Verification and experience badges */}
           <div className="mt-2 flex flex-wrap items-center gap-2">
             {phoneVerified && (
               <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
@@ -159,6 +388,9 @@ export default function PublicProfilePage() {
                 ID Verified
               </span>
             )}
+            <ExperiencedBadge
+              completedRidesCount={profile?.completed_rides_count ?? 0}
+            />
           </div>
 
           {/* Bio */}
@@ -234,35 +466,41 @@ export default function PublicProfilePage() {
         </div>
       )}
 
-      {/* Ratings section */}
-      <div className="mb-4 rounded-2xl border border-border-pastel bg-surface p-6">
-        <h3 className="mb-3 text-sm font-semibold text-text-main">Ratings</h3>
-        {profile && profile.rating_count > 0 ? (
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <svg
-                  key={star}
-                  className={`h-5 w-5 ${
-                    star <= Math.round(profile.rating_avg || 0)
-                      ? "text-yellow-400"
-                      : "text-border-pastel"
-                  }`}
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <span className="text-sm text-text-secondary">
-              {(profile.rating_avg || 0).toFixed(1)} ({profile.rating_count} {profile.rating_count === 1 ? "rating" : "ratings"})
-            </span>
-          </div>
-        ) : (
-          <p className="text-sm text-text-secondary">No ratings yet</p>
-        )}
+      {/* Reviews section */}
+      <div className="mb-4">
+        <h3 className="mb-3 text-sm font-semibold text-text-main">Reviews</h3>
+        <ReviewList key={reviewListKey} userId={profileId} />
       </div>
+
+      {/* Report dialog */}
+      {!isOwnProfile && profile && (
+        <ReportDialog
+          reportedUserId={profileId}
+          reportedUserName={profile.display_name || "User"}
+          isOpen={showReportDialog}
+          onClose={() => setShowReportDialog(false)}
+        />
+      )}
+
+      {/* Rating modal for pending reviews */}
+      {ratingModalReview && (
+        <RatingModal
+          bookingId={ratingModalReview.booking_id}
+          otherUserName={ratingModalReview.other_user_name}
+          otherUserAvatar={ratingModalReview.other_user_avatar}
+          isOpen={true}
+          onClose={() => setRatingModalReview(null)}
+          onSubmitted={() => {
+            setRatingModalReview(null);
+            setPendingReviews((prev) =>
+              prev.filter(
+                (pr) => pr.booking_id !== ratingModalReview.booking_id,
+              ),
+            );
+            setReviewListKey((k) => k + 1);
+          }}
+        />
+      )}
     </div>
   );
 }

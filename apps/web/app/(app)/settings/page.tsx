@@ -136,6 +136,16 @@ export default function SettingsPage() {
       />
 
       <SettingsSection
+        title="Privacy"
+        items={[
+          {
+            label: "Blocked Users",
+            onClick: () => router.push("/settings/blocked-users"),
+          },
+        ]}
+      />
+
+      <SettingsSection
         title="Account"
         items={[
           {
