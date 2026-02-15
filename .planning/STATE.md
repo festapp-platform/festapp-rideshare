@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 1 of 10 (Foundation & Auth)
-Plan: 4 of 5 in current phase
-Status: Executing
-Last activity: 2026-02-15 -- Completed 01-04 App shell & navigation
+Plan: 5 of 5 in current phase (awaiting human verification checkpoint)
+Status: Checkpoint
+Last activity: 2026-02-15 -- Completed 01-05 Task 1; awaiting human verification
 
-Progress: [██░░░░░░░░] 8%
+Progress: [██░░░░░░░░] 10%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: 7min
-- Total execution time: 0.48 hours
+- Total execution time: 0.55 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-auth | 4/5 | 29min | 7min |
+| 01-foundation-auth | 5/5 | 33min | 7min |
 
 **Recent Trend:**
-- Last 5 plans: 14min, 4min, 6min, 5min
+- Last 5 plans: 14min, 4min, 6min, 5min, 4min
 - Trend: improving
 
 *Updated after each plan completion*
@@ -56,6 +56,9 @@ Recent decisions affecting current work:
 - [01-04]: Used inline style props with design tokens for mobile (not only NativeWind classes) for exact palette colors
 - [01-04]: Web nav split: server component layout (auth check) + client component app-nav.tsx (active state)
 - [01-04]: ColorTokens type uses {[K]: string} instead of literal types for light/dark union compatibility
+- [01-05]: Web onboarding skips location permission -- browser prompts contextually when needed
+- [01-05]: Onboarding completion stored client-side (AsyncStorage/localStorage) -- no server round-trip
+- [01-05]: Web app layout detects onboarding path via header check for nav-free rendering
 
 ### Pending Todos
 
@@ -69,5 +72,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 01-04-PLAN.md (App shell & navigation)
-Resume file: .planning/phases/01-foundation-auth/01-04-SUMMARY.md
+Stopped at: 01-05-PLAN.md Task 2 checkpoint:human-verify (Task 1 complete, awaiting user verification of Phase 1)
+Resume file: .planning/phases/01-foundation-auth/01-05-SUMMARY.md
