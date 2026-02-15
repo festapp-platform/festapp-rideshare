@@ -114,16 +114,15 @@ Plans:
   3. User receives push notifications for booking requests, confirmations, cancellations, new messages, and ride reminders
   4. User receives email notifications for important events (booking confirmation, ride reminder, cancellation) respecting their preferences
   5. User can manage notification preferences (toggle categories on/off) from settings
-**Plans**: TBD
+**Plans:** 6 plans
 
 Plans:
-- [ ] 05-01: Real-time chat with Supabase Broadcast
-- [ ] 05-02: Chat UI (typing indicators, read receipts, message history)
-- [ ] 05-03: Contact sharing after booking
-- [ ] 05-04: Push notification infrastructure (OneSignal)
-- [ ] 05-05: Push notification triggers for all ride events
-- [ ] 05-06: Email notifications and preference management
-- [ ] 05-07: Route alerts (push when new ride matches saved route)
+- [ ] 05-01-PLAN.md — Database foundation: chat tables, notification preferences, RPCs, shared types/schemas/queries
+- [ ] 05-02-PLAN.md — Push notification infrastructure: send-notification Edge Function, OneSignal + SES helpers, web setup
+- [ ] 05-03-PLAN.md — Chat UI: conversation list, real-time chat, typing indicators, read receipts, contact sharing
+- [ ] 05-04-PLAN.md — Push notification triggers: booking/cancellation/message triggers via pg_net, ride reminders via pg_cron
+- [ ] 05-05-PLAN.md — Email notifications, notification preferences UI, OneSignal web initialization
+- [ ] 05-06-PLAN.md — Route alerts: alert toggle on saved routes, trigger on new ride match
 
 ### Phase 6: Ratings, Trust & Safety
 **Goal**: Users can rate each other after rides, report bad behavior, and admins can moderate the platform
@@ -254,7 +253,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -
 | 2. Profiles & Identity | 5/5 | ✓ Complete | 2026-02-15 |
 | 3. Ride Posting & Search | 7/7 | ✓ Complete | 2026-02-15 |
 | 4. Booking & Ride Management | 5/5 | ✓ Complete | 2026-02-15 |
-| 5. Communication & Notifications | 0/7 | Not started | - |
+| 5. Communication & Notifications | 0/6 | Not started | - |
 | 6. Ratings, Trust & Safety | 0/5 | Not started | - |
 | 7. Live Location | 0/4 | Not started | - |
 | 8. Events, Flexible Rides & Gamification | 0/8 | Not started | - |
