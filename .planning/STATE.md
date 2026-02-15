@@ -160,5 +160,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 05-05-PLAN.md (notification preferences, email templates, OneSignal init)
-Resume file: None
+Stopped at: Phase 6 context gathered
+Resume file: .planning/phases/06-ratings-trust-safety/06-CONTEXT.md
