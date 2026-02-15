@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 1 of 10 (Foundation & Auth)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: Executing
-Last activity: 2026-02-15 -- Completed 01-01 monorepo scaffolding
+Last activity: 2026-02-15 -- Completed 01-02 Supabase setup
 
-Progress: [█░░░░░░░░░] 2%
+Progress: [██░░░░░░░░] 4%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 14min
-- Total execution time: 0.23 hours
+- Total plans completed: 2
+- Average duration: 9min
+- Total execution time: 0.30 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-auth | 1/5 | 14min | 14min |
+| 01-foundation-auth | 2/5 | 18min | 9min |
 
 **Recent Trend:**
-- Last 5 plans: 14min
-- Trend: -
+- Last 5 plans: 14min, 4min
+- Trend: improving
 
 *Updated after each plan completion*
 
@@ -47,6 +47,9 @@ Recent decisions affecting current work:
 - [01-01]: Used Zod v3.25 (not v4.3) -- stable API, v4 was speculative
 - [01-01]: expo-router v6 for SDK 54 (not v5 from plan); corrected all Expo package versions
 - [01-01]: Tailwind v4 for web, v3 for mobile (NativeWind constraint confirmed)
+- [01-02]: Enabled SMS signup with test OTP for local dev; production uses Send SMS Hook via AWS SNS
+- [01-02]: Used getUser() in middleware (not getClaims()) -- proven pattern per research
+- [01-02]: Added .env.local.example exception to web .gitignore
 
 ### Pending Todos
 
@@ -60,5 +63,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 01-01-PLAN.md (monorepo scaffolding)
-Resume file: .planning/phases/01-foundation-auth/01-01-SUMMARY.md
+Stopped at: Completed 01-02-PLAN.md (Supabase setup)
+Resume file: .planning/phases/01-foundation-auth/01-02-SUMMARY.md
