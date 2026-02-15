@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 2 of 11 (Profiles & Identity)
-Plan: 2 of 5 in current phase
+Plan: 3 of 5 in current phase
 Status: Executing
-Last activity: 2026-02-15 -- Completed 02-02 (profile editing UI with avatar upload)
+Last activity: 2026-02-15 -- Completed 02-03 (vehicle management UI)
 
-Progress: [██░░░░░░░░] 15%
+Progress: [██░░░░░░░░] 16%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: 6min
-- Total execution time: 0.7 hours
+- Total execution time: 0.8 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-auth | 5/5 | 33min | 7min |
-| 02-profiles-identity | 2/5 | 10min | 5min |
+| 02-profiles-identity | 3/5 | 18min | 6min |
 
 **Recent Trend:**
-- Last 5 plans: 6min, 5min, 4min, 3min, 7min
+- Last 5 plans: 5min, 4min, 3min, 7min, 8min
 - Trend: improving
 
 *Updated after each plan completion*
@@ -66,6 +66,8 @@ Recent decisions affecting current work:
 - [02-02]: Web avatar upload uses browser-image-compression with useWebWorker for non-blocking compression
 - [02-02]: Mobile uses Controller pattern from react-hook-form for TextInput (not register) for proper RN integration
 - [02-02]: Avatar upload on web previews locally, uploads on save; mobile uploads immediately on pick
+- [02-03]: Mobile photo upload offered after save (vehicle ID needed for storage path); web uploads inline
+- [02-03]: Web inline confirm-on-second-click for delete; mobile uses native Alert dialog
 
 ### Pending Todos
 
@@ -82,5 +84,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 02-02-PLAN.md (profile editing UI with avatar upload)
+Stopped at: Completed 02-03-PLAN.md (vehicle management UI)
 Resume file: None
