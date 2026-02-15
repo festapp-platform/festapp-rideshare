@@ -63,6 +63,7 @@ Progress: [████████████████░] 70%
 | Phase 07 P03 | 8min | 2 tasks | 8 files |
 | Phase 08 P01 | 3min | 2 tasks | 6 files |
 | Phase 08 P04 | 6min | 2 tasks | 12 files |
+| Phase 08 P03 | 6min | 2 tasks | 16 files |
 
 ## Accumulated Context
 
@@ -182,6 +183,7 @@ Recent decisions affecting current work:
 - [08-04]: LevelBadge hides "New" level on ride cards (default, not informative)
 - [08-04]: Impact CO2 uses EU average 120g CO2/km saved per shared ride
 - [08-04]: Badges always publicly visible via RLS SELECT for everyone (social proof)
+- [Phase 08]: flexible_ride_confirmed notification type maps to push_route_alerts preference (no new DB column)
 
 ### Pending Todos
 
