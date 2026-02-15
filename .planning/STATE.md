@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 8 of 11 (Events & Flexible Gamification)
-Plan: 1 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: In Progress
-Last activity: 2026-02-16 -- Completed 08-01 (events database migration & shared package)
+Last activity: 2026-02-16 -- Completed 08-04 (gamification: badges, impact, levels, streaks)
 
-Progress: [██████████████░] 65%
+Progress: [████████████████░] 70%
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Progress: [██████████████░] 65%
 | Phase 07 P02 | 2min | 2 tasks | 2 files |
 | Phase 07 P03 | 8min | 2 tasks | 8 files |
 | Phase 08 P01 | 3min | 2 tasks | 6 files |
+| Phase 08 P04 | 6min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -177,6 +178,10 @@ Recent decisions affecting current work:
 - [08-01]: get_event_rides returns empty set (not error) for non-approved events for graceful client handling
 - [08-01]: Event deletion restricted to own pending events only; approved/rejected events persist for history
 - [08-01]: rides.event_id uses ON DELETE SET NULL so rides survive if event removed
+- [08-04]: Route streaks use ISO week string comparison for consecutive week detection
+- [08-04]: LevelBadge hides "New" level on ride cards (default, not informative)
+- [08-04]: Impact CO2 uses EU average 120g CO2/km saved per shared ride
+- [08-04]: Badges always publicly visible via RLS SELECT for everyone (social proof)
 
 ### Pending Todos
 
@@ -195,5 +200,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 08-01-PLAN.md
-Resume file: .planning/phases/08-events-flexible-gamification/08-01-SUMMARY.md
+Stopped at: Completed 08-04-PLAN.md (gamification)
+Resume file: .planning/phases/08-events-flexible-gamification/08-04-SUMMARY.md
