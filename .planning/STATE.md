@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** Drivers and passengers can find each other for shared rides quickly and effortlessly -- simpler, more trustworthy, and completely free.
-**Current focus:** Phase 7 - Live Location
+**Current focus:** Phase 8 - Events & Flexible Gamification
 
 ## Current Position
 
-Phase: 7 of 11 (Live Location) -- COMPLETE
-Plan: 3 of 3 in current phase
-Status: Phase Complete
-Last activity: 2026-02-16 -- Completed 07-03 (adaptive GPS, auto-stop, tests)
+Phase: 8 of 11 (Events & Flexible Gamification)
+Plan: 1 of 5 in current phase
+Status: In Progress
+Last activity: 2026-02-16 -- Completed 08-01 (events database migration & shared package)
 
-Progress: [████████████░] 60%
+Progress: [██████████████░] 65%
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [████████████░] 60%
 | Phase 07 P01 | 1min | 2 tasks | 5 files |
 | Phase 07 P02 | 2min | 2 tasks | 2 files |
 | Phase 07 P03 | 8min | 2 tasks | 8 files |
+| Phase 08 P01 | 3min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -173,6 +174,9 @@ Recent decisions affecting current work:
 - [07-03]: happy-dom vitest environment for React 19 compatibility (same async requirement as jsdom, faster)
 - [07-03]: LiveLocationMap tests use inline JSX due to pnpm dual-React issue with component imports
 - [07-03]: Postgres Changes subscription for cross-device auto-stop on ride completion/cancellation
+- [08-01]: get_event_rides returns empty set (not error) for non-approved events for graceful client handling
+- [08-01]: Event deletion restricted to own pending events only; approved/rejected events persist for history
+- [08-01]: rides.event_id uses ON DELETE SET NULL so rides survive if event removed
 
 ### Pending Todos
 
@@ -191,5 +195,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 07-03-PLAN.md (Phase 7 complete)
-Resume file: .planning/phases/07-live-location/07-03-SUMMARY.md
+Stopped at: Completed 08-01-PLAN.md
+Resume file: .planning/phases/08-events-flexible-gamification/08-01-SUMMARY.md
