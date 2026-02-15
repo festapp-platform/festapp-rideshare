@@ -36,14 +36,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User session persists across app restarts and browser refresh without re-login
   4. User can log out and delete their account from the settings screen
   5. Bottom tab navigation (Search, My Rides, Messages, Profile) works on both web and mobile with the pastel design system applied
-**Plans**: TBD
+**Plans:** 5 plans
 
 Plans:
-- [ ] 01-01: Monorepo scaffolding and shared package
-- [ ] 01-02: Supabase project setup and database schema
-- [ ] 01-03: Authentication flows (phone, email, social)
-- [ ] 01-04: App shell, navigation, and design system
-- [ ] 01-05: Onboarding flow skeleton
+- [ ] 01-01-PLAN.md — Monorepo scaffolding (pnpm + Turborepo + shared package + CI)
+- [ ] 01-02-PLAN.md — Supabase schema, Edge Functions, and platform-specific clients
+- [ ] 01-03-PLAN.md — Authentication flows (phone OTP, email, Google, Apple) for web and mobile
+- [ ] 01-04-PLAN.md — App shell with tab navigation, pastel design system, settings (logout/delete)
+- [ ] 01-05-PLAN.md — Onboarding flow, splash/icon assets, and auth validation tests
 
 ### Phase 2: Profiles & Identity
 **Goal**: Users have rich, trustworthy profiles that build confidence for ride sharing with strangers
@@ -188,7 +188,7 @@ Plans:
 **Depends on**: Phase 8 (needs all core features to exist for AI to operate on)
 **Requirements**: AIVC-01, AIVC-02, AIVC-03, AIVC-04, AIVC-05, AIVC-06, AIVC-07, AIVC-08, AIVC-09, AIVC-10
 **Success Criteria** (what must be TRUE):
-  1. User can open an AI assistant chat and create a ride by typing or speaking a natural language description (e.g., "Jedu zítra z Prahy do Brna ve 3, mám 3 místa")
+  1. User can open an AI assistant chat and create a ride by typing or speaking a natural language description (e.g., "Jedu zitra z Prahy do Brna ve 3, mam 3 mista")
   2. User can search for rides, book seats, and manage rides through the AI assistant with confirmation before each action
   3. Voice input works via speech-to-text on both mobile and web, feeding into the same AI processing pipeline
   4. AI assistant correctly handles Czech, Slovak, and English input
@@ -250,7 +250,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Auth | 0/5 | Not started | - |
+| 1. Foundation & Auth | 0/5 | Planning complete | - |
 | 2. Profiles & Identity | 0/5 | Not started | - |
 | 3. Ride Posting & Search | 0/7 | Not started | - |
 | 4. Booking & Ride Management | 0/5 | Not started | - |
