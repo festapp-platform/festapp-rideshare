@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 ## Current Position
 
-Phase: 5 of 11 (Communication & Notifications) -- COMPLETE
-Plan: 6 of 6 in current phase
-Status: Phase Complete
-Last activity: 2026-02-15 -- Completed 05-06 (route alerts)
+Phase: 5 of 11 (Communication & Notifications)
+Plan: 5 of 6 in current phase
+Status: Executing
+Last activity: 2026-02-15 -- Completed 05-05 (notification preferences, email templates, OneSignal init)
 
 Progress: [████████░░] 45%
 
@@ -50,6 +50,7 @@ Progress: [████████░░] 45%
 | Phase 05 P02 | 3min | 2 tasks | 8 files |
 | Phase 05 P04 | 2min | 2 tasks | 3 files |
 | Phase 05 P03 | 5min | 2 tasks | 11 files |
+| Phase 05 P05 | 3min | 2 tasks | 6 files |
 | Phase 05 P05 | 2min | 2 tasks | 3 files |
 | Phase 05 P06 | 2min | 2 tasks | 3 files |
 
@@ -136,6 +137,9 @@ Recent decisions affecting current work:
 - [Phase 05]: Optimistic message sending with client-side UUID and dedup on Realtime delivery (Pitfall 6)
 - [Phase 05]: UnreadBadge subscribes globally to chat_messages INSERT/UPDATE for real-time count
 - [Phase 05]: ContactShareButton integrated into ChatView action bar for onSendMessage callback access
+- [05-05]: Email templates use inline HTML/CSS with table layout for email client compatibility (no template engine)
+- [05-05]: send-ride-reminders calls send-notification via HTTP for unified push+email+preferences dispatch
+- [05-05]: OneSignalInit uses dynamic import() to avoid SSR issues with OneSignal browser SDK
 - [05-06]: Dedicated RPC (find_matching_route_alerts) for geospatial matching instead of raw SQL in Edge Function
 - [05-06]: check-route-alerts calls sendPush directly via onesignal.ts -- avoids extra HTTP hop through send-notification
 
@@ -156,5 +160,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 05-06-PLAN.md (route alerts) -- Phase 5 complete
+Stopped at: Completed 05-05-PLAN.md (notification preferences, email templates, OneSignal init)
 Resume file: None
