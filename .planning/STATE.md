@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** Drivers and passengers can find each other for shared rides quickly and effortlessly -- simpler, more trustworthy, and completely free.
-**Current focus:** Phase 4 - Booking & Ride Management
+**Current focus:** Phase 5 - Communication & Notifications
 
 ## Current Position
 
-Phase: 4 of 11 (Booking & Ride Management)
-Plan: 5 of 5 in current phase
-Status: Phase Complete
-Last activity: 2026-02-15 -- Completed 04-05 (ride completion & driver reliability)
+Phase: 5 of 11 (Communication & Notifications)
+Plan: 0 of 7 in current phase
+Status: Ready to plan
+Last activity: 2026-02-15 -- Phase 4 complete (verified, 5/5 success criteria, 8/8 requirements)
 
 Progress: [████████░░] 36%
 
