@@ -55,14 +55,14 @@ Plans:
   3. User profile shows verification badge for phone-verified users and enhanced badge for ID-uploaded users
   4. User can link Instagram and Facebook to their profile and view other users' profiles with social links, bio, and ratings placeholder
   5. Onboarding flow guides new users through profile creation and optional vehicle setup
-**Plans**: TBD
+**Plans:** 5 plans
 
 Plans:
-- [ ] 02-01: Profile creation and editing (name, avatar, bio)
-- [ ] 02-02: Vehicle info and car photo management
-- [ ] 02-03: Verification badges and social profile linking
-- [ ] 02-04: Profile viewing and onboarding completion
-- [ ] 02-05: Image optimization pipeline (compression, thumbnails)
+- [ ] 02-01-PLAN.md — Database foundation: vehicles table, storage buckets, profile columns, shared schemas
+- [ ] 02-02-PLAN.md — Profile editing with avatar upload (web + mobile)
+- [ ] 02-03-PLAN.md — Vehicle management with car photo upload (web + mobile)
+- [ ] 02-04-PLAN.md — Verification badges, social links, and public profile viewing
+- [ ] 02-05-PLAN.md — Extended onboarding: profile creation, role selection, vehicle setup
 
 ### Phase 3: Ride Posting & Search
 **Goal**: Drivers can publish rides and passengers can find them by route and date with map-based results
