@@ -39,6 +39,7 @@ Progress: [████░░░░░░] 24%
 | Phase 03 P02 | 2min | 2 tasks | 9 files |
 | Phase 03 P04 | 7min | 2 tasks | 10 files |
 | Phase 03 P05 | 4min | 2 tasks | 4 files |
+| Phase 03 P06 | 4min | 2 tasks | 6 files |
 | Phase 03 P07 | 4min | 2 tasks | 6 files |
 
 ## Accumulated Context
@@ -93,6 +94,9 @@ Recent decisions affecting current work:
 - [03-05]: Client-side filtering on RPC results for price/mode/seats refinement; RPC handles spatial filtering
 - [03-05]: URL search params persist coordinates and date for shareable/bookmarkable searches
 - [03-05]: Skeleton cards as loading state instead of spinner for better perceived performance
+- [03-06]: PostGIS geography parsed via WKT regex with GeoJSON fallback for coordinate extraction
+- [03-06]: EditRideForm only recomputes route when origin/destination actually changes (routeChanged flag)
+- [03-06]: My Rides fetches all driver rides at once and filters client-side into upcoming/past tabs
 - [03-07]: FAB positioned bottom-20 on mobile (above bottom nav) and bottom-8 on desktop
 - [03-07]: Favorite routes match by address string (not coordinates) for deduplication simplicity
 - [03-07]: Skipped Share button on ride-detail.tsx since 03-06 runs in parallel
@@ -113,5 +117,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 03-07-PLAN.md (UX polish, FAB, favorites, recurring rides)
+Stopped at: Completed 03-06-PLAN.md (ride detail, edit, My Rides)
 Resume file: None
