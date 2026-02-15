@@ -5,6 +5,8 @@ export {
   OtpSchema,
   PasswordSchema,
   DisplayNameSchema,
+  SignUpSchema,
+  LoginSchema,
 } from './validation/auth';
 
 // Constants

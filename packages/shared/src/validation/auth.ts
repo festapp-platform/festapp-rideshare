@@ -16,3 +16,14 @@ export const PasswordSchema = z
   .min(8, 'Password must be at least 8 characters');
 
 export const DisplayNameSchema = z.string().min(1).max(50);
+
+export const SignUpSchema = z.object({
+  display_name: DisplayNameSchema,
+  email: EmailSchema,
+  password: PasswordSchema,
+});
+
+export const LoginSchema = z.object({
+  email: EmailSchema,
+  password: PasswordSchema,
+});
