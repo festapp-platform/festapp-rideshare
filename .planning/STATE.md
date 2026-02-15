@@ -10,27 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 2 of 11 (Profiles & Identity)
-Plan: 0 of 5 in current phase
-Status: Ready to plan
-Last activity: 2026-02-15 -- Phase 1 complete (verified), checkpoint skipped by user
+Plan: 1 of 5 in current phase
+Status: Executing
+Last activity: 2026-02-15 -- Completed 02-01 (data layer & shared schemas)
 
-Progress: [█░░░░░░░░░] 9%
+Progress: [██░░░░░░░░] 11%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 7min
-- Total execution time: 0.55 hours
+- Total plans completed: 6
+- Average duration: 6min
+- Total execution time: 0.6 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-auth | 5/5 | 33min | 7min |
+| 02-profiles-identity | 1/5 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 14min, 4min, 6min, 5min, 4min
+- Last 5 plans: 4min, 6min, 5min, 4min, 3min
 - Trend: improving
 
 *Updated after each plan completion*
@@ -59,10 +60,16 @@ Recent decisions affecting current work:
 - [01-05]: Web onboarding skips location permission -- browser prompts contextually when needed
 - [01-05]: Onboarding completion stored client-side (AsyncStorage/localStorage) -- no server round-trip
 - [01-05]: Web app layout detects onboarding path via header check for nav-free rendering
+- [02-01]: DisplayNameSchema moved from auth.ts to profile.ts as single source of truth; re-exported from auth.ts
+- [02-01]: is_phone_verified derives from auth.users (no duplicated column) per research pitfall #4
+- [02-01]: Storage path helpers use Date.now() suffix for CDN cache-busting
 
 ### Pending Todos
 
-None yet.
+- [ ] Landing page: initial page explaining what the app is about, with anonymised rides visible to non-authenticated users
+- [ ] SMTP: configure same SMTP as akhweb project (waiting for credentials from user)
+- [ ] Prettier dialogs: delete account confirmation and other modals (polish phase)
+- [ ] Supabase project linked: `xamctptqmpruhovhjcgm` (rideshare) on rawen.dev 2, migrations pushed
 
 ### Blockers/Concerns
 
@@ -72,5 +79,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Phase 1 complete, Phase 2 ready to plan
+Stopped at: Completed 02-01-PLAN.md (data layer & shared schemas)
 Resume file: None
