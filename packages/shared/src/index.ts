@@ -134,6 +134,19 @@ export {
   upsertNotificationPreferences,
 } from './queries/chat';
 
+// Query builders - reviews, reports & moderation
+export {
+  getReviewsForUser,
+  getExistingReview,
+  getReportsForAdmin,
+  getReportById,
+  getModerationHistory,
+  getPlatformStats,
+  getPlatformOverview,
+  searchUsersForAdmin,
+  getReviewsForAdmin,
+} from './queries/reviews';
+
 // Constants - review
 export {
   REVIEW_MAX_COMMENT_LENGTH,
