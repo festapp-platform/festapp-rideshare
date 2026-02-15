@@ -130,7 +130,7 @@ export default function SettingsPage() {
           },
           {
             label: "Notifications",
-            onClick: () => alert("Notification preferences will be available in a future update."),
+            onClick: () => router.push("/settings/notifications"),
           },
         ]}
       />
