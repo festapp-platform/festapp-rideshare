@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** Drivers and passengers can find each other for shared rides quickly and effortlessly -- simpler, more trustworthy, and completely free.
-**Current focus:** Phase 6 - Ratings, Trust & Safety (COMPLETE)
+**Current focus:** Phase 7 - Live Location
 
 ## Current Position
 
-Phase: 6 of 11 (Ratings, Trust & Safety) -- COMPLETE
-Plan: 5 of 5 in current phase
-Status: Phase Complete
-Last activity: 2026-02-15 -- Completed 06-05 (admin moderation panel)
+Phase: 7 of 11 (Live Location)
+Plan: 1 of 3 in current phase
+Status: In Progress
+Last activity: 2026-02-16 -- Completed 07-01 (live location foundation)
 
-Progress: [█████████░] 50%
+Progress: [██████████░] 55%
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Progress: [█████████░] 50%
 | Phase 06 P03 | 5min | 2 tasks | 12 files |
 | Phase 06 P04 | 4min | 2 tasks | 5 files |
 | Phase 06 P05 | 7min | 2 tasks | 14 files |
+| Phase 07 P01 | 1min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -162,6 +163,8 @@ Recent decisions affecting current work:
 - [06-05]: TrendChart uses next/dynamic with ssr:false for recharts lazy-loading
 - [06-05]: ModerationActionForm two-click confirm pattern for destructive admin actions
 - [06-05]: Installed lucide-react for admin panel icons (LayoutDashboard, Flag, Users, Star)
+- [07-01]: start_ride follows complete_ride pattern: SECURITY DEFINER, FOR UPDATE row lock, validated driver ownership
+- [07-01]: Broadcast-only location sharing (no database persistence) for ephemeral driver positions
 
 ### Pending Todos
 
@@ -179,6 +182,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-15
-Stopped at: Completed 06-05-PLAN.md (Phase 6 complete)
-Resume file: .planning/phases/06-ratings-trust-safety/06-05-SUMMARY.md
+Last session: 2026-02-16
+Stopped at: Completed 07-01-PLAN.md
+Resume file: .planning/phases/07-live-location/07-01-SUMMARY.md
