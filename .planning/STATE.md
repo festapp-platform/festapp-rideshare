@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 3 of 11 (Ride Posting & Search)
-Plan: 0 of 7 in current phase
-Status: Ready to plan
-Last activity: 2026-02-15 -- Phase 2 complete (verified, 5/5 success criteria passed)
+Plan: 3 of 7 in current phase
+Status: Executing
+Last activity: 2026-02-15 -- Completed 03-03 (compute-route Edge Function)
 
-Progress: [███░░░░░░░] 20%
+Progress: [████░░░░░░] 24%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 6min
-- Total execution time: 1.0 hours
+- Total plans completed: 13
+- Average duration: 5min
+- Total execution time: 1.1 hours
 
 **By Phase:**
 
@@ -74,6 +74,8 @@ Recent decisions affecting current work:
 - [02-05]: Separate PROFILE_ONBOARDING_COMPLETED_KEY for backward compat -- existing users keep their completed state but see new profile steps
 - [02-05]: Mobile vehicle photo upload offered via Alert after save (consistent with 02-03 pattern)
 - [02-05]: FlatList Option A: scrollEnabled disabled for form steps, re-enabled for passive steps
+- [03-03]: Added coordinate range validation and 502 status for upstream Google API errors
+- [03-03]: CORS headers on all Edge Function responses including errors for web client compatibility
 
 ### Pending Todos
 
@@ -90,5 +92,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 02-04-PLAN.md (verification badges, social links, public profiles) -- Phase 2 complete
+Stopped at: Completed 03-03-PLAN.md (compute-route Edge Function)
 Resume file: None
