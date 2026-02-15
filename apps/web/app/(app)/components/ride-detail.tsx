@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
+import { toast } from "sonner";
 import { RIDE_STATUS, type BookingStatus } from "@festapp/shared";
+import { createClient } from "@/lib/supabase/client";
 import { RideMap } from "./ride-map";
 import { RideStatusBadge } from "./ride-status-badge";
 import { BookingButton } from "./booking-button";
@@ -123,14 +125,56 @@ export function RideDetail({
   driverReliability,
 }: RideDetailProps) {
   const router = useRouter();
+  const supabase = createClient();
   const [cancelDialogType, setCancelDialogType] = useState<"booking" | "ride" | null>(null);
   const [cancelDialogId, setCancelDialogId] = useState<string>("");
+  const [completeConfirm, setCompleteConfirm] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   const departureDate = parseISO(ride.departure_time);
   const formattedDate = format(departureDate, "EEE, MMM d, yyyy");
   const formattedTime = format(departureDate, "h:mm a");
   const profile = ride.profiles;
   const vehicle = ride.vehicles;
+  const isPastDeparture = new Date() > departureDate;
+  const isCompletable =
+    isOwner &&
+    (ride.status === RIDE_STATUS.upcoming || ride.status === "in_progress") &&
+    isPastDeparture;
+  const isCompleted = ride.status === RIDE_STATUS.completed;
+
+  async function handleComplete() {
+    if (!completeConfirm) {
+      setCompleteConfirm(true);
+      return;
+    }
+
+    setIsCompleting(true);
+    try {
+      const { error } = await supabase.rpc("complete_ride", {
+        p_ride_id: ride.id,
+        p_driver_id: ride.driver_id,
+      });
+      if (error) {
+        if (error.message.includes("Only the driver")) {
+          toast.error("Only the ride driver can complete this ride");
+        } else if (error.message.includes("cannot be completed")) {
+          toast.error("This ride cannot be completed from its current status");
+        } else {
+          toast.error("Failed to complete ride");
+        }
+        setCompleteConfirm(false);
+        return;
+      }
+      toast.success("Ride completed!");
+      router.refresh();
+    } catch {
+      toast.error("Failed to complete ride");
+      setCompleteConfirm(false);
+    } finally {
+      setIsCompleting(false);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -160,6 +204,13 @@ export function RideDetail({
         </div>
         <RideStatusBadge status={ride.status} />
       </div>
+
+      {/* Completed banner */}
+      {isCompleted && (
+        <div className="rounded-xl bg-success/10 p-4 text-sm font-medium text-success">
+          This ride has been completed.
+        </div>
+      )}
 
       {/* Map */}
       {ride.route_encoded_polyline && (
@@ -435,23 +486,59 @@ export function RideDetail({
         )}
 
       {/* Owner actions */}
-      {isOwner && ride.status === RIDE_STATUS.upcoming && (
-        <div className="flex gap-3">
-          <Link
-            href={`/rides/${ride.id}/edit`}
-            className="flex-1 rounded-xl border border-primary bg-surface px-6 py-3 text-center font-semibold text-primary transition-colors hover:bg-primary/5"
-          >
-            Edit Ride
-          </Link>
-          <button
-            onClick={() => {
-              setCancelDialogType("ride");
-              setCancelDialogId(ride.id);
-            }}
-            className="flex-1 rounded-xl border border-red-300 px-6 py-3 font-semibold text-red-600 transition-colors hover:bg-red-50"
-          >
-            Cancel Ride
-          </button>
+      {isOwner &&
+        (ride.status === RIDE_STATUS.upcoming ||
+          ride.status === "in_progress") && (
+        <div className="space-y-3">
+          {/* Complete ride button */}
+          {isCompletable ? (
+            <button
+              onClick={handleComplete}
+              disabled={isCompleting}
+              className={`w-full rounded-xl px-6 py-3 font-semibold transition-colors ${
+                completeConfirm
+                  ? "bg-green-600 text-white hover:bg-green-700"
+                  : "border border-green-500 text-green-600 hover:bg-green-50"
+              } disabled:opacity-50`}
+            >
+              {isCompleting
+                ? "Completing..."
+                : completeConfirm
+                  ? "Confirm Complete?"
+                  : "Complete Ride"}
+            </button>
+          ) : (
+            isOwner &&
+            !isPastDeparture && (
+              <div
+                className="w-full rounded-xl border border-gray-300 px-6 py-3 text-center font-semibold text-gray-400 cursor-not-allowed"
+                title="Available after departure time"
+              >
+                Complete Ride
+                <span className="block text-xs font-normal mt-0.5">
+                  Available after departure time
+                </span>
+              </div>
+            )
+          )}
+
+          <div className="flex gap-3">
+            <Link
+              href={`/rides/${ride.id}/edit`}
+              className="flex-1 rounded-xl border border-primary bg-surface px-6 py-3 text-center font-semibold text-primary transition-colors hover:bg-primary/5"
+            >
+              Edit Ride
+            </Link>
+            <button
+              onClick={() => {
+                setCancelDialogType("ride");
+                setCancelDialogId(ride.id);
+              }}
+              className="flex-1 rounded-xl border border-red-300 px-6 py-3 font-semibold text-red-600 transition-colors hover:bg-red-50"
+            >
+              Cancel Ride
+            </button>
+          </div>
         </div>
       )}
 
