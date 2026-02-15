@@ -370,6 +370,67 @@ export interface Database {
           },
         ];
       };
+      bookings: {
+        Row: {
+          id: string;
+          ride_id: string;
+          passenger_id: string;
+          seats_booked: number;
+          status: string;
+          cancelled_by: string | null;
+          cancellation_reason: string | null;
+          cancelled_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          ride_id: string;
+          passenger_id: string;
+          seats_booked?: number;
+          status?: string;
+          cancelled_by?: string | null;
+          cancellation_reason?: string | null;
+          cancelled_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          ride_id?: string;
+          passenger_id?: string;
+          seats_booked?: number;
+          status?: string;
+          cancelled_by?: string | null;
+          cancellation_reason?: string | null;
+          cancelled_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "bookings_ride_id_fkey";
+            columns: ["ride_id"];
+            isOneToOne: false;
+            referencedRelation: "rides";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bookings_passenger_id_fkey";
+            columns: ["passenger_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bookings_cancelled_by_fkey";
+            columns: ["cancelled_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -407,6 +468,64 @@ export interface Database {
           booking_mode: string;
           origin_distance_m: number;
           dest_distance_m: number;
+        }[];
+      };
+      book_ride_instant: {
+        Args: {
+          p_ride_id: string;
+          p_passenger_id: string;
+          p_seats?: number;
+        };
+        Returns: string;
+      };
+      request_ride_booking: {
+        Args: {
+          p_ride_id: string;
+          p_passenger_id: string;
+          p_seats?: number;
+        };
+        Returns: string;
+      };
+      respond_to_booking: {
+        Args: {
+          p_booking_id: string;
+          p_driver_id: string;
+          p_accept: boolean;
+        };
+        Returns: undefined;
+      };
+      cancel_booking: {
+        Args: {
+          p_booking_id: string;
+          p_user_id: string;
+          p_reason?: string;
+        };
+        Returns: undefined;
+      };
+      cancel_ride: {
+        Args: {
+          p_ride_id: string;
+          p_driver_id: string;
+          p_reason?: string;
+        };
+        Returns: undefined;
+      };
+      complete_ride: {
+        Args: {
+          p_ride_id: string;
+          p_driver_id: string;
+        };
+        Returns: undefined;
+      };
+      get_driver_reliability: {
+        Args: {
+          p_driver_id: string;
+        };
+        Returns: {
+          total_rides_completed: number;
+          total_rides_cancelled: number;
+          cancellation_rate: number;
+          total_bookings_received: number;
         }[];
       };
     };

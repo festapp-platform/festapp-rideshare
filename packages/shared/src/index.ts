@@ -90,5 +90,20 @@ export {
 export { searchNearbyRides } from './queries/search';
 export type { SearchParams, NearbyRideResult } from './queries/search';
 
+// Constants - booking
+export { BOOKING_STATUS } from './constants/booking';
+export type { BookingStatus } from './constants/booking';
+
+// Validation schemas - booking
+export { BookSeatSchema, CancelBookingSchema } from './validation/booking';
+export type { BookSeat, CancelBooking } from './validation/booking';
+
+// Query builders - bookings
+export {
+  getBookingsForRide,
+  getPassengerBookings,
+  getBookingById,
+} from './queries/bookings';
+
 // Types
 export type { Database } from './types/database';
