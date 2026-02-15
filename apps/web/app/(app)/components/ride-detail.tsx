@@ -216,6 +216,7 @@ export function RideDetail({
       rideId: ride.id,
       isDriver: isOwner,
       enabled: liveLocationEnabled || passengerAutoEnabled,
+      pickupLocation: { lat: originLat, lng: originLng },
     });
 
   // Show LiveLocationMap when driver is sharing or passenger has active tracking
@@ -241,6 +242,33 @@ export function RideDetail({
       toast.error(locationError);
     }
   }, [locationError]);
+
+  // Auto-stop location sharing when ride is completed or cancelled (including from other tabs/devices)
+  useEffect(() => {
+    const channel = supabase
+      .channel(`ride-status-${ride.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "rides",
+          filter: `id=eq.${ride.id}`,
+        },
+        (payload) => {
+          const newStatus = (payload.new as { status: string }).status;
+          if (newStatus === "completed" || newStatus === "cancelled") {
+            stopSharing();
+            setLocalRideStatus(newStatus);
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [ride.id, supabase, stopSharing]);
 
   async function handleShareLocation() {
     if (localRideStatus === "in_progress") {
@@ -292,6 +320,7 @@ export function RideDetail({
         setCompleteConfirm(false);
         return;
       }
+      stopSharing();
       toast.success("Ride completed!");
       router.push(`/rides/${ride.id}?justCompleted=true`);
     } catch {
