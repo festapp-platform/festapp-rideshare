@@ -152,13 +152,12 @@ Plans:
   2. Passenger sees driver's real-time position on a map during pickup with smooth updates
   3. Location sharing uses adaptive GPS (battery-efficient with balanced accuracy and distance filtering)
   4. Location sharing automatically stops after pickup is confirmed or ride begins
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 07-01: Location sharing activation and Supabase Broadcast channel
-- [ ] 07-02: Live map UI with real-time driver position
-- [ ] 07-03: Adaptive GPS and battery optimization
-- [ ] 07-04: Auto-stop logic and pickup confirmation
+- [ ] 07-01-PLAN.md — start_ride RPC, shared location constants/types, useLiveLocation Broadcast hook
+- [ ] 07-02-PLAN.md — LiveLocationMap component with animated driver marker, ride detail integration
+- [ ] 07-03-PLAN.md — Adaptive GPS frequency, auto-stop logic, unit and integration tests
 
 ### Phase 8: Events, Flexible Rides & Gamification
 **Goal**: Users can create events with ride listings, drivers can post route intents that passengers subscribe to, and users are motivated by impact stats and achievement badges
