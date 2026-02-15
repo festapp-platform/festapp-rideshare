@@ -188,6 +188,56 @@ export type {
   AdminResolveReport,
 } from './validation/review';
 
+// Constants - event
+export {
+  EVENT_STATUS,
+  EVENT_NAME_MIN,
+  EVENT_NAME_MAX,
+  EVENT_DESCRIPTION_MAX,
+} from './constants/event';
+export type { EventStatus } from './constants/event';
+
+// Validation schemas - event
+export { CreateEventSchema, UpdateEventSchema } from './validation/event';
+export type { CreateEvent, UpdateEvent } from './validation/event';
+
+// Query builders - events
+export {
+  getApprovedEvents,
+  getEventById,
+  getMyEvents,
+  getPendingEventsForAdmin,
+  getEventRides,
+} from './queries/events';
+
+// Constants - gamification
+export {
+  USER_LEVELS,
+  getUserLevel,
+  CO2_SAVINGS_PER_KM,
+  BADGE_CATEGORIES,
+} from './constants/gamification';
+export type {
+  UserLevelKey,
+  UserLevel,
+  BadgeCategory,
+} from './constants/gamification';
+
+// Validation types - gamification
+export type {
+  UserImpactStats,
+  UserBadge,
+  RouteStreakResult as RouteStreakData,
+} from './validation/gamification';
+
+// Query builders - gamification
+export {
+  getUserImpact,
+  getUserBadges,
+  getRouteStreaks,
+  getAllBadges,
+} from './queries/gamification';
+
 // Constants - location
 export {
   LOCATION_CHANNEL_PREFIX,
@@ -209,4 +259,12 @@ export type {
   ModerationAction,
   PlatformStatDaily,
   PendingReview,
+  Event,
+  EventRide,
+  BadgeDefinition,
+  UserAchievement,
+  RouteStreak,
+  UserImpact,
+  UserBadgeResult,
+  RouteStreakResult,
 } from './types/database';

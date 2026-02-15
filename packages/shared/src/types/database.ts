@@ -147,6 +147,7 @@ export interface Database {
           notes: string | null;
           status: string;
           recurring_pattern_id: string | null;
+          event_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -173,6 +174,7 @@ export interface Database {
           notes?: string | null;
           status?: string;
           recurring_pattern_id?: string | null;
+          event_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -199,6 +201,7 @@ export interface Database {
           notes?: string | null;
           status?: string;
           recurring_pattern_id?: string | null;
+          event_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -215,6 +218,13 @@ export interface Database {
             columns: ["vehicle_id"];
             isOneToOne: false;
             referencedRelation: "vehicles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "rides_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
             referencedColumns: ["id"];
           },
         ];
@@ -797,6 +807,303 @@ export interface Database {
         };
         Relationships: [];
       };
+      events: {
+        Row: {
+          id: string;
+          creator_id: string;
+          name: string;
+          description: string | null;
+          location_address: string;
+          location: unknown;
+          event_date: string;
+          event_end_date: string | null;
+          status: string;
+          admin_notes: string | null;
+          approved_by: string | null;
+          approved_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          creator_id: string;
+          name: string;
+          description?: string | null;
+          location_address: string;
+          location: unknown;
+          event_date: string;
+          event_end_date?: string | null;
+          status?: string;
+          admin_notes?: string | null;
+          approved_by?: string | null;
+          approved_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          creator_id?: string;
+          name?: string;
+          description?: string | null;
+          location_address?: string;
+          location?: unknown;
+          event_date?: string;
+          event_end_date?: string | null;
+          status?: string;
+          admin_notes?: string | null;
+          approved_by?: string | null;
+          approved_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "events_creator_id_fkey";
+            columns: ["creator_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "events_approved_by_fkey";
+            columns: ["approved_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      badge_definitions: {
+        Row: {
+          id: string;
+          name: string;
+          description: string;
+          icon: string;
+          category: string;
+          threshold: number | null;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          name: string;
+          description: string;
+          icon: string;
+          category: string;
+          threshold?: number | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          description?: string;
+          icon?: string;
+          category?: string;
+          threshold?: number | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      user_achievements: {
+        Row: {
+          id: string;
+          user_id: string;
+          badge_id: string;
+          earned_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          badge_id: string;
+          earned_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          badge_id?: string;
+          earned_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "user_achievements_badge_id_fkey";
+            columns: ["badge_id"];
+            isOneToOne: false;
+            referencedRelation: "badge_definitions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      route_streaks: {
+        Row: {
+          id: string;
+          user_id: string;
+          origin_address: string;
+          destination_address: string;
+          current_streak: number;
+          longest_streak: number;
+          last_ride_week: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          origin_address: string;
+          destination_address: string;
+          current_streak?: number;
+          longest_streak?: number;
+          last_ride_week: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          origin_address?: string;
+          destination_address?: string;
+          current_streak?: number;
+          longest_streak?: number;
+          last_ride_week?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "route_streaks_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      route_intents: {
+        Row: {
+          id: string;
+          driver_id: string;
+          vehicle_id: string | null;
+          origin_location: unknown;
+          origin_address: string;
+          destination_location: unknown;
+          destination_address: string;
+          route_geometry: unknown | null;
+          route_encoded_polyline: string | null;
+          seats_total: number;
+          price_czk: number | null;
+          booking_mode: string;
+          notes: string | null;
+          status: string;
+          confirmed_ride_id: string | null;
+          subscriber_count: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          driver_id: string;
+          vehicle_id?: string | null;
+          origin_location: unknown;
+          origin_address: string;
+          destination_location: unknown;
+          destination_address: string;
+          route_geometry?: unknown | null;
+          route_encoded_polyline?: string | null;
+          seats_total?: number;
+          price_czk?: number | null;
+          booking_mode?: string;
+          notes?: string | null;
+          status?: string;
+          confirmed_ride_id?: string | null;
+          subscriber_count?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          driver_id?: string;
+          vehicle_id?: string | null;
+          origin_location?: unknown;
+          origin_address?: string;
+          destination_location?: unknown;
+          destination_address?: string;
+          route_geometry?: unknown | null;
+          route_encoded_polyline?: string | null;
+          seats_total?: number;
+          price_czk?: number | null;
+          booking_mode?: string;
+          notes?: string | null;
+          status?: string;
+          confirmed_ride_id?: string | null;
+          subscriber_count?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "route_intents_driver_id_fkey";
+            columns: ["driver_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "route_intents_vehicle_id_fkey";
+            columns: ["vehicle_id"];
+            isOneToOne: false;
+            referencedRelation: "vehicles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "route_intents_confirmed_ride_id_fkey";
+            columns: ["confirmed_ride_id"];
+            isOneToOne: false;
+            referencedRelation: "rides";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      route_intent_subscriptions: {
+        Row: {
+          id: string;
+          route_intent_id: string;
+          subscriber_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          route_intent_id: string;
+          subscriber_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          route_intent_id?: string;
+          subscriber_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "route_intent_subscriptions_route_intent_id_fkey";
+            columns: ["route_intent_id"];
+            isOneToOne: false;
+            referencedRelation: "route_intents";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "route_intent_subscriptions_subscriber_id_fkey";
+            columns: ["subscriber_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       notification_preferences: {
         Row: {
           user_id: string;
@@ -871,6 +1178,7 @@ export interface Database {
           driver_avatar: string | null;
           driver_rating: number;
           driver_rating_count: number;
+          driver_completed_rides_count: number;
           vehicle_make: string | null;
           vehicle_model: string | null;
           vehicle_color: string | null;
@@ -1064,6 +1372,76 @@ export interface Database {
         };
         Returns: undefined;
       };
+      admin_approve_event: {
+        Args: {
+          p_event_id: string;
+        };
+        Returns: undefined;
+      };
+      admin_reject_event: {
+        Args: {
+          p_event_id: string;
+          p_reason?: string | null;
+        };
+        Returns: undefined;
+      };
+      get_user_impact: {
+        Args: {
+          p_user_id?: string;
+        };
+        Returns: {
+          total_rides_completed: number;
+          total_co2_saved_kg: number;
+          total_money_saved_czk: number;
+          total_distance_km: number;
+          total_passengers_carried: number;
+        }[];
+      };
+      get_user_badges: {
+        Args: {
+          p_user_id?: string;
+        };
+        Returns: {
+          badge_id: string;
+          name: string;
+          description: string;
+          icon: string;
+          category: string;
+          threshold: number;
+          earned_at: string;
+        }[];
+      };
+      get_route_streaks: {
+        Args: {
+          p_user_id?: string;
+        };
+        Returns: {
+          id: string;
+          origin_address: string;
+          destination_address: string;
+          current_streak: number;
+          longest_streak: number;
+          last_ride_week: string;
+        }[];
+      };
+      get_event_rides: {
+        Args: {
+          p_event_id: string;
+        };
+        Returns: {
+          ride_id: string;
+          driver_id: string;
+          driver_name: string;
+          driver_avatar: string | null;
+          driver_rating: number;
+          origin_address: string;
+          destination_address: string;
+          departure_time: string;
+          seats_available: number;
+          price_czk: number | null;
+          booking_mode: string;
+        }[];
+      };
     };
     Enums: Record<string, never>;
   };
@@ -1087,3 +1465,19 @@ export type PlatformStatDaily =
   Database['public']['Tables']['platform_stats_daily']['Row'];
 export type PendingReview =
   Database['public']['Functions']['get_pending_reviews']['Returns'][number];
+
+// Phase 8 derived types
+export type Event = Database['public']['Tables']['events']['Row'];
+export type EventRide =
+  Database['public']['Functions']['get_event_rides']['Returns'][number];
+
+// Gamification derived types
+export type BadgeDefinition = Database['public']['Tables']['badge_definitions']['Row'];
+export type UserAchievement = Database['public']['Tables']['user_achievements']['Row'];
+export type RouteStreak = Database['public']['Tables']['route_streaks']['Row'];
+export type UserImpact =
+  Database['public']['Functions']['get_user_impact']['Returns'][number];
+export type UserBadgeResult =
+  Database['public']['Functions']['get_user_badges']['Returns'][number];
+export type RouteStreakResult =
+  Database['public']['Functions']['get_route_streaks']['Returns'][number];
