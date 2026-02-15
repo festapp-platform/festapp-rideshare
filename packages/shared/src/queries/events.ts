@@ -13,7 +13,7 @@ export function getApprovedEvents(client: SupabaseClient<Database>) {
   return client
     .from('events')
     .select(
-      'id, name, description, location_address, event_date, event_end_date, created_at, creator:creator_id(id, display_name, avatar_url)',
+      'id, name, description, location_address, event_date, event_end_date, created_at, creator:profiles!events_creator_id_fkey(id, display_name, avatar_url)',
     )
     .eq('status', 'approved')
     .gte('event_date', new Date().toISOString())
@@ -28,7 +28,7 @@ export function getEventById(
   return client
     .from('events')
     .select(
-      '*, creator:creator_id(id, display_name, avatar_url, rating_avg)',
+      '*, creator:profiles!events_creator_id_fkey(id, display_name, avatar_url, rating_avg)',
     )
     .eq('id', id)
     .single();
@@ -51,7 +51,7 @@ export function getPendingEventsForAdmin(client: SupabaseClient<Database>) {
   return client
     .from('events')
     .select(
-      '*, creator:creator_id(id, display_name, avatar_url)',
+      '*, creator:profiles!events_creator_id_fkey(id, display_name, avatar_url)',
     )
     .eq('status', 'pending')
     .order('created_at', { ascending: true });

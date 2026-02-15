@@ -9,6 +9,7 @@ import {
   type CreateRide,
   PRICING,
   calculateSuggestedPrice,
+  getApprovedEvents,
 } from "@festapp/shared";
 import { createRide } from "@festapp/shared";
 import { decode as decodePolyline } from "@googlemaps/polyline-codec";
@@ -25,10 +26,22 @@ interface RouteInfo {
   priceMaxCzk: number;
 }
 
+interface LinkedEvent {
+  id: string;
+  name: string;
+  location_address: string;
+  location_lat: number;
+  location_lng: number;
+}
+
+interface RideFormProps {
+  linkedEvent?: LinkedEvent | null;
+}
+
 type WizardStep = 0 | 1 | 2;
 const STEP_LABELS = ["Route", "When", "Price"] as const;
 
-export function RideForm() {
+export function RideForm({ linkedEvent }: RideFormProps) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -45,6 +58,14 @@ export function RideForm() {
   // Submit state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Event linking
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(
+    linkedEvent?.id ?? null,
+  );
+  const [availableEvents, setAvailableEvents] = useState<
+    { id: string; name: string }[]
+  >([]);
 
   // Vehicles
   const [vehicles, setVehicles] = useState<
@@ -106,6 +127,30 @@ export function RideForm() {
       if (data) setVehicles(data);
     }
     fetchVehicles();
+  }, [supabase]);
+
+  // Pre-fill destination from linked event
+  useEffect(() => {
+    if (linkedEvent && linkedEvent.location_lat !== 0) {
+      const eventPlace: PlaceResult = {
+        lat: linkedEvent.location_lat,
+        lng: linkedEvent.location_lng,
+        address: linkedEvent.location_address,
+        placeId: "",
+      };
+      setDestination(eventPlace);
+    }
+  }, [linkedEvent]);
+
+  // Fetch approved events for optional linking dropdown
+  useEffect(() => {
+    async function fetchEvents() {
+      const { data } = await getApprovedEvents(supabase);
+      if (data) {
+        setAvailableEvents(data.map((e) => ({ id: e.id, name: e.name })));
+      }
+    }
+    fetchEvents();
   }, [supabase]);
 
   // Compute route when both origin and destination are set
@@ -235,6 +280,7 @@ export function RideForm() {
         preferences: values.preferences ?? {},
         notes: values.notes ?? null,
         vehicle_id: values.vehicleId ?? null,
+        event_id: selectedEventId ?? null,
         ...(routeInfo?.encodedPolyline
           ? {
               route_geometry: encodedPolylineToWKT(routeInfo.encodedPolyline),
@@ -602,6 +648,33 @@ export function RideForm() {
                 {vehicles.map((v) => (
                   <option key={v.id} value={v.id}>
                     {v.make} {v.model}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Event linking */}
+          {availableEvents.length > 0 && (
+            <div className="mb-6">
+              <label
+                htmlFor="event"
+                className="mb-1 block text-sm font-medium text-text-main"
+              >
+                Link to event (optional)
+              </label>
+              <select
+                id="event"
+                value={selectedEventId ?? ""}
+                onChange={(e) =>
+                  setSelectedEventId(e.target.value || null)
+                }
+                className="w-full rounded-xl border border-border-pastel bg-background px-4 py-3 text-sm text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+              >
+                <option value="">No event</option>
+                {availableEvents.map((ev) => (
+                  <option key={ev.id} value={ev.id}>
+                    {ev.name}
                   </option>
                 ))}
               </select>
