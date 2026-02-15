@@ -68,6 +68,7 @@ const VALID_TYPES: NotificationType[] = [
   "new_message",
   "ride_reminder",
   "route_alert",
+  "flexible_ride_confirmed",
 ];
 
 /** Email-eligible notification types that can generate templates from ride_data. */

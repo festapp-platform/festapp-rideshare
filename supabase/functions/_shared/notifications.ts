@@ -13,7 +13,8 @@ export type NotificationType =
   | "booking_cancellation"
   | "new_message"
   | "ride_reminder"
-  | "route_alert";
+  | "route_alert"
+  | "flexible_ride_confirmed";
 
 export interface NotificationPreferences {
   push_booking_requests: boolean;
@@ -35,6 +36,7 @@ const PUSH_PREF_MAP: Record<NotificationType, keyof NotificationPreferences> = {
   new_message: "push_new_messages",
   ride_reminder: "push_ride_reminders",
   route_alert: "push_route_alerts",
+  flexible_ride_confirmed: "push_route_alerts",
 };
 
 /**
