@@ -126,6 +126,7 @@ Recent decisions affecting current work:
 - [ ] Prettier dialogs: delete account confirmation and other modals (polish phase)
 - [ ] Supabase project linked: `xamctptqmpruhovhjcgm` (rideshare) on rawen.dev 2, migrations pushed
 - [ ] Research and implement ride audit trail: event sourcing/CDC/trigger research + ride_events table + RPC updates + cancellation columns (database)
+- [ ] Fix image uploads via Edge Function: refactor to server-side upload (like akhweb), random UUID filenames, bypass broken RLS (api)
 
 ### Blockers/Concerns
 
