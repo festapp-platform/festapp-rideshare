@@ -134,14 +134,14 @@ Plans:
   3. User can report another user for inappropriate behavior and block them (blocked user's rides and messages become invisible)
   4. Admin can view and manage reported users and content, warn/suspend/ban users, and see basic platform stats
   5. Admin panel is a protected web-only dashboard with role-based access
-**Plans**: TBD
+**Plans:** 5 plans
 
 Plans:
-- [ ] 06-01: Rating and review submission flow
-- [ ] 06-02: Rating display on profiles and aggregation
-- [ ] 06-03: User reporting and blocking
-- [ ] 06-04: Admin panel with moderation tools
-- [ ] 06-05: Platform stats dashboard
+- [ ] 06-01-PLAN.md — Database foundation: reviews, reports, blocks, moderation tables, RPCs, triggers, cron jobs, RLS
+- [ ] 06-02-PLAN.md — Shared package: constants, Zod schemas, query builders, Database types for Phase 6
+- [ ] 06-03-PLAN.md — Rating modal, review display on profiles, experienced badge, pending rating detection
+- [ ] 06-04-PLAN.md — Report dialog, block/unblock, blocked users settings, profile integration
+- [ ] 06-05-PLAN.md — Admin panel: dashboard, reports management, user moderation, review management
 
 ### Phase 7: Live Location
 **Goal**: Drivers and passengers can find each other at the pickup point using real-time location sharing on a map
