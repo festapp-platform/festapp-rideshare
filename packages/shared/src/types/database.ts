@@ -114,12 +114,300 @@ export interface Database {
           },
         ];
       };
+      rides: {
+        Row: {
+          id: string;
+          driver_id: string;
+          vehicle_id: string | null;
+          origin_location: unknown;
+          origin_address: string;
+          destination_location: unknown;
+          destination_address: string;
+          route_geometry: unknown | null;
+          route_encoded_polyline: string | null;
+          departure_time: string;
+          seats_total: number;
+          seats_available: number;
+          suggested_price_czk: number | null;
+          price_czk: number | null;
+          distance_meters: number | null;
+          duration_seconds: number | null;
+          luggage_size: string;
+          booking_mode: string;
+          preferences: Record<string, unknown>;
+          notes: string | null;
+          status: string;
+          recurring_pattern_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          driver_id: string;
+          vehicle_id?: string | null;
+          origin_location: unknown;
+          origin_address: string;
+          destination_location: unknown;
+          destination_address: string;
+          route_geometry?: unknown | null;
+          route_encoded_polyline?: string | null;
+          departure_time: string;
+          seats_total: number;
+          seats_available: number;
+          suggested_price_czk?: number | null;
+          price_czk?: number | null;
+          distance_meters?: number | null;
+          duration_seconds?: number | null;
+          luggage_size?: string;
+          booking_mode?: string;
+          preferences?: Record<string, unknown>;
+          notes?: string | null;
+          status?: string;
+          recurring_pattern_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          driver_id?: string;
+          vehicle_id?: string | null;
+          origin_location?: unknown;
+          origin_address?: string;
+          destination_location?: unknown;
+          destination_address?: string;
+          route_geometry?: unknown | null;
+          route_encoded_polyline?: string | null;
+          departure_time?: string;
+          seats_total?: number;
+          seats_available?: number;
+          suggested_price_czk?: number | null;
+          price_czk?: number | null;
+          distance_meters?: number | null;
+          duration_seconds?: number | null;
+          luggage_size?: string;
+          booking_mode?: string;
+          preferences?: Record<string, unknown>;
+          notes?: string | null;
+          status?: string;
+          recurring_pattern_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "rides_driver_id_fkey";
+            columns: ["driver_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "rides_vehicle_id_fkey";
+            columns: ["vehicle_id"];
+            isOneToOne: false;
+            referencedRelation: "vehicles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      ride_waypoints: {
+        Row: {
+          id: string;
+          ride_id: string;
+          location: unknown;
+          address: string;
+          order_index: number;
+          type: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          ride_id: string;
+          location: unknown;
+          address: string;
+          order_index: number;
+          type?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          ride_id?: string;
+          location?: unknown;
+          address?: string;
+          order_index?: number;
+          type?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ride_waypoints_ride_id_fkey";
+            columns: ["ride_id"];
+            isOneToOne: false;
+            referencedRelation: "rides";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      recurring_ride_patterns: {
+        Row: {
+          id: string;
+          driver_id: string;
+          vehicle_id: string | null;
+          origin_location: unknown;
+          origin_address: string;
+          destination_location: unknown;
+          destination_address: string;
+          route_geometry: unknown | null;
+          route_encoded_polyline: string | null;
+          day_of_week: number;
+          departure_time: string;
+          seats_total: number;
+          price_czk: number | null;
+          booking_mode: string;
+          is_active: boolean;
+          generate_weeks_ahead: number;
+          last_generated_date: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          driver_id: string;
+          vehicle_id?: string | null;
+          origin_location: unknown;
+          origin_address: string;
+          destination_location: unknown;
+          destination_address: string;
+          route_geometry?: unknown | null;
+          route_encoded_polyline?: string | null;
+          day_of_week: number;
+          departure_time: string;
+          seats_total?: number;
+          price_czk?: number | null;
+          booking_mode?: string;
+          is_active?: boolean;
+          generate_weeks_ahead?: number;
+          last_generated_date?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          driver_id?: string;
+          vehicle_id?: string | null;
+          origin_location?: unknown;
+          origin_address?: string;
+          destination_location?: unknown;
+          destination_address?: string;
+          route_geometry?: unknown | null;
+          route_encoded_polyline?: string | null;
+          day_of_week?: number;
+          departure_time?: string;
+          seats_total?: number;
+          price_czk?: number | null;
+          booking_mode?: string;
+          is_active?: boolean;
+          generate_weeks_ahead?: number;
+          last_generated_date?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "recurring_ride_patterns_driver_id_fkey";
+            columns: ["driver_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "recurring_ride_patterns_vehicle_id_fkey";
+            columns: ["vehicle_id"];
+            isOneToOne: false;
+            referencedRelation: "vehicles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      favorite_routes: {
+        Row: {
+          id: string;
+          user_id: string;
+          origin_location: unknown;
+          origin_address: string;
+          destination_location: unknown;
+          destination_address: string;
+          label: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          origin_location: unknown;
+          origin_address: string;
+          destination_location: unknown;
+          destination_address: string;
+          label?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          origin_location?: unknown;
+          origin_address?: string;
+          destination_location?: unknown;
+          destination_address?: string;
+          label?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "favorite_routes_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
       is_phone_verified: {
         Args: { user_id: string };
         Returns: boolean;
+      };
+      nearby_rides: {
+        Args: {
+          origin_lat: number;
+          origin_lng: number;
+          dest_lat: number;
+          dest_lng: number;
+          search_date: string;
+          radius_km?: number;
+          max_results?: number;
+        };
+        Returns: {
+          ride_id: string;
+          driver_id: string;
+          driver_name: string;
+          driver_avatar: string | null;
+          driver_rating: number;
+          driver_rating_count: number;
+          vehicle_make: string | null;
+          vehicle_model: string | null;
+          vehicle_color: string | null;
+          origin_address: string;
+          destination_address: string;
+          departure_time: string;
+          seats_available: number;
+          price_czk: number | null;
+          distance_meters: number | null;
+          duration_seconds: number | null;
+          booking_mode: string;
+          origin_distance_m: number;
+          dest_distance_m: number;
+        }[];
       };
     };
     Enums: Record<string, never>;
