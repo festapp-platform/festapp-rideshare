@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { AppNav } from "./app-nav";
+import { GoogleMapsProvider } from "@/lib/google-maps-provider";
 
 /**
  * Authenticated app layout (NAV-01).
@@ -38,14 +39,16 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background md:flex-row">
-      {/* Desktop sidebar */}
-      <AppNav />
+    <GoogleMapsProvider>
+      <div className="flex min-h-screen flex-col bg-background md:flex-row">
+        {/* Desktop sidebar */}
+        <AppNav />
 
-      {/* Main content */}
-      <main className="flex-1 pb-16 md:pb-0">
-        <div className="mx-auto max-w-4xl px-4 py-6">{children}</div>
-      </main>
-    </div>
+        {/* Main content */}
+        <main className="flex-1 pb-16 md:pb-0">
+          <div className="mx-auto max-w-4xl px-4 py-6">{children}</div>
+        </main>
+      </div>
+    </GoogleMapsProvider>
   );
 }
