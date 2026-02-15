@@ -16,7 +16,7 @@ export function getBookingsForRide(
   return client
     .from('bookings')
     .select(
-      '*, profiles:passenger_id(display_name, avatar_url, rating_avg)',
+      '*, profiles!bookings_passenger_id_fkey(display_name, avatar_url, rating_avg)',
     )
     .eq('ride_id', rideId)
     .order('created_at', { ascending: true });
@@ -55,7 +55,7 @@ export function getBookingById(
         seats_total, seats_available, price_czk, status, driver_id,
         profiles:driver_id(display_name, avatar_url, rating_avg)
       ),
-      profiles:passenger_id(display_name, avatar_url, rating_avg)
+      profiles!bookings_passenger_id_fkey(display_name, avatar_url, rating_avg)
     `)
     .eq('id', bookingId)
     .single();

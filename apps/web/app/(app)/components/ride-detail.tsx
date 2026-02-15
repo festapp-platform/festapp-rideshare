@@ -394,7 +394,7 @@ export function RideDetail({
         seatsTotal={ride.seats_total}
       />
 
-      {/* Manage Bookings link for driver with request-mode rides or pending bookings */}
+      {/* Manage Bookings link for driver */}
       {isOwner &&
         ride.status === RIDE_STATUS.upcoming &&
         (ride.booking_mode === "request" ||
