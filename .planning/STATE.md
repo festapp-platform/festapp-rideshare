@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 3 of 11 (Ride Posting & Search)
-Plan: 3 of 7 in current phase
+Plan: 5 of 7 in current phase
 Status: Executing
-Last activity: 2026-02-15 -- Completed 03-03 (compute-route Edge Function)
+Last activity: 2026-02-15 -- Completed 03-05 (ride search page)
 
 Progress: [████░░░░░░] 24%
 
@@ -37,6 +37,7 @@ Progress: [████░░░░░░] 24%
 *Updated after each plan completion*
 | Phase 03 P01 | 3min | 2 tasks | 8 files |
 | Phase 03 P02 | 2min | 2 tasks | 9 files |
+| Phase 03 P05 | 4min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,9 @@ Recent decisions affecting current work:
 - [Phase 03]: nearby_rides RPC falls back to point matching when route_geometry is NULL
 - [Phase 03-02]: Added @supabase/supabase-js to shared package for typed query builders (SupabaseClient<Database> pattern)
 - [Phase 03-02]: PostGIS geography columns typed as unknown (opaque binary format); NearbyRideResult derived from Database Functions type
+- [03-05]: Client-side filtering on RPC results for price/mode/seats refinement; RPC handles spatial filtering
+- [03-05]: URL search params persist coordinates and date for shareable/bookmarkable searches
+- [03-05]: Skeleton cards as loading state instead of spinner for better perceived performance
 
 ### Pending Todos
 
@@ -99,5 +103,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 03-03-PLAN.md (compute-route Edge Function)
+Stopped at: Completed 03-05-PLAN.md (ride search page)
 Resume file: None
