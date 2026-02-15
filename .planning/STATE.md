@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 2 of 11 (Profiles & Identity)
-Plan: 3 of 5 in current phase
-Status: Executing
-Last activity: 2026-02-15 -- Completed 02-03 (vehicle management UI)
+Plan: 5 of 5 in current phase
+Status: Executing (02-04 running in parallel)
+Last activity: 2026-02-15 -- Completed 02-05 (profile onboarding extension)
 
-Progress: [██░░░░░░░░] 16%
+Progress: [███░░░░░░░] 20%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: 6min
-- Total execution time: 0.8 hours
+- Total execution time: 0.9 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-auth | 5/5 | 33min | 7min |
-| 02-profiles-identity | 3/5 | 18min | 6min |
+| 02-profiles-identity | 4/5 | 22min | 6min |
 
 **Recent Trend:**
-- Last 5 plans: 5min, 4min, 3min, 7min, 8min
+- Last 5 plans: 4min, 3min, 7min, 8min, 4min
 - Trend: improving
 
 *Updated after each plan completion*
@@ -68,6 +68,9 @@ Recent decisions affecting current work:
 - [02-02]: Avatar upload on web previews locally, uploads on save; mobile uploads immediately on pick
 - [02-03]: Mobile photo upload offered after save (vehicle ID needed for storage path); web uploads inline
 - [02-03]: Web inline confirm-on-second-click for delete; mobile uses native Alert dialog
+- [02-05]: Separate PROFILE_ONBOARDING_COMPLETED_KEY for backward compat -- existing users keep their completed state but see new profile steps
+- [02-05]: Mobile vehicle photo upload offered via Alert after save (consistent with 02-03 pattern)
+- [02-05]: FlatList Option A: scrollEnabled disabled for form steps, re-enabled for passive steps
 
 ### Pending Todos
 
@@ -84,5 +87,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 02-03-PLAN.md (vehicle management UI)
+Stopped at: Completed 02-05-PLAN.md (profile onboarding extension)
 Resume file: None
