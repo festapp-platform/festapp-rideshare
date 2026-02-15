@@ -2,8 +2,8 @@
  * Send Ride Reminders Edge Function.
  *
  * Cron-triggered (every 15 minutes via pg_cron). Finds rides departing
- * within ~75 minutes that haven't been reminded yet, and sends push
- * notifications to driver and confirmed passengers.
+ * within ~75 minutes that haven't been reminded yet, and dispatches
+ * notifications (push + email) via the send-notification function.
  *
  * Authentication: service_role key required (server-to-server only).
  *
@@ -13,11 +13,6 @@
  *   500 - Server error
  */
 import { createAdminClient } from "../_shared/supabase-client.ts";
-import { sendPush } from "../_shared/onesignal.ts";
-import {
-  getNotificationPreferences,
-  shouldSendPush,
-} from "../_shared/notifications.ts";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -31,6 +26,37 @@ function jsonResponse(body: unknown, status: number) {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+/**
+ * Call send-notification Edge Function for a single user.
+ * This centralizes push + email dispatch logic in one place.
+ */
+async function callSendNotification(payload: Record<string, unknown>) {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    console.error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
+    return;
+  }
+
+  const res = await fetch(
+    `${supabaseUrl}/functions/v1/send-notification`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${serviceRoleKey}`,
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.warn("send-notification call failed:", res.status, text);
+  }
 }
 
 Deno.serve(async (req) => {
@@ -58,7 +84,7 @@ Deno.serve(async (req) => {
     // Find rides departing within 75 minutes that haven't been reminded
     const { data: rides, error: ridesError } = await supabase
       .from("rides")
-      .select("id, driver_id, origin_address, destination_address")
+      .select("id, driver_id, origin_address, destination_address, departure_time")
       .eq("status", "upcoming")
       .is("reminder_sent_at", null)
       .gte("departure_time", new Date().toISOString())
@@ -92,18 +118,22 @@ Deno.serve(async (req) => {
         }
       }
 
-      // Send push to each user who has ride_reminder enabled
+      // Dispatch via send-notification for each user (handles push + email + prefs)
       for (const userId of userIds) {
-        const prefs = await getNotificationPreferences(userId);
-        if (shouldSendPush(prefs, "ride_reminder")) {
-          await sendPush({
-            userIds: [userId],
-            title: "Ride Reminder",
-            body: `Your ride from ${ride.origin_address} to ${ride.destination_address} departs in about 1 hour`,
-            data: { ride_id: ride.id },
-          });
-          remindersSent++;
-        }
+        await callSendNotification({
+          user_id: userId,
+          type: "ride_reminder",
+          title: "Ride Reminder",
+          body: `Your ride from ${ride.origin_address} to ${ride.destination_address} departs in about 1 hour`,
+          data: { ride_id: ride.id },
+          ride_data: {
+            ride_id: ride.id,
+            origin_address: ride.origin_address,
+            destination_address: ride.destination_address,
+            departure_time: ride.departure_time,
+          },
+        });
+        remindersSent++;
       }
 
       // Mark ride as reminded

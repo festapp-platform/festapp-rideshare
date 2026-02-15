@@ -8,6 +8,9 @@
  * All notification triggers (booking events, chat messages, ride reminders,
  * route alerts) call this single function.
  *
+ * Email templates are generated inline for eligible types when ride_data
+ * is provided and no explicit email_html is given.
+ *
  * Returns:
  *   200 - Notification dispatched (with push_sent/email_sent booleans)
  *   400 - Invalid payload
@@ -38,6 +41,14 @@ function jsonResponse(body: unknown, status: number) {
   });
 }
 
+interface RideData {
+  ride_id?: string;
+  origin_address: string;
+  destination_address: string;
+  departure_time?: string;
+  other_party_name?: string;
+}
+
 interface NotificationPayload {
   user_id: string;
   type: NotificationType;
@@ -47,6 +58,7 @@ interface NotificationPayload {
   url?: string;
   email_subject?: string;
   email_html?: string;
+  ride_data?: RideData;
 }
 
 const VALID_TYPES: NotificationType[] = [
@@ -57,6 +69,163 @@ const VALID_TYPES: NotificationType[] = [
   "ride_reminder",
   "route_alert",
 ];
+
+/** Email-eligible notification types that can generate templates from ride_data. */
+const EMAIL_TEMPLATE_TYPES: NotificationType[] = [
+  "booking_confirmation",
+  "booking_cancellation",
+  "ride_reminder",
+];
+
+const APP_NAME = "FestApp Rideshare";
+const APP_URL = Deno.env.get("APP_URL") ?? "https://rideshare.festapp.io";
+
+// ---------------------------------------------------------------------------
+// Email template generation
+// ---------------------------------------------------------------------------
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function formatDepartureTime(iso: string): string {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  } catch {
+    return iso;
+  }
+}
+
+function emailWrapper(content: string, rideId?: string): string {
+  const viewRideUrl = rideId ? `${APP_URL}/rides/${rideId}` : APP_URL;
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f7f5f3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f7f5f3;padding:24px 0;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;max-width:560px;width:100%;">
+        <!-- Header -->
+        <tr><td style="background:#6C63FF;padding:20px 24px;text-align:center;">
+          <span style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:0.5px;">${APP_NAME}</span>
+        </td></tr>
+        <!-- Content -->
+        <tr><td style="padding:24px;">
+          ${content}
+          <div style="margin-top:24px;text-align:center;">
+            <a href="${escapeHtml(viewRideUrl)}" style="display:inline-block;padding:12px 28px;background:#6C63FF;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600;font-size:14px;">View Ride</a>
+          </div>
+        </td></tr>
+        <!-- Footer -->
+        <tr><td style="padding:16px 24px;border-top:1px solid #eee;text-align:center;">
+          <p style="margin:0;font-size:12px;color:#999;">Manage your notification preferences in <a href="${APP_URL}/settings/notifications" style="color:#6C63FF;">app settings</a>.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+function generateEmailContent(
+  type: NotificationType,
+  rideData: RideData,
+): { subject: string; html: string } | null {
+  const origin = escapeHtml(rideData.origin_address);
+  const destination = escapeHtml(rideData.destination_address);
+  const departure = rideData.departure_time
+    ? formatDepartureTime(rideData.departure_time)
+    : "";
+  const otherParty = rideData.other_party_name
+    ? escapeHtml(rideData.other_party_name)
+    : "";
+
+  switch (type) {
+    case "booking_confirmation": {
+      const subject = `Booking Confirmed - ${rideData.origin_address} to ${rideData.destination_address}`;
+      const content = `
+        <h2 style="margin:0 0 16px;color:#333;font-size:20px;">Booking Confirmed</h2>
+        <p style="margin:0 0 12px;color:#555;font-size:14px;line-height:1.5;">Your booking has been confirmed${otherParty ? ` with <strong>${otherParty}</strong>` : ""}.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9f8f7;border-radius:8px;padding:16px;margin:16px 0;">
+          <tr><td style="padding:8px 16px;">
+            <p style="margin:0 0 8px;font-size:13px;color:#888;">From</p>
+            <p style="margin:0;font-size:15px;color:#333;font-weight:500;">${origin}</p>
+          </td></tr>
+          <tr><td style="padding:8px 16px;">
+            <p style="margin:0 0 8px;font-size:13px;color:#888;">To</p>
+            <p style="margin:0;font-size:15px;color:#333;font-weight:500;">${destination}</p>
+          </td></tr>
+          ${departure ? `<tr><td style="padding:8px 16px;">
+            <p style="margin:0 0 8px;font-size:13px;color:#888;">Departure</p>
+            <p style="margin:0;font-size:15px;color:#333;font-weight:500;">${escapeHtml(departure)}</p>
+          </td></tr>` : ""}
+        </table>`;
+      return { subject, html: emailWrapper(content, rideData.ride_id) };
+    }
+
+    case "ride_reminder": {
+      const subject = `Ride Reminder - Departing in 1 hour`;
+      const content = `
+        <h2 style="margin:0 0 16px;color:#333;font-size:20px;">Ride Reminder</h2>
+        <p style="margin:0 0 12px;color:#555;font-size:14px;line-height:1.5;">Your ride is departing soon. Make sure you are ready!</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9f8f7;border-radius:8px;padding:16px;margin:16px 0;">
+          <tr><td style="padding:8px 16px;">
+            <p style="margin:0 0 8px;font-size:13px;color:#888;">From</p>
+            <p style="margin:0;font-size:15px;color:#333;font-weight:500;">${origin}</p>
+          </td></tr>
+          <tr><td style="padding:8px 16px;">
+            <p style="margin:0 0 8px;font-size:13px;color:#888;">To</p>
+            <p style="margin:0;font-size:15px;color:#333;font-weight:500;">${destination}</p>
+          </td></tr>
+          ${departure ? `<tr><td style="padding:8px 16px;">
+            <p style="margin:0 0 8px;font-size:13px;color:#888;">Departure</p>
+            <p style="margin:0;font-size:15px;color:#333;font-weight:500;">${escapeHtml(departure)}</p>
+          </td></tr>` : ""}
+        </table>`;
+      return { subject, html: emailWrapper(content, rideData.ride_id) };
+    }
+
+    case "booking_cancellation": {
+      const subject = `Booking Cancelled - ${rideData.origin_address} to ${rideData.destination_address}`;
+      const content = `
+        <h2 style="margin:0 0 16px;color:#333;font-size:20px;">Booking Cancelled</h2>
+        <p style="margin:0 0 12px;color:#555;font-size:14px;line-height:1.5;">A booking for the following ride has been cancelled${otherParty ? ` by <strong>${otherParty}</strong>` : ""}.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9f8f7;border-radius:8px;padding:16px;margin:16px 0;">
+          <tr><td style="padding:8px 16px;">
+            <p style="margin:0 0 8px;font-size:13px;color:#888;">From</p>
+            <p style="margin:0;font-size:15px;color:#333;font-weight:500;">${origin}</p>
+          </td></tr>
+          <tr><td style="padding:8px 16px;">
+            <p style="margin:0 0 8px;font-size:13px;color:#888;">To</p>
+            <p style="margin:0;font-size:15px;color:#333;font-weight:500;">${destination}</p>
+          </td></tr>
+          ${departure ? `<tr><td style="padding:8px 16px;">
+            <p style="margin:0 0 8px;font-size:13px;color:#888;">Departure</p>
+            <p style="margin:0;font-size:15px;color:#333;font-weight:500;">${escapeHtml(departure)}</p>
+          </td></tr>` : ""}
+        </table>`;
+      return { subject, html: emailWrapper(content, rideData.ride_id) };
+    }
+
+    default:
+      return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Main handler
+// ---------------------------------------------------------------------------
 
 Deno.serve(async (req) => {
   // CORS preflight
@@ -120,9 +289,24 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Send email if content provided and enabled
-    if (payload.email_html && shouldSendEmail(prefs, payload.type)) {
-      // Fetch user's email from auth.users via admin client
+    // Determine email content: use provided html, or generate from template
+    let emailSubject = payload.email_subject ?? payload.title;
+    let emailHtml = payload.email_html ?? null;
+
+    if (
+      !emailHtml &&
+      payload.ride_data &&
+      EMAIL_TEMPLATE_TYPES.includes(payload.type)
+    ) {
+      const generated = generateEmailContent(payload.type, payload.ride_data);
+      if (generated) {
+        emailSubject = generated.subject;
+        emailHtml = generated.html;
+      }
+    }
+
+    // Send email if content available and enabled by preferences
+    if (emailHtml && shouldSendEmail(prefs, payload.type)) {
       const supabase = createAdminClient();
       const { data: userData, error: userError } =
         await supabase.auth.admin.getUserById(payload.user_id);
@@ -135,8 +319,8 @@ Deno.serve(async (req) => {
       } else {
         emailSent = await sendEmail({
           to: userData.user.email,
-          subject: payload.email_subject ?? payload.title,
-          html: payload.email_html,
+          subject: emailSubject,
+          html: emailHtml,
         });
       }
     }

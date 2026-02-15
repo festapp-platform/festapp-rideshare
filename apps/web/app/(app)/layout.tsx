@@ -5,6 +5,7 @@ import { AppNav } from "./app-nav";
 import { MapProvider } from "@/lib/map-provider";
 import { PostRideFab } from "./components/post-ride-fab";
 import { Toaster } from "sonner";
+import { OneSignalInit } from "./components/onesignal-init";
 
 /**
  * Authenticated app layout (NAV-01).
@@ -53,6 +54,9 @@ export default async function AppLayout({
 
         {/* Post-a-Ride FAB on all authenticated pages (NAV-07) */}
         <PostRideFab />
+
+        {/* OneSignal push notification initialization (NOTF-05) */}
+        <OneSignalInit />
 
         {/* Toast notifications */}
         <Toaster position="top-right" richColors closeButton />
