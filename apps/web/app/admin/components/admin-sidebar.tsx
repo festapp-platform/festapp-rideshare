@@ -7,6 +7,7 @@ import {
   Flag,
   Users,
   Star,
+  Calendar,
   Menu,
   X,
 } from "lucide-react";
@@ -17,6 +18,7 @@ const navItems = [
   { name: "Reports", href: "/admin/reports", icon: Flag },
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Reviews", href: "/admin/reviews", icon: Star },
+  { name: "Events", href: "/admin/events", icon: Calendar },
 ];
 
 interface AdminSidebarProps {
