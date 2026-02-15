@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 2 of 11 (Profiles & Identity)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: Executing
-Last activity: 2026-02-15 -- Completed 02-01 (data layer & shared schemas)
+Last activity: 2026-02-15 -- Completed 02-02 (profile editing UI with avatar upload)
 
-Progress: [██░░░░░░░░] 11%
+Progress: [██░░░░░░░░] 15%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 6min
-- Total execution time: 0.6 hours
+- Total execution time: 0.7 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-auth | 5/5 | 33min | 7min |
-| 02-profiles-identity | 1/5 | 3min | 3min |
+| 02-profiles-identity | 2/5 | 10min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 6min, 5min, 4min, 3min
+- Last 5 plans: 6min, 5min, 4min, 3min, 7min
 - Trend: improving
 
 *Updated after each plan completion*
@@ -63,6 +63,9 @@ Recent decisions affecting current work:
 - [02-01]: DisplayNameSchema moved from auth.ts to profile.ts as single source of truth; re-exported from auth.ts
 - [02-01]: is_phone_verified derives from auth.users (no duplicated column) per research pitfall #4
 - [02-01]: Storage path helpers use Date.now() suffix for CDN cache-busting
+- [02-02]: Web avatar upload uses browser-image-compression with useWebWorker for non-blocking compression
+- [02-02]: Mobile uses Controller pattern from react-hook-form for TextInput (not register) for proper RN integration
+- [02-02]: Avatar upload on web previews locally, uploads on save; mobile uploads immediately on pick
 
 ### Pending Todos
 
@@ -79,5 +82,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 02-01-PLAN.md (data layer & shared schemas)
+Stopped at: Completed 02-02-PLAN.md (profile editing UI with avatar upload)
 Resume file: None
