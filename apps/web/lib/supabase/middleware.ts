@@ -9,7 +9,13 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /** Routes that don't require authentication */
-const PUBLIC_ROUTES = ["/login", "/signup", "/reset-password", "/auth/callback"];
+const PUBLIC_ROUTES = [
+  "/login",
+  "/signup",
+  "/reset-password",
+  "/auth/callback",
+  "/auth/confirm",
+];
 
 function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
