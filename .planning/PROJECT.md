@@ -63,6 +63,7 @@ Drivers and passengers can find each other for shared rides quickly and effortle
 - **SMS:** AWS SNS via custom Supabase Auth hook (cheapest SMS to CZ/SK at ~$0.035/SMS)
 - **Email:** AWS SES for transactional emails ($0.10/1000 emails)
 - **Push:** OneSignal for push notifications (mobile + web push)
+- **Data access:** Prefer Supabase RPC functions (PostgreSQL functions) over direct table queries for write operations and complex reads. Direct queries only for simple reads protected by RLS.
 - **Cost:** Minimize infrastructure costs (Supabase free tier, AWS for email/SMS, open-source map options)
 
 ## Key Decisions
@@ -79,6 +80,7 @@ Drivers and passengers can find each other for shared rides quickly and effortle
 | AWS SNS for SMS | Cheapest SMS provider to CZ/SK (~$0.035/SMS vs $0.065 Twilio). Custom Supabase Auth hook required | — Pending |
 | AWS SES for email | Cheapest email ($0.10/1K). User has AWS experience. Transactional emails via Edge Functions | — Pending |
 | OneSignal for push | Web push + mobile push + scheduling. Better than Expo Push for PWA-first strategy | — Pending |
+| RPC-first data access | Prefer Supabase RPC (PostgreSQL functions) for writes + complex reads. Atomic transactions, hidden table structure, server-side validation. Direct queries only for simple reads with RLS | — Pending |
 | Web + PWA first, app stores later | Launch web as PWA first. Mobile native apps released to stores in a later phase. Faster to market, iterate on web, then polish for stores | — Pending |
 
 ---
