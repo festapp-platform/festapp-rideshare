@@ -85,6 +85,14 @@ export default async function RideDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  // Fetch driver reliability data server-side to avoid client waterfall
+  const { data: reliabilityRows } = await supabase.rpc(
+    "get_driver_reliability",
+    { p_driver_id: ride.driver_id },
+  );
+  const driverReliability =
+    reliabilityRows && reliabilityRows.length > 0 ? reliabilityRows[0] : null;
+
   // Determine ownership and current user
   const {
     data: { user },
@@ -120,12 +128,14 @@ export default async function RideDetailPage({ params }: PageProps) {
         currentUserBooking={
           currentUserBooking
             ? {
+                id: currentUserBooking.id,
                 status: currentUserBooking.status as BookingStatus,
                 seats_booked: currentUserBooking.seats_booked,
               }
             : null
         }
         currentUserId={currentUserId}
+        driverReliability={driverReliability}
       />
     </div>
   );

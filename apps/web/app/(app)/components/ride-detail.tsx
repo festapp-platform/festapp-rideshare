@@ -4,12 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
-import { updateRide, deleteRide, RIDE_STATUS, type BookingStatus } from "@festapp/shared";
-import { createClient } from "@/lib/supabase/client";
+import { RIDE_STATUS, type BookingStatus } from "@festapp/shared";
 import { RideMap } from "./ride-map";
 import { RideStatusBadge } from "./ride-status-badge";
 import { BookingButton } from "./booking-button";
 import { PassengerList } from "./passenger-list";
+import { CancellationDialog } from "./cancellation-dialog";
+import { ReliabilityBadge, type DriverReliability } from "./reliability-badge";
 
 interface RideProfile {
   display_name: string;
@@ -78,8 +79,9 @@ interface RideDetailProps {
   destLat: number;
   destLng: number;
   bookings: BookingData[];
-  currentUserBooking: { status: BookingStatus; seats_booked: number } | null;
+  currentUserBooking: { id: string; status: BookingStatus; seats_booked: number } | null;
   currentUserId: string | null;
+  driverReliability: DriverReliability | null;
 }
 
 function formatDuration(seconds: number): string {
@@ -118,38 +120,17 @@ export function RideDetail({
   bookings,
   currentUserBooking,
   currentUserId,
+  driverReliability,
 }: RideDetailProps) {
   const router = useRouter();
-  const supabase = createClient();
-  const [cancelConfirm, setCancelConfirm] = useState(false);
-  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelDialogType, setCancelDialogType] = useState<"booking" | "ride" | null>(null);
+  const [cancelDialogId, setCancelDialogId] = useState<string>("");
 
   const departureDate = parseISO(ride.departure_time);
   const formattedDate = format(departureDate, "EEE, MMM d, yyyy");
   const formattedTime = format(departureDate, "h:mm a");
   const profile = ride.profiles;
   const vehicle = ride.vehicles;
-
-  async function handleCancel() {
-    if (!cancelConfirm) {
-      setCancelConfirm(true);
-      return;
-    }
-
-    setIsCancelling(true);
-    try {
-      const { error } = await updateRide(supabase, ride.id, {
-        status: RIDE_STATUS.cancelled,
-      });
-      if (error) throw error;
-      router.refresh();
-    } catch {
-      // Reset on error
-      setCancelConfirm(false);
-    } finally {
-      setIsCancelling(false);
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -274,6 +255,11 @@ export function RideDetail({
               </div>
             </div>
           </Link>
+          {driverReliability && (
+            <div className="mt-3">
+              <ReliabilityBadge reliability={driverReliability} />
+            </div>
+          )}
         </section>
       )}
 
@@ -380,6 +366,21 @@ export function RideDetail({
             existingBooking={currentUserBooking}
           />
         )}
+        {/* Passenger booking cancellation */}
+        {!isOwner &&
+          currentUserBooking &&
+          (currentUserBooking.status === "pending" ||
+            currentUserBooking.status === "confirmed") && (
+            <button
+              onClick={() => {
+                setCancelDialogType("booking");
+                setCancelDialogId(currentUserBooking.id);
+              }}
+              className="mt-3 w-full rounded-xl border border-red-300 px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
+            >
+              Cancel Booking
+            </button>
+          )}
       </section>
 
       {/* Passengers */}
@@ -443,21 +444,26 @@ export function RideDetail({
             Edit Ride
           </Link>
           <button
-            onClick={handleCancel}
-            disabled={isCancelling}
-            className={`flex-1 rounded-xl px-6 py-3 font-semibold transition-colors ${
-              cancelConfirm
-                ? "bg-red-600 text-white hover:bg-red-700"
-                : "border border-red-300 text-red-600 hover:bg-red-50"
-            } disabled:opacity-50`}
+            onClick={() => {
+              setCancelDialogType("ride");
+              setCancelDialogId(ride.id);
+            }}
+            className="flex-1 rounded-xl border border-red-300 px-6 py-3 font-semibold text-red-600 transition-colors hover:bg-red-50"
           >
-            {isCancelling
-              ? "Cancelling..."
-              : cancelConfirm
-                ? "Confirm Cancel"
-                : "Cancel Ride"}
+            Cancel Ride
           </button>
         </div>
+      )}
+
+      {/* Cancellation dialog */}
+      {cancelDialogType && (
+        <CancellationDialog
+          type={cancelDialogType}
+          id={cancelDialogId}
+          isOpen={true}
+          onClose={() => setCancelDialogType(null)}
+          onCancelled={() => router.refresh()}
+        />
       )}
     </div>
   );
