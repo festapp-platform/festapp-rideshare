@@ -35,6 +35,7 @@ Progress: [████░░░░░░] 24%
 - Trend: improving
 
 *Updated after each plan completion*
+| Phase 03 P01 | 3min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,9 @@ Recent decisions affecting current work:
 - [02-05]: FlatList Option A: scrollEnabled disabled for form steps, re-enabled for passive steps
 - [03-03]: Added coordinate range validation and 502 status for upstream Google API errors
 - [03-03]: CORS headers on all Edge Function responses including errors for web client compatibility
+- [Phase 03]: PostGIS functions use extensions. prefix throughout (ST_DWithin, ST_Distance, ST_MakePoint, ST_SetSRID) per Supabase requirement
+- [Phase 03]: pg_cron extension enabled explicitly in migration (not pre-installed on Supabase hosted)
+- [Phase 03]: nearby_rides RPC falls back to point matching when route_geometry is NULL
 
 ### Pending Todos
 
