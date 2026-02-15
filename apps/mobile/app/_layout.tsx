@@ -57,9 +57,8 @@ export default function RootLayout() {
       // Not authenticated and not on auth screen -> go to login
       router.replace("/(auth)/login");
     } else if (session && inAuthGroup) {
-      // Authenticated but still on auth screen -> go to home
-      // Tabs come in Plan 04; for now redirect to root
-      router.replace("/");
+      // Authenticated but still on auth screen -> go to tabs
+      router.replace("/(tabs)/search");
     }
   }, [session, segments, isLoading, router]);
 
