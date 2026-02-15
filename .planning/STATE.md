@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 6 of 11 (Ratings, Trust & Safety)
-Plan: 2 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: Executing
-Last activity: 2026-02-15 -- Completed 06-02 (shared package foundation for Phase 6)
+Last activity: 2026-02-15 -- Completed 06-04 (report/block UI for profiles and settings)
 
 Progress: [████████░░] 48%
 
@@ -55,6 +55,7 @@ Progress: [████████░░] 48%
 | Phase 05 P06 | 2min | 2 tasks | 3 files |
 | Phase 06 P01 | 3min | 2 tasks | 3 files |
 | Phase 06 P02 | 3min | 2 tasks | 7 files |
+| Phase 06 P04 | 4min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -149,6 +150,9 @@ Recent decisions affecting current work:
 - [06-01]: Reports RLS uses inline JWT check to avoid forward dependency on is_admin() in migration 031
 - [06-01]: Rating aggregation trigger fires on INSERT and UPDATE OF revealed_at for immediate recalculation
 - [06-02]: No index.ts barrel files in subdirectories -- project uses flat exports from src/index.ts
+- [06-04]: Three-dot ellipsis menu for Report/Block actions on profile page (not inline buttons)
+- [06-04]: Block confirmation required, unblock instant; optimistic UI with error revert
+- [06-04]: Banned profiles show "account suspended" to visitors; suspended users see banner on own profile only
 
 ### Pending Todos
 
@@ -167,5 +171,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 06-02-PLAN.md
-Resume file: .planning/phases/06-ratings-trust-safety/06-02-SUMMARY.md
+Stopped at: Completed 06-04-PLAN.md
+Resume file: .planning/phases/06-ratings-trust-safety/06-04-SUMMARY.md
