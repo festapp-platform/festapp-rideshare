@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Alert,
   ScrollView,
+  Linking,
   useColorScheme,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,15 +17,28 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { colors, ProfileUpdateSchema } from "@festapp/shared";
-import type { ProfileUpdate } from "@festapp/shared";
+import type { ProfileUpdate, SocialLinks } from "@festapp/shared";
 import { supabase } from "@/lib/supabase";
 import { pickAndUploadAvatar } from "@/lib/image-upload";
+import * as ImagePicker from "expo-image-picker";
 
 interface Profile {
   id: string;
   display_name: string | null;
   bio: string | null;
   avatar_url: string | null;
+  social_links: SocialLinks | null;
+  id_document_url: string | null;
+  id_verified: boolean;
+  created_at: string;
+}
+
+interface Vehicle {
+  id: string;
+  make: string;
+  model: string;
+  photo_url: string | null;
+  is_primary: boolean;
 }
 
 export default function ProfileScreen() {
@@ -38,6 +52,9 @@ export default function ProfileScreen() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingId, setUploadingId] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [primaryVehicle, setPrimaryVehicle] = useState<Vehicle | null>(null);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -48,6 +65,7 @@ export default function ProfileScreen() {
     defaultValues: {
       display_name: "",
       bio: "",
+      social_links: { instagram: "", facebook: "" },
     },
   });
 
@@ -59,22 +77,39 @@ export default function ProfileScreen() {
 
     setUserId(user.id);
 
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id, display_name, bio, avatar_url")
-      .eq("id", user.id)
-      .single();
+    const [profileResult, phoneResult, vehicleResult] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("id, display_name, bio, avatar_url, social_links, id_document_url, id_verified, created_at")
+        .eq("id", user.id)
+        .single(),
+      supabase.rpc("is_phone_verified", { user_id: user.id }),
+      supabase
+        .from("vehicles")
+        .select("id, make, model, photo_url, is_primary")
+        .eq("owner_id", user.id)
+        .eq("is_primary", true)
+        .maybeSingle(),
+    ]);
 
-    if (error) {
+    if (profileResult.error) {
       setMessage({ type: "error", text: "Failed to load profile" });
       setLoading(false);
       return;
     }
 
-    setProfile(data);
+    setProfile(profileResult.data);
+    setPhoneVerified(phoneResult.data === true);
+    setPrimaryVehicle(vehicleResult.data || null);
+
+    const socialLinks = profileResult.data.social_links as SocialLinks | null;
     form.reset({
-      display_name: data.display_name || "",
-      bio: data.bio || "",
+      display_name: profileResult.data.display_name || "",
+      bio: profileResult.data.bio || "",
+      social_links: {
+        instagram: socialLinks?.instagram || "",
+        facebook: socialLinks?.facebook || "",
+      },
     });
     setLoading(false);
   }, [form]);
@@ -103,17 +138,88 @@ export default function ProfileScreen() {
     }
   }
 
+  async function handleIdUpload() {
+    if (!userId) return;
+
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission Required", "Please allow access to your photo library.");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: "images",
+      quality: 0.8,
+    });
+
+    if (result.canceled || !result.assets?.[0]) return;
+
+    setUploadingId(true);
+    setMessage(null);
+
+    try {
+      const asset = result.assets[0];
+      const response = await fetch(asset.uri);
+      const blob = await response.blob();
+
+      const path = `${userId}/id-document-${Date.now()}.jpg`;
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(path, blob, {
+          upsert: true,
+          contentType: "image/jpeg",
+        });
+
+      if (uploadError) {
+        throw new Error(`Failed to upload ID: ${uploadError.message}`);
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("avatars").getPublicUrl(path);
+
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ id_document_url: publicUrl, id_verified: true })
+        .eq("id", userId);
+
+      if (updateError) {
+        throw new Error(`Failed to update profile: ${updateError.message}`);
+      }
+
+      setProfile((prev) =>
+        prev ? { ...prev, id_document_url: publicUrl, id_verified: true } : prev,
+      );
+      setMessage({ type: "success", text: "ID document uploaded successfully" });
+    } catch (error) {
+      Alert.alert(
+        "Upload Failed",
+        error instanceof Error ? error.message : "Failed to upload ID",
+      );
+    } finally {
+      setUploadingId(false);
+    }
+  }
+
   async function onSave(values: ProfileUpdate) {
     if (!userId) return;
     setSaving(true);
     setMessage(null);
 
     try {
+      const socialLinks = values.social_links
+        ? {
+            instagram: values.social_links.instagram || undefined,
+            facebook: values.social_links.facebook || undefined,
+          }
+        : undefined;
+
       const { error } = await supabase
         .from("profiles")
         .update({
           display_name: values.display_name,
           bio: values.bio || null,
+          social_links: socialLinks || null,
         })
         .eq("id", userId);
 
@@ -132,6 +238,7 @@ export default function ProfileScreen() {
               ...prev,
               display_name: values.display_name,
               bio: values.bio || null,
+              social_links: socialLinks as SocialLinks | null,
             }
           : prev,
       );
@@ -148,9 +255,14 @@ export default function ProfileScreen() {
   function handleCancelEdit() {
     setEditing(false);
     if (profile) {
+      const socialLinks = profile.social_links as SocialLinks | null;
       form.reset({
         display_name: profile.display_name || "",
         bio: profile.bio || "",
+        social_links: {
+          instagram: socialLinks?.instagram || "",
+          facebook: socialLinks?.facebook || "",
+        },
       });
     }
     setMessage(null);
@@ -182,6 +294,7 @@ export default function ProfileScreen() {
   }
 
   const bioValue = form.watch("bio") || "";
+  const socialLinks = profile?.social_links as SocialLinks | null;
 
   return (
     <SafeAreaView
@@ -334,7 +447,7 @@ export default function ProfileScreen() {
             </View>
 
             {/* Bio */}
-            <View className="mb-6">
+            <View className="mb-4">
               <Text
                 style={{ color: theme.text }}
                 className="mb-1 text-sm font-medium"
@@ -380,6 +493,67 @@ export default function ProfileScreen() {
               </View>
             </View>
 
+            {/* Social links */}
+            <View className="mb-4">
+              <Text
+                style={{ color: theme.text }}
+                className="mb-1 text-sm font-medium"
+              >
+                Instagram URL
+              </Text>
+              <Controller
+                control={form.control}
+                name="social_links.instagram"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    value={value || ""}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="https://instagram.com/yourhandle"
+                    placeholderTextColor={theme.textSecondary}
+                    autoCapitalize="none"
+                    keyboardType="url"
+                    style={{
+                      color: theme.text,
+                      backgroundColor: theme.surface,
+                      borderColor: theme.border,
+                    }}
+                    className="rounded-lg border px-3 py-2.5 text-sm"
+                  />
+                )}
+              />
+            </View>
+
+            <View className="mb-6">
+              <Text
+                style={{ color: theme.text }}
+                className="mb-1 text-sm font-medium"
+              >
+                Facebook URL
+              </Text>
+              <Controller
+                control={form.control}
+                name="social_links.facebook"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    value={value || ""}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="https://facebook.com/yourprofile"
+                    placeholderTextColor={theme.textSecondary}
+                    autoCapitalize="none"
+                    keyboardType="url"
+                    style={{
+                      color: theme.text,
+                      backgroundColor: theme.surface,
+                      borderColor: theme.border,
+                    }}
+                    className="rounded-lg border px-3 py-2.5 text-sm"
+                  />
+                )}
+              />
+            </View>
+
             {/* Save button */}
             <TouchableOpacity
               onPress={form.handleSubmit(onSave)}
@@ -408,6 +582,33 @@ export default function ProfileScreen() {
             <Text style={{ color: theme.text }} className="text-xl font-bold">
               {profile?.display_name || "Your Profile"}
             </Text>
+
+            {/* Verification badges */}
+            <View className="mt-2 flex-row flex-wrap items-center justify-center" style={{ gap: 8 }}>
+              {phoneVerified && (
+                <View
+                  style={{ backgroundColor: "#dcfce7" }}
+                  className="flex-row items-center rounded-full px-2.5 py-1"
+                >
+                  <FontAwesome name="check" size={10} color="#15803d" style={{ marginRight: 4 }} />
+                  <Text style={{ color: "#15803d" }} className="text-xs font-medium">
+                    Phone Verified
+                  </Text>
+                </View>
+              )}
+              {profile?.id_verified && (
+                <View
+                  style={{ backgroundColor: "#dbeafe" }}
+                  className="flex-row items-center rounded-full px-2.5 py-1"
+                >
+                  <FontAwesome name="shield" size={10} color="#1d4ed8" style={{ marginRight: 4 }} />
+                  <Text style={{ color: "#1d4ed8" }} className="text-xs font-medium">
+                    ID Verified
+                  </Text>
+                </View>
+              )}
+            </View>
+
             {profile?.bio ? (
               <Text
                 style={{ color: theme.textSecondary }}
@@ -425,11 +626,131 @@ export default function ProfileScreen() {
                 </Text>
               )
             )}
+
+            {/* Social links */}
+            {(socialLinks?.instagram || socialLinks?.facebook) && (
+              <View className="mt-3 flex-row items-center" style={{ gap: 16 }}>
+                {socialLinks?.instagram && (
+                  <TouchableOpacity
+                    onPress={() => Linking.openURL(socialLinks.instagram!)}
+                  >
+                    <FontAwesome name="instagram" size={22} color={theme.textSecondary} />
+                  </TouchableOpacity>
+                )}
+                {socialLinks?.facebook && (
+                  <TouchableOpacity
+                    onPress={() => Linking.openURL(socialLinks.facebook!)}
+                  >
+                    <FontAwesome name="facebook" size={22} color={theme.textSecondary} />
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
           </View>
         )}
 
-        {/* Spacer before settings */}
+        {/* Spacer */}
         <View className="mt-8" />
+
+        {/* My Vehicles section */}
+        {!editing && (
+          <TouchableOpacity
+            onPress={() => router.push("/vehicles")}
+            style={{
+              backgroundColor: theme.surface,
+              borderColor: theme.border,
+            }}
+            className="mb-3 rounded-xl border p-4"
+          >
+            <Text style={{ color: theme.text }} className="mb-2 text-sm font-semibold">
+              My Vehicles
+            </Text>
+            {primaryVehicle ? (
+              <View className="flex-row items-center">
+                {primaryVehicle.photo_url ? (
+                  <Image
+                    source={{ uri: primaryVehicle.photo_url }}
+                    className="mr-3 h-10 w-14 rounded-lg"
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View
+                    style={{ backgroundColor: theme.border }}
+                    className="mr-3 h-10 w-14 items-center justify-center rounded-lg"
+                  >
+                    <FontAwesome name="car" size={16} color={theme.textSecondary} />
+                  </View>
+                )}
+                <Text style={{ color: theme.text }} className="flex-1 text-sm font-medium">
+                  {primaryVehicle.make} {primaryVehicle.model}
+                </Text>
+                <FontAwesome name="chevron-right" size={14} color={theme.textSecondary} />
+              </View>
+            ) : (
+              <View className="flex-row items-center justify-between">
+                <Text style={{ color: theme.textSecondary }} className="text-sm">
+                  Add a vehicle to offer rides
+                </Text>
+                <FontAwesome name="chevron-right" size={14} color={theme.textSecondary} />
+              </View>
+            )}
+          </TouchableOpacity>
+        )}
+
+        {/* ID Verification section */}
+        {!editing && (
+          <View
+            style={{
+              backgroundColor: theme.surface,
+              borderColor: theme.border,
+            }}
+            className="mb-3 rounded-xl border p-4"
+          >
+            <Text style={{ color: theme.text }} className="mb-2 text-sm font-semibold">
+              ID Verification
+            </Text>
+            {profile?.id_verified ? (
+              <View className="flex-row items-center" style={{ gap: 8 }}>
+                <View
+                  style={{ backgroundColor: "#dbeafe" }}
+                  className="flex-row items-center rounded-full px-2.5 py-1"
+                >
+                  <FontAwesome name="shield" size={10} color="#1d4ed8" style={{ marginRight: 4 }} />
+                  <Text style={{ color: "#1d4ed8" }} className="text-xs font-medium">
+                    ID Verified
+                  </Text>
+                </View>
+                <Text style={{ color: theme.textSecondary }} className="text-sm">
+                  Your ID has been verified
+                </Text>
+              </View>
+            ) : (
+              <View>
+                <Text style={{ color: theme.textSecondary }} className="mb-2 text-sm">
+                  Upload a photo of your ID to increase trust.
+                </Text>
+                <TouchableOpacity
+                  onPress={handleIdUpload}
+                  disabled={uploadingId}
+                  style={{ backgroundColor: theme.primary, opacity: uploadingId ? 0.5 : 1 }}
+                  className="flex-row items-center justify-center rounded-lg py-2.5"
+                  activeOpacity={0.7}
+                >
+                  {uploadingId ? (
+                    <ActivityIndicator color={theme.surface} size="small" />
+                  ) : (
+                    <>
+                      <FontAwesome name="upload" size={14} color={theme.surface} style={{ marginRight: 8 }} />
+                      <Text style={{ color: theme.surface }} className="text-sm font-semibold">
+                        Upload ID Document
+                      </Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )}
 
         {/* Settings button */}
         <TouchableOpacity
