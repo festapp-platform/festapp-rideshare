@@ -188,6 +188,15 @@ export type {
   AdminResolveReport,
 } from './validation/review';
 
+// Constants - location
+export {
+  LOCATION_CHANNEL_PREFIX,
+  LOCATION_BROADCAST_EVENT,
+  LOCATION_STOPPED_EVENT,
+  GPS_CONFIG,
+} from './constants/location';
+export type { LocationPayload } from './constants/location';
+
 // Types
 export type {
   Database,

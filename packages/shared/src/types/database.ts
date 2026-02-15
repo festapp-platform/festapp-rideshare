@@ -1057,6 +1057,13 @@ export interface Database {
         };
         Returns: undefined;
       };
+      start_ride: {
+        Args: {
+          p_ride_id: string;
+          p_driver_id: string;
+        };
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
   };
