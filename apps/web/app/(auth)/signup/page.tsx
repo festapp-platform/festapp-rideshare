@@ -15,6 +15,7 @@ import {
 } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { EyeIcon, EyeSlashIcon } from "@/components/icons";
 
 // --- Email signup schema ---
 const EmailSignUpSchema = z.object({
@@ -42,6 +43,8 @@ export default function SignupPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSocialLoading, setIsSocialLoading] = useState<string | null>(null);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   // Phone OTP flow state
   const [phoneForOtp, setPhoneForOtp] = useState<string | null>(null);
@@ -274,14 +277,28 @@ export default function SignupPage() {
             >
               Password
             </label>
-            <input
-              id="signup-password"
-              type="password"
-              autoComplete="new-password"
-              {...emailForm.register("password")}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-              placeholder="At least 8 characters"
-            />
+            <div className="relative">
+              <input
+                id="signup-password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                {...emailForm.register("password")}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                placeholder="At least 6 characters"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="h-4 w-4" />
+                ) : (
+                  <EyeIcon className="h-4 w-4" />
+                )}
+              </button>
+            </div>
             {emailForm.formState.errors.password && (
               <p className="mt-1 text-xs text-red-500">
                 {emailForm.formState.errors.password.message}
