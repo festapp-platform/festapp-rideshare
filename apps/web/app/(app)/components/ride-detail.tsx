@@ -13,6 +13,7 @@ import { BookingButton } from "./booking-button";
 import { PassengerList } from "./passenger-list";
 import { CancellationDialog } from "./cancellation-dialog";
 import { ReliabilityBadge, type DriverReliability } from "./reliability-badge";
+import { RatingModal } from "./rating-modal";
 
 interface RideProfile {
   display_name: string;
@@ -83,6 +84,12 @@ interface RideDetailProps {
   currentUserBooking: { id: string; status: BookingStatus; seats_booked: number } | null;
   currentUserId: string | null;
   driverReliability: DriverReliability | null;
+  showRatingModal?: boolean;
+  ratingBookingId?: string | null;
+  ratingOtherUserName?: string | null;
+  ratingOtherUserAvatar?: string | null;
+  hasExistingReview?: boolean;
+  rideStatus?: string;
 }
 
 function formatDuration(seconds: number): string {
@@ -170,6 +177,12 @@ export function RideDetail({
   currentUserBooking,
   currentUserId,
   driverReliability,
+  showRatingModal: initialShowRatingModal = false,
+  ratingBookingId = null,
+  ratingOtherUserName = null,
+  ratingOtherUserAvatar = null,
+  hasExistingReview = false,
+  rideStatus,
 }: RideDetailProps) {
   const router = useRouter();
   const supabase = createClient();
@@ -177,6 +190,8 @@ export function RideDetail({
   const [cancelDialogId, setCancelDialogId] = useState<string>("");
   const [completeConfirm, setCompleteConfirm] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [showRating, setShowRating] = useState(initialShowRatingModal);
+  const [hasReviewed, setHasReviewed] = useState(hasExistingReview);
 
   const departureDate = parseISO(ride.departure_time);
   const formattedDate = format(departureDate, "EEE, MMM d, yyyy");
@@ -214,7 +229,7 @@ export function RideDetail({
         return;
       }
       toast.success("Ride completed!");
-      router.refresh();
+      router.push(`/rides/${ride.id}?justCompleted=true`);
     } catch {
       toast.error("Failed to complete ride");
       setCompleteConfirm(false);
@@ -608,6 +623,44 @@ export function RideDetail({
             </button>
           </div>
         </div>
+      )}
+
+      {/* Rate this ride button (completed ride, not yet reviewed) */}
+      {(rideStatus ?? ride.status) === RIDE_STATUS.completed &&
+        !hasReviewed &&
+        ratingBookingId &&
+        !showRating && (
+          <button
+            onClick={() => setShowRating(true)}
+            className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-white transition-colors hover:bg-primary/90"
+          >
+            Rate this ride
+          </button>
+        )}
+
+      {/* Rating modal */}
+      {showRating && ratingBookingId && ratingOtherUserName && (
+        <RatingModal
+          bookingId={ratingBookingId}
+          otherUserName={ratingOtherUserName}
+          otherUserAvatar={ratingOtherUserAvatar}
+          isOpen={true}
+          onClose={() => {
+            setShowRating(false);
+            // Remove justCompleted param from URL
+            const url = new URL(window.location.href);
+            url.searchParams.delete("justCompleted");
+            window.history.replaceState({}, "", url.toString());
+          }}
+          onSubmitted={() => {
+            setShowRating(false);
+            setHasReviewed(true);
+            // Remove justCompleted param from URL
+            const url = new URL(window.location.href);
+            url.searchParams.delete("justCompleted");
+            window.history.replaceState({}, "", url.toString());
+          }}
+        />
       )}
 
       {/* Cancellation dialog */}

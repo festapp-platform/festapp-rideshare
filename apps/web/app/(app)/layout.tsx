@@ -6,6 +6,7 @@ import { MapProvider } from "@/lib/map-provider";
 import { PostRideFab } from "./components/post-ride-fab";
 import { Toaster } from "sonner";
 import { OneSignalInit } from "./components/onesignal-init";
+import { PendingRatingBanner } from "./components/pending-rating-banner";
 
 /**
  * Authenticated app layout (NAV-01).
@@ -49,6 +50,8 @@ export default async function AppLayout({
 
         {/* Main content */}
         <main className="flex-1 pb-16 md:pb-0">
+          {/* Pending rating detection banner (RATE-03) */}
+          <PendingRatingBanner />
           <div className="mx-auto max-w-4xl px-4 py-6">{children}</div>
         </main>
 

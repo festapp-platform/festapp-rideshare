@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { format, parseISO } from "date-fns";
-import { getRideById, getRideWaypoints, getBookingsForRide, type BookingStatus } from "@festapp/shared";
+import { getRideById, getRideWaypoints, getBookingsForRide, getExistingReview, type BookingStatus } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/server";
 import { RideDetail } from "../../components/ride-detail";
 
 interface PageProps {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ justCompleted?: string }>;
 }
 
 /**
@@ -70,8 +71,9 @@ export async function generateMetadata({
   };
 }
 
-export default async function RideDetailPage({ params }: PageProps) {
+export default async function RideDetailPage({ params, searchParams }: PageProps) {
   const { id } = await params;
+  const { justCompleted } = await searchParams;
   const supabase = await createClient();
 
   const [{ data: ride }, { data: waypoints }, { data: bookings }] =
@@ -110,9 +112,61 @@ export default async function RideDetailPage({ params }: PageProps) {
         ) ?? null
       : null;
 
+  // Check if user has already reviewed this ride (for any booking)
+  let hasExistingReview = false;
+  let ratingBookingId: string | null = null;
+  let ratingOtherUserName: string | null = null;
+  let ratingOtherUserAvatar: string | null = null;
+
+  if (currentUserId && ride.status === "completed") {
+    // Find the booking for the current user (confirmed only, since ride is completed)
+    const userBooking = bookings?.find(
+      (b) =>
+        (b.passenger_id === currentUserId && b.status === "completed") ||
+        (b.passenger_id === currentUserId && b.status === "confirmed"),
+    );
+
+    if (userBooking) {
+      const { data: existingReview } = await getExistingReview(
+        supabase,
+        userBooking.id,
+        currentUserId,
+      );
+      hasExistingReview = !!existingReview;
+      ratingBookingId = userBooking.id;
+      // The other user is the driver
+      ratingOtherUserName = ride.profiles?.display_name ?? "Driver";
+      ratingOtherUserAvatar = ride.profiles?.avatar_url ?? null;
+    } else if (isOwner) {
+      // Driver can rate each passenger - find first unreviewed booking
+      const confirmedBookings = bookings?.filter(
+        (b) => b.status === "completed" || b.status === "confirmed",
+      ) ?? [];
+      for (const booking of confirmedBookings) {
+        const { data: existingReview } = await getExistingReview(
+          supabase,
+          booking.id,
+          currentUserId,
+        );
+        if (!existingReview) {
+          ratingBookingId = booking.id;
+          ratingOtherUserName = booking.profiles?.display_name ?? "Passenger";
+          ratingOtherUserAvatar = booking.profiles?.avatar_url ?? null;
+          break;
+        }
+      }
+      hasExistingReview = !ratingBookingId;
+    }
+  }
+
   // Parse coordinates from PostGIS geography columns
   const origin = parsePoint(ride.origin_location);
   const dest = parsePoint(ride.destination_location);
+
+  const showRatingModal =
+    justCompleted === "true" &&
+    !hasExistingReview &&
+    ratingBookingId !== null;
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -136,6 +190,12 @@ export default async function RideDetailPage({ params }: PageProps) {
         }
         currentUserId={currentUserId}
         driverReliability={driverReliability}
+        showRatingModal={showRatingModal}
+        ratingBookingId={ratingBookingId}
+        ratingOtherUserName={ratingOtherUserName}
+        ratingOtherUserAvatar={ratingOtherUserAvatar}
+        hasExistingReview={hasExistingReview}
+        rideStatus={ride.status}
       />
     </div>
   );

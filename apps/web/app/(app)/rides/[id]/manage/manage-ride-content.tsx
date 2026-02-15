@@ -97,7 +97,7 @@ export function ManageRideContent({ ride, bookings }: ManageRideContentProps) {
         return;
       }
       toast.success("Ride completed!");
-      router.push(`/rides/${ride.id}`);
+      router.push(`/rides/${ride.id}?justCompleted=true`);
     } catch {
       toast.error("Failed to complete ride");
       setCompleteConfirm(false);
