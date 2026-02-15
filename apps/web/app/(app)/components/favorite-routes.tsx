@@ -13,6 +13,7 @@ interface FavoriteRoute {
   origin_location: unknown;
   destination_location: unknown;
   label: string | null;
+  alert_enabled: boolean;
 }
 
 interface SaveRouteButtonProps {
@@ -184,13 +185,15 @@ export function SaveRouteButton({
 // ─── FavoriteRoutesList ───────────────────────────────────────────────────
 
 /**
- * List of user's favorite routes with click-to-search and delete.
+ * List of user's favorite routes with click-to-search, alert toggle, and delete.
  * Shown on the search page for quick access to saved routes.
+ * Alert toggle enables push notifications when new rides match the route.
  */
 export function FavoriteRoutesList({ onRouteSelect }: FavoriteRoutesListProps) {
   const supabase = createClient();
   const [routes, setRoutes] = useState<FavoriteRoute[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [togglingAlert, setTogglingAlert] = useState<string | null>(null);
 
   const fetchRoutes = useCallback(async () => {
     const {
@@ -203,7 +206,7 @@ export function FavoriteRoutesList({ onRouteSelect }: FavoriteRoutesListProps) {
 
     const { data } = await supabase
       .from('favorite_routes')
-      .select('id, origin_address, destination_address, origin_location, destination_location, label')
+      .select('id, origin_address, destination_address, origin_location, destination_location, label, alert_enabled')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -218,6 +221,35 @@ export function FavoriteRoutesList({ onRouteSelect }: FavoriteRoutesListProps) {
   async function handleDelete(id: string) {
     await supabase.from('favorite_routes').delete().eq('id', id);
     setRoutes((prev) => prev.filter((r) => r.id !== id));
+  }
+
+  async function handleToggleAlert(id: string, currentValue: boolean) {
+    if (togglingAlert) return;
+    setTogglingAlert(id);
+
+    // Optimistic update
+    setRoutes((prev) =>
+      prev.map((r) =>
+        r.id === id ? { ...r, alert_enabled: !currentValue } : r,
+      ),
+    );
+
+    const { error } = await supabase
+      .from('favorite_routes')
+      .update({ alert_enabled: !currentValue })
+      .eq('id', id);
+
+    if (error) {
+      // Revert on error
+      setRoutes((prev) =>
+        prev.map((r) =>
+          r.id === id ? { ...r, alert_enabled: currentValue } : r,
+        ),
+      );
+      console.error('Failed to toggle alert:', error.message);
+    }
+
+    setTogglingAlert(null);
   }
 
   function handleSelect(route: FavoriteRoute) {
@@ -268,8 +300,13 @@ export function FavoriteRoutesList({ onRouteSelect }: FavoriteRoutesListProps) {
               onClick={() => handleSelect(route)}
               className="flex-1 text-left"
             >
-              <div className="text-sm font-medium text-text-main">
+              <div className="flex items-center gap-1.5 text-sm font-medium text-text-main">
                 {route.label ?? `${route.origin_address.split(',')[0]} to ${route.destination_address.split(',')[0]}`}
+                {route.alert_enabled && (
+                  <span className="inline-flex h-4 items-center rounded-full bg-primary/10 px-1.5 text-[10px] font-medium text-primary">
+                    Alerts on
+                  </span>
+                )}
               </div>
               {route.label && (
                 <div className="mt-0.5 text-xs text-text-secondary">
@@ -278,25 +315,62 @@ export function FavoriteRoutesList({ onRouteSelect }: FavoriteRoutesListProps) {
                 </div>
               )}
             </button>
-            <button
-              onClick={() => handleDelete(route.id)}
-              aria-label="Remove saved route"
-              className="ml-2 rounded-lg p-1 text-text-secondary opacity-0 transition-opacity hover:text-error group-hover:opacity-100"
-            >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
+            <div className="ml-2 flex items-center gap-1">
+              {/* Alert toggle (bell icon) */}
+              <button
+                onClick={() => handleToggleAlert(route.id, route.alert_enabled)}
+                disabled={togglingAlert === route.id}
+                aria-label={
+                  route.alert_enabled
+                    ? 'Disable ride alerts for this route'
+                    : 'Enable ride alerts for this route'
+                }
+                title={
+                  route.alert_enabled
+                    ? 'Alerts enabled -- get notified when new rides match'
+                    : 'Get notified when new rides match this route'
+                }
+                className={`rounded-lg p-1 transition-colors disabled:opacity-50 ${
+                  route.alert_enabled
+                    ? 'text-primary hover:bg-primary/5'
+                    : 'text-text-secondary opacity-0 hover:text-primary group-hover:opacity-100'
+                }`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill={route.alert_enabled ? 'currentColor' : 'none'}
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                  />
+                </svg>
+              </button>
+              {/* Delete button */}
+              <button
+                onClick={() => handleDelete(route.id)}
+                aria-label="Remove saved route"
+                className="rounded-lg p-1 text-text-secondary opacity-0 transition-opacity hover:text-error group-hover:opacity-100"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         ))}
       </div>
