@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 8 of 11 (Events & Flexible Gamification)
-Plan: 4 of 5 in current phase
+Plan: 5 of 5 in current phase
 Status: In Progress
-Last activity: 2026-02-16 -- Completed 08-04 (gamification: badges, impact, levels, streaks)
+Last activity: 2026-02-16 -- Completed 08-02 (events UI and admin management)
 
 Progress: [████████████████░] 70%
 
@@ -64,6 +64,7 @@ Progress: [████████████████░] 70%
 | Phase 08 P01 | 3min | 2 tasks | 6 files |
 | Phase 08 P04 | 6min | 2 tasks | 12 files |
 | Phase 08 P03 | 6min | 2 tasks | 16 files |
+| Phase 08 P02 | 6min | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -184,6 +185,9 @@ Recent decisions affecting current work:
 - [08-04]: Impact CO2 uses EU average 120g CO2/km saved per shared ride
 - [08-04]: Badges always publicly visible via RLS SELECT for everyone (social proof)
 - [Phase 08]: flexible_ride_confirmed notification type maps to push_route_alerts preference (no new DB column)
+- [08-02]: PostgREST FK hint profiles!events_creator_id_fkey needed for events table (two FKs to profiles)
+- [08-02]: Admin event detail uses two-click confirm pattern consistent with moderation actions
+- [08-02]: Ride form fetches approved events client-side for optional linking dropdown
 
 ### Pending Todos
 
@@ -202,5 +206,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 08-04-PLAN.md (gamification)
-Resume file: .planning/phases/08-events-flexible-gamification/08-04-SUMMARY.md
+Stopped at: Completed 08-02-PLAN.md (events UI and admin management)
+Resume file: .planning/phases/08-events-flexible-gamification/08-02-SUMMARY.md
