@@ -238,6 +238,29 @@ export {
   getAllBadges,
 } from './queries/gamification';
 
+// Constants - flexible rides
+export { ROUTE_INTENT_STATUS } from './constants/flexible';
+export type { RouteIntentStatus } from './constants/flexible';
+
+// Validation schemas - flexible rides
+export {
+  CreateRouteIntentSchema,
+  ConfirmRouteIntentSchema,
+} from './validation/flexible';
+export type {
+  CreateRouteIntent,
+  ConfirmRouteIntent,
+} from './validation/flexible';
+
+// Query builders - flexible rides
+export {
+  getActiveRouteIntents,
+  getRouteIntentById,
+  getMyRouteIntents,
+  getMySubscriptions,
+  isSubscribed,
+} from './queries/flexible';
+
 // Constants - location
 export {
   LOCATION_CHANNEL_PREFIX,
@@ -267,4 +290,6 @@ export type {
   UserImpact,
   UserBadgeResult,
   RouteStreakResult,
+  RouteIntent,
+  RouteIntentSubscription,
 } from './types/database';

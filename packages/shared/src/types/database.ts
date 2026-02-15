@@ -1442,6 +1442,21 @@ export interface Database {
           booking_mode: string;
         }[];
       };
+      confirm_route_intent: {
+        Args: {
+          p_intent_id: string;
+          p_departure_time: string;
+          p_seats?: number | null;
+          p_price?: number | null;
+        };
+        Returns: string;
+      };
+      cancel_route_intent: {
+        Args: {
+          p_intent_id: string;
+        };
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
   };
@@ -1470,6 +1485,11 @@ export type PendingReview =
 export type Event = Database['public']['Tables']['events']['Row'];
 export type EventRide =
   Database['public']['Functions']['get_event_rides']['Returns'][number];
+
+// Flexible rides derived types
+export type RouteIntent = Database['public']['Tables']['route_intents']['Row'];
+export type RouteIntentSubscription =
+  Database['public']['Tables']['route_intent_subscriptions']['Row'];
 
 // Gamification derived types
 export type BadgeDefinition = Database['public']['Tables']['badge_definitions']['Row'];
