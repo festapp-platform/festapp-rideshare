@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 5 of 11 (Communication & Notifications)
-Plan: 0 of 7 in current phase
-Status: Ready to plan
-Last activity: 2026-02-15 -- Phase 4 complete (verified, 5/5 success criteria, 8/8 requirements)
+Plan: 1 of 6 in current phase
+Status: Executing
+Last activity: 2026-02-15 -- Completed 05-01 (chat & notification DB foundation)
 
-Progress: [████████░░] 36%
+Progress: [████████░░] 39%
 
 ## Performance Metrics
 
@@ -46,6 +46,7 @@ Progress: [████████░░] 36%
 | Phase 04 P03 | 6min | 2 tasks | 4 files |
 | Phase 04 P04 | 5min | 2 tasks | 3 files |
 | Phase 04 P05 | 4min | 2 tasks | 4 files |
+| Phase 05 P01 | 3min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -118,6 +119,9 @@ Recent decisions affecting current work:
 - [04-05]: Cancellation rate color coding: green <= 10%, amber 10-20%, red > 20%
 - [04-05]: Two-step confirm pattern for ride completion (consistent with cancel flow)
 - [04-05]: Manage page redirects to ride detail after completion (manage actions no longer relevant)
+- [05-01]: Lazy conversation creation with ON CONFLICT for race-safe deduplication
+- [05-01]: get_unread_count as SQL function (STABLE) for optimal nav badge performance
+- [05-01]: ChatMessage Zod type aliased as ChatMessageValidated in index to avoid collision with Database derived type
 
 ### Pending Todos
 
@@ -136,5 +140,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 04-05-PLAN.md (ride completion & driver reliability) -- Phase 4 complete
+Stopped at: Completed 05-01-PLAN.md (chat & notification DB foundation)
 Resume file: None
