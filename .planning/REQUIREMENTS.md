@@ -43,6 +43,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **RIDE-10**: Rides with past departure dates are automatically expired and archived
 - [ ] **RIDE-11**: Origin and destination input uses address autocomplete (Google Places or equivalent)
 - [ ] **RIDE-12**: Ride has clear status flow: Upcoming -> In Progress -> Completed / Cancelled
+- [ ] **RIDE-13**: Driver can create a recurring ride pattern (e.g., "every Friday Prague->Brno") and rides are auto-generated for upcoming weeks
 
 ### Ride Search & Details
 
@@ -53,6 +54,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **SRCH-05**: Passenger can view full ride detail page with route on map, driver profile, pickup points, and booking action
 - [ ] **SRCH-06**: Ride can be shared via deep link (opens in app or web)
 - [ ] **SRCH-07**: User can save favorite routes for quick repeat searches
+- [ ] **SRCH-09**: User can enable push alerts on a saved route -- receives notification when a new ride matching the route is posted
 - [ ] **SRCH-08**: Passenger can see who else is booked on a ride (co-passengers with names and ratings)
 
 ### Booking
@@ -184,7 +186,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Platform & UX
 
-- [ ] **PLAT-01**: Clean, minimal UI with a friendly, playful pastel color palette -- approachable and warm feel
+- [ ] **PLAT-01**: Clean, minimal UI with a friendly, playful pastel color palette -- approachable and warm feel. Supports light and dark mode.
 - [ ] **PLAT-02**: App supports Czech, Slovak, and English languages
 - [ ] **PLAT-03**: Terms of service and privacy policy pages (required for app stores)
 - [ ] **PLAT-04**: Donation prompt -- subtle way for users to support the platform ("Buy us a coffee")
@@ -222,11 +224,9 @@ Deferred to future release. Tracked but not in current roadmap.
 
 ### Advanced Features
 
-- **ADVN-01**: Recurring rides (daily/weekly commute patterns)
-- **ADVN-02**: Multi-stop rides with intermediate pickup/dropoff points
-- **ADVN-03**: Ride sharing to social media (share ride link to Instagram stories, etc.)
-- **ADVN-04**: Dark mode
-- **ADVN-05**: Female-only ride option
+- **ADVN-01**: Multi-stop rides with intermediate pickup/dropoff points
+- **ADVN-02**: Ride sharing to social media (share ride link to Instagram stories, etc.)
+- **ADVN-03**: Female-only ride option
 
 ## Out of Scope
 
@@ -274,6 +274,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RIDE-10 | Phase 3 | Pending |
 | RIDE-11 | Phase 3 | Pending |
 | RIDE-12 | Phase 3 | Pending |
+| RIDE-13 | Phase 3 | Pending |
 | SRCH-01 | Phase 3 | Pending |
 | SRCH-02 | Phase 3 | Pending |
 | SRCH-03 | Phase 3 | Pending |
@@ -282,6 +283,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SRCH-06 | Phase 3 | Pending |
 | SRCH-07 | Phase 3 | Pending |
 | SRCH-08 | Phase 3 | Pending |
+| SRCH-09 | Phase 5 | Pending |
 | BOOK-01 | Phase 4 | Pending |
 | BOOK-02 | Phase 4 | Pending |
 | BOOK-03 | Phase 4 | Pending |
@@ -396,8 +398,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PLAT-18 | Phase 10 | Pending |
 
 **Coverage:**
-- v1 requirements: 148 total
-- Mapped to phases: 148
+- v1 requirements: 151 total
+- Mapped to phases: 151
 - Unmapped: 0
 
 ---

@@ -67,7 +67,7 @@ Plans:
 ### Phase 3: Ride Posting & Search
 **Goal**: Drivers can publish rides and passengers can find them by route and date with map-based results
 **Depends on**: Phase 2
-**Requirements**: RIDE-01, RIDE-02, RIDE-03, RIDE-04, RIDE-05, RIDE-07, RIDE-08, RIDE-09, RIDE-10, RIDE-11, RIDE-12, SRCH-01, SRCH-02, SRCH-03, SRCH-04, SRCH-05, SRCH-06, SRCH-07, SRCH-08, NAV-07
+**Requirements**: RIDE-01, RIDE-02, RIDE-03, RIDE-04, RIDE-05, RIDE-07, RIDE-08, RIDE-09, RIDE-10, RIDE-11, RIDE-12, RIDE-13, SRCH-01, SRCH-02, SRCH-03, SRCH-04, SRCH-05, SRCH-06, SRCH-07, SRCH-08, NAV-07
 **Success Criteria** (what must be TRUE):
   1. Driver can post a ride with origin/destination (autocomplete), date/time, seats, and a price suggested by the app (adjustable)
   2. Passenger can search rides by origin, destination, and date and see geospatially matched results (rides passing near their route)
@@ -83,6 +83,7 @@ Plans:
 - [ ] 03-04: Ride detail page with map, driver info, and pickup points
 - [ ] 03-05: Ride management (edit, delete, expiry, status flow)
 - [ ] 03-06: Deep links, favorite routes, and post-ride FAB
+- [ ] 03-07: Recurring ride patterns and auto-generation
 
 ### Phase 4: Booking & Ride Management
 **Goal**: Passengers can book seats and both parties can manage their upcoming and past rides
@@ -106,7 +107,7 @@ Plans:
 ### Phase 5: Communication & Notifications
 **Goal**: Drivers and passengers can coordinate via in-app chat and receive timely push/email notifications for all ride events
 **Depends on**: Phase 4
-**Requirements**: CHAT-01, CHAT-02, CHAT-03, CHAT-04, NOTF-01, NOTF-02, NOTF-04, NOTF-05, NOTF-06, NOTF-07, NOTF-08, NOTF-09
+**Requirements**: CHAT-01, CHAT-02, CHAT-03, CHAT-04, NOTF-01, NOTF-02, NOTF-04, NOTF-05, NOTF-06, NOTF-07, NOTF-08, NOTF-09, SRCH-09
 **Success Criteria** (what must be TRUE):
   1. Driver and passenger can chat 1:1 after booking, with typing indicators, read receipts, and message history accessible from ride history
   2. User can share their phone number with the other party after booking is confirmed
@@ -122,6 +123,7 @@ Plans:
 - [ ] 05-04: Push notification infrastructure (OneSignal)
 - [ ] 05-05: Push notification triggers for all ride events
 - [ ] 05-06: Email notifications and preference management
+- [ ] 05-07: Route alerts (push when new ride matches saved route)
 
 ### Phase 6: Ratings, Trust & Safety
 **Goal**: Users can rate each other after rides, report bad behavior, and admins can moderate the platform
@@ -250,9 +252,9 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -
 |-------|----------------|--------|-----------|
 | 1. Foundation & Auth | 0/5 | Not started | - |
 | 2. Profiles & Identity | 0/5 | Not started | - |
-| 3. Ride Posting & Search | 0/6 | Not started | - |
+| 3. Ride Posting & Search | 0/7 | Not started | - |
 | 4. Booking & Ride Management | 0/5 | Not started | - |
-| 5. Communication & Notifications | 0/6 | Not started | - |
+| 5. Communication & Notifications | 0/7 | Not started | - |
 | 6. Ratings, Trust & Safety | 0/5 | Not started | - |
 | 7. Live Location | 0/4 | Not started | - |
 | 8. Events, Flexible Rides & Gamification | 0/8 | Not started | - |
