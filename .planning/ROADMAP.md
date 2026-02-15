@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Auth** - Monorepo scaffolding, Supabase setup, authentication, app shell with navigation
 - [x] **Phase 2: Profiles & Identity** - User profiles, vehicle info, verification badges, social links
-- [ ] **Phase 3: Ride Posting & Search** - Drivers post rides, passengers search and view ride details on a map
+- [x] **Phase 3: Ride Posting & Search** - Drivers post rides, passengers search and view ride details on a map
 - [ ] **Phase 4: Booking & Ride Management** - Seat booking (instant + request/approve), ride lifecycle, My Rides
 - [ ] **Phase 5: Communication & Notifications** - In-app chat, contact sharing, push and email notifications
 - [ ] **Phase 6: Ratings, Trust & Safety** - Mutual ratings/reviews, reporting, blocking, admin moderation panel
@@ -252,7 +252,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -
 |-------|----------------|--------|-----------|
 | 1. Foundation & Auth | 5/5 | ✓ Complete | 2026-02-15 |
 | 2. Profiles & Identity | 5/5 | ✓ Complete | 2026-02-15 |
-| 3. Ride Posting & Search | 0/7 | Not started | - |
+| 3. Ride Posting & Search | 7/7 | ✓ Complete | 2026-02-15 |
 | 4. Booking & Ride Management | 0/5 | Not started | - |
 | 5. Communication & Notifications | 0/7 | Not started | - |
 | 6. Ratings, Trust & Safety | 0/5 | Not started | - |
