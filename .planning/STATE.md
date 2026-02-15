@@ -53,6 +53,7 @@ Progress: [████████░░] 48%
 | Phase 05 P05 | 3min | 2 tasks | 6 files |
 | Phase 05 P05 | 2min | 2 tasks | 3 files |
 | Phase 05 P06 | 2min | 2 tasks | 3 files |
+| Phase 06 P01 | 3min | 2 tasks | 3 files |
 | Phase 06 P02 | 3min | 2 tasks | 7 files |
 
 ## Accumulated Context
@@ -143,6 +144,10 @@ Recent decisions affecting current work:
 - [05-05]: OneSignalInit uses dynamic import() to avoid SSR issues with OneSignal browser SDK
 - [05-06]: Dedicated RPC (find_matching_route_alerts) for geospatial matching instead of raw SQL in Edge Function
 - [05-06]: check-route-alerts calls sendPush directly via onesignal.ts -- avoids extra HTTP hop through send-notification
+- [06-01]: Dual-reveal uses FOR UPDATE on counter-review query to prevent race conditions
+- [06-01]: Block-aware RPCs use CREATE OR REPLACE to augment existing functions with NOT EXISTS block checks
+- [06-01]: Reports RLS uses inline JWT check to avoid forward dependency on is_admin() in migration 031
+- [06-01]: Rating aggregation trigger fires on INSERT and UPDATE OF revealed_at for immediate recalculation
 - [06-02]: No index.ts barrel files in subdirectories -- project uses flat exports from src/index.ts
 
 ### Pending Todos
