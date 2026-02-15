@@ -12,7 +12,7 @@ Festapp Rideshare is built as a web-first PWA with a shared TypeScript monorepo,
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & Auth** - Monorepo scaffolding, Supabase setup, authentication, app shell with navigation
+- [x] **Phase 1: Foundation & Auth** - Monorepo scaffolding, Supabase setup, authentication, app shell with navigation
 - [ ] **Phase 2: Profiles & Identity** - User profiles, vehicle info, verification badges, social links
 - [ ] **Phase 3: Ride Posting & Search** - Drivers post rides, passengers search and view ride details on a map
 - [ ] **Phase 4: Booking & Ride Management** - Seat booking (instant + request/approve), ride lifecycle, My Rides
@@ -39,11 +39,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 5 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Monorepo scaffolding (pnpm + Turborepo + shared package + CI)
-- [ ] 01-02-PLAN.md — Supabase schema, Edge Functions, and platform-specific clients
-- [ ] 01-03-PLAN.md — Authentication flows (phone OTP, email, Google, Apple) for web and mobile
-- [ ] 01-04-PLAN.md — App shell with tab navigation, pastel design system, settings (logout/delete)
-- [ ] 01-05-PLAN.md — Onboarding flow, splash/icon assets, and auth validation tests
+- [x] 01-01-PLAN.md — Monorepo scaffolding (pnpm + Turborepo + shared package + CI)
+- [x] 01-02-PLAN.md — Supabase schema, Edge Functions, and platform-specific clients
+- [x] 01-03-PLAN.md — Authentication flows (phone OTP, email, Google, Apple) for web and mobile
+- [x] 01-04-PLAN.md — App shell with tab navigation, pastel design system, settings (logout/delete)
+- [x] 01-05-PLAN.md — Onboarding flow, splash/icon assets, and auth validation tests
 
 ### Phase 2: Profiles & Identity
 **Goal**: Users have rich, trustworthy profiles that build confidence for ride sharing with strangers
@@ -250,7 +250,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Auth | 0/5 | Planning complete | - |
+| 1. Foundation & Auth | 5/5 | ✓ Complete | 2026-02-15 |
 | 2. Profiles & Identity | 0/5 | Not started | - |
 | 3. Ride Posting & Search | 0/7 | Not started | - |
 | 4. Booking & Ride Management | 0/5 | Not started | - |
