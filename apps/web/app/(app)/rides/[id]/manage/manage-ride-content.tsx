@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
-import { BOOKING_STATUS } from "@festapp/shared";
+import { toast } from "sonner";
+import { BOOKING_STATUS, RIDE_STATUS } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/client";
 import { BookingRequestCard } from "../../../components/booking-request-card";
 
@@ -55,9 +56,55 @@ export function ManageRideContent({ ride, bookings }: ManageRideContentProps) {
     0,
   );
 
+  const [completeConfirm, setCompleteConfirm] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
+
   const departureDate = parseISO(ride.departure_time);
   const formattedDate = format(departureDate, "EEE, MMM d, yyyy");
   const formattedTime = format(departureDate, "h:mm a");
+  const isPastDeparture = new Date() > departureDate;
+  const isCompletable =
+    (ride.status === RIDE_STATUS.upcoming || ride.status === "in_progress") &&
+    isPastDeparture;
+  const isCompleted = ride.status === RIDE_STATUS.completed;
+
+  async function handleComplete() {
+    if (!completeConfirm) {
+      setCompleteConfirm(true);
+      return;
+    }
+
+    setIsCompleting(true);
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { error } = await supabase.rpc("complete_ride", {
+        p_ride_id: ride.id,
+        p_driver_id: user.id,
+      });
+      if (error) {
+        if (error.message.includes("Only the driver")) {
+          toast.error("Only the ride driver can complete this ride");
+        } else if (error.message.includes("cannot be completed")) {
+          toast.error("This ride cannot be completed from its current status");
+        } else {
+          toast.error("Failed to complete ride");
+        }
+        setCompleteConfirm(false);
+        return;
+      }
+      toast.success("Ride completed!");
+      router.push(`/rides/${ride.id}`);
+    } catch {
+      toast.error("Failed to complete ride");
+      setCompleteConfirm(false);
+    } finally {
+      setIsCompleting(false);
+    }
+  }
 
   // Realtime subscription for booking changes
   useEffect(() => {
@@ -142,6 +189,43 @@ export function ManageRideContent({ ride, bookings }: ManageRideContentProps) {
           </span>
         </div>
       </section>
+
+      {/* Completed banner */}
+      {isCompleted && (
+        <div className="rounded-xl bg-success/10 p-4 text-sm font-medium text-success">
+          This ride has been completed. All bookings have been finalized.
+        </div>
+      )}
+
+      {/* Complete ride button */}
+      {!isCompleted && isCompletable && (
+        <button
+          onClick={handleComplete}
+          disabled={isCompleting}
+          className={`w-full rounded-xl px-6 py-3 font-semibold transition-colors ${
+            completeConfirm
+              ? "bg-green-600 text-white hover:bg-green-700"
+              : "border border-green-500 text-green-600 hover:bg-green-50"
+          } disabled:opacity-50`}
+        >
+          {isCompleting
+            ? "Completing..."
+            : completeConfirm
+              ? "Confirm Complete?"
+              : "Complete Ride"}
+        </button>
+      )}
+      {!isCompleted && !isPastDeparture && (
+        <div
+          className="w-full rounded-xl border border-gray-300 px-6 py-3 text-center font-semibold text-gray-400 cursor-not-allowed"
+          title="Available after departure time"
+        >
+          Complete Ride
+          <span className="block text-xs font-normal mt-0.5">
+            Available after departure time
+          </span>
+        </div>
+      )}
 
       {/* Pending requests */}
       <section>
