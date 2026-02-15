@@ -24,6 +24,9 @@ export interface Database {
           user_role: string;
           id_verified: boolean;
           id_document_url: string | null;
+          account_status: string;
+          suspended_until: string | null;
+          completed_rides_count: number;
           created_at: string;
           updated_at: string;
         };
@@ -39,6 +42,9 @@ export interface Database {
           user_role?: string;
           id_verified?: boolean;
           id_document_url?: string | null;
+          account_status?: string;
+          suspended_until?: string | null;
+          completed_rides_count?: number;
           created_at?: string;
           updated_at?: string;
         };
@@ -54,6 +60,9 @@ export interface Database {
           user_role?: string;
           id_verified?: boolean;
           id_document_url?: string | null;
+          account_status?: string;
+          suspended_until?: string | null;
+          completed_rides_count?: number;
           created_at?: string;
           updated_at?: string;
         };
@@ -535,6 +544,259 @@ export interface Database {
           },
         ];
       };
+      reviews: {
+        Row: {
+          id: string;
+          booking_id: string;
+          reviewer_id: string;
+          reviewee_id: string;
+          rating: number;
+          comment: string | null;
+          revealed_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          booking_id: string;
+          reviewer_id: string;
+          reviewee_id: string;
+          rating: number;
+          comment?: string | null;
+          revealed_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          booking_id?: string;
+          reviewer_id?: string;
+          reviewee_id?: string;
+          rating?: number;
+          comment?: string | null;
+          revealed_at?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey";
+            columns: ["booking_id"];
+            isOneToOne: false;
+            referencedRelation: "bookings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reviews_reviewer_id_fkey";
+            columns: ["reviewer_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reviews_reviewee_id_fkey";
+            columns: ["reviewee_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      reports: {
+        Row: {
+          id: string;
+          reporter_id: string;
+          reported_user_id: string;
+          ride_id: string | null;
+          booking_id: string | null;
+          review_id: string | null;
+          description: string;
+          status: string;
+          admin_notes: string | null;
+          resolved_by: string | null;
+          resolved_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          reporter_id: string;
+          reported_user_id: string;
+          ride_id?: string | null;
+          booking_id?: string | null;
+          review_id?: string | null;
+          description: string;
+          status?: string;
+          admin_notes?: string | null;
+          resolved_by?: string | null;
+          resolved_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          reporter_id?: string;
+          reported_user_id?: string;
+          ride_id?: string | null;
+          booking_id?: string | null;
+          review_id?: string | null;
+          description?: string;
+          status?: string;
+          admin_notes?: string | null;
+          resolved_by?: string | null;
+          resolved_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reports_reporter_id_fkey";
+            columns: ["reporter_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reports_reported_user_id_fkey";
+            columns: ["reported_user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      user_blocks: {
+        Row: {
+          id: string;
+          blocker_id: string;
+          blocked_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          blocker_id: string;
+          blocked_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          blocker_id?: string;
+          blocked_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_blocks_blocker_id_fkey";
+            columns: ["blocker_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "user_blocks_blocked_id_fkey";
+            columns: ["blocked_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      moderation_actions: {
+        Row: {
+          id: string;
+          user_id: string;
+          admin_id: string;
+          action_type: string;
+          reason: string;
+          report_id: string | null;
+          duration_days: number | null;
+          expires_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          admin_id: string;
+          action_type: string;
+          reason: string;
+          report_id?: string | null;
+          duration_days?: number | null;
+          expires_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          admin_id?: string;
+          action_type?: string;
+          reason?: string;
+          report_id?: string | null;
+          duration_days?: number | null;
+          expires_at?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "moderation_actions_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "moderation_actions_admin_id_fkey";
+            columns: ["admin_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      platform_stats_daily: {
+        Row: {
+          date: string;
+          total_users: number;
+          new_users: number;
+          active_users: number;
+          total_rides: number;
+          completed_rides: number;
+          cancelled_rides: number;
+          total_bookings: number;
+          total_reviews: number;
+          average_rating: number | null;
+          total_reports: number;
+          open_reports: number;
+          created_at: string;
+        };
+        Insert: {
+          date: string;
+          total_users?: number;
+          new_users?: number;
+          active_users?: number;
+          total_rides?: number;
+          completed_rides?: number;
+          cancelled_rides?: number;
+          total_bookings?: number;
+          total_reviews?: number;
+          average_rating?: number | null;
+          total_reports?: number;
+          open_reports?: number;
+          created_at?: string;
+        };
+        Update: {
+          date?: string;
+          total_users?: number;
+          new_users?: number;
+          active_users?: number;
+          total_rides?: number;
+          completed_rides?: number;
+          cancelled_rides?: number;
+          total_bookings?: number;
+          total_reviews?: number;
+          average_rating?: number | null;
+          total_reports?: number;
+          open_reports?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       notification_preferences: {
         Row: {
           user_id: string;
@@ -706,6 +968,95 @@ export interface Database {
         Args: Record<string, never>;
         Returns: number;
       };
+      submit_review: {
+        Args: {
+          p_booking_id: string;
+          p_rating: number;
+          p_comment?: string | null;
+        };
+        Returns: string;
+      };
+      get_pending_reviews: {
+        Args: Record<string, never>;
+        Returns: {
+          booking_id: string;
+          ride_id: string;
+          other_user_id: string;
+          other_user_name: string;
+          other_user_avatar: string | null;
+          origin_address: string;
+          destination_address: string;
+          ride_completed_at: string;
+        }[];
+      };
+      block_user: {
+        Args: { p_blocked_id: string };
+        Returns: undefined;
+      };
+      unblock_user: {
+        Args: { p_blocked_id: string };
+        Returns: undefined;
+      };
+      get_blocked_users: {
+        Args: Record<string, never>;
+        Returns: {
+          id: string;
+          display_name: string;
+          avatar_url: string | null;
+          blocked_at: string;
+        }[];
+      };
+      report_user: {
+        Args: {
+          p_reported_user_id: string;
+          p_description: string;
+          p_ride_id?: string | null;
+          p_booking_id?: string | null;
+          p_review_id?: string | null;
+        };
+        Returns: string;
+      };
+      admin_warn_user: {
+        Args: {
+          p_user_id: string;
+          p_reason: string;
+          p_report_id?: string | null;
+        };
+        Returns: string;
+      };
+      admin_suspend_user: {
+        Args: {
+          p_user_id: string;
+          p_reason: string;
+          p_duration_days: number;
+          p_report_id?: string | null;
+        };
+        Returns: string;
+      };
+      admin_ban_user: {
+        Args: {
+          p_user_id: string;
+          p_reason: string;
+          p_cancel_rides?: boolean;
+          p_report_id?: string | null;
+        };
+        Returns: string;
+      };
+      admin_unban_user: {
+        Args: {
+          p_user_id: string;
+          p_reason: string;
+        };
+        Returns: string;
+      };
+      admin_resolve_report: {
+        Args: {
+          p_report_id: string;
+          p_status: string;
+          p_admin_notes?: string | null;
+        };
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
   };
@@ -718,3 +1069,14 @@ export type ChatMessage =
   Database['public']['Tables']['chat_messages']['Row'];
 export type NotificationPreferencesRow =
   Database['public']['Tables']['notification_preferences']['Row'];
+
+// Phase 6 derived types
+export type Review = Database['public']['Tables']['reviews']['Row'];
+export type Report = Database['public']['Tables']['reports']['Row'];
+export type UserBlock = Database['public']['Tables']['user_blocks']['Row'];
+export type ModerationAction =
+  Database['public']['Tables']['moderation_actions']['Row'];
+export type PlatformStatDaily =
+  Database['public']['Tables']['platform_stats_daily']['Row'];
+export type PendingReview =
+  Database['public']['Functions']['get_pending_reviews']['Returns'][number];

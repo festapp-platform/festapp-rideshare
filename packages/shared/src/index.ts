@@ -134,10 +134,57 @@ export {
   upsertNotificationPreferences,
 } from './queries/chat';
 
+// Constants - review
+export {
+  REVIEW_MAX_COMMENT_LENGTH,
+  REVIEW_DEADLINE_DAYS,
+  RATING_MIN,
+  RATING_MAX,
+  REVIEW_REMINDER_HOURS,
+} from './constants/review';
+
+// Constants - moderation
+export {
+  ACCOUNT_STATUS,
+  MODERATION_ACTION_TYPE,
+  REPORT_STATUS,
+  SUSPENSION_DURATIONS,
+  EXPERIENCED_BADGE_THRESHOLD,
+} from './constants/moderation';
+export type {
+  AccountStatus,
+  ModerationActionType,
+  ReportStatus,
+} from './constants/moderation';
+
+// Validation schemas - review & moderation
+export {
+  SubmitReviewSchema,
+  ReportUserSchema,
+  AdminWarnSchema,
+  AdminSuspendSchema,
+  AdminBanSchema,
+  AdminResolveReportSchema,
+} from './validation/review';
+export type {
+  SubmitReview,
+  ReportUser,
+  AdminWarn,
+  AdminSuspend,
+  AdminBan,
+  AdminResolveReport,
+} from './validation/review';
+
 // Types
 export type {
   Database,
   ChatConversation,
   ChatMessage,
   NotificationPreferencesRow,
+  Review,
+  Report,
+  UserBlock,
+  ModerationAction,
+  PlatformStatDaily,
+  PendingReview,
 } from './types/database';
