@@ -103,5 +103,41 @@ export {
   getBookingById,
 } from './queries/bookings';
 
+// Validation schemas - chat
+export { SendMessageSchema, ChatMessageSchema } from './validation/chat';
+export type {
+  SendMessage,
+  ChatMessage as ChatMessageValidated,
+} from './validation/chat';
+
+// Validation schemas - notification
+export { NotificationPreferencesSchema } from './validation/notification';
+export type { NotificationPreferences } from './validation/notification';
+
+// Constants - notification
+export {
+  NOTIFICATION_TYPES,
+  NOTIFICATION_CATEGORIES,
+  MESSAGE_TYPE,
+} from './constants/notification';
+export type {
+  NotificationType,
+  MessageType,
+} from './constants/notification';
+
+// Query builders - chat & notifications
+export {
+  getConversationsForUser,
+  getMessages,
+  getUnreadCount,
+  getNotificationPreferences,
+  upsertNotificationPreferences,
+} from './queries/chat';
+
 // Types
-export type { Database } from './types/database';
+export type {
+  Database,
+  ChatConversation,
+  ChatMessage,
+  NotificationPreferencesRow,
+} from './types/database';

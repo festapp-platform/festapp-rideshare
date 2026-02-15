@@ -338,6 +338,7 @@ export interface Database {
           destination_location: unknown;
           destination_address: string;
           label: string | null;
+          alert_enabled: boolean;
           created_at: string;
         };
         Insert: {
@@ -348,6 +349,7 @@ export interface Database {
           destination_location: unknown;
           destination_address: string;
           label?: string | null;
+          alert_enabled?: boolean;
           created_at?: string;
         };
         Update: {
@@ -358,6 +360,7 @@ export interface Database {
           destination_location?: unknown;
           destination_address?: string;
           label?: string | null;
+          alert_enabled?: boolean;
           created_at?: string;
         };
         Relationships: [
@@ -426,6 +429,157 @@ export interface Database {
             foreignKeyName: "bookings_cancelled_by_fkey";
             columns: ["cancelled_by"];
             isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      chat_conversations: {
+        Row: {
+          id: string;
+          booking_id: string;
+          ride_id: string;
+          driver_id: string;
+          passenger_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          booking_id: string;
+          ride_id: string;
+          driver_id: string;
+          passenger_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          booking_id?: string;
+          ride_id?: string;
+          driver_id?: string;
+          passenger_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "chat_conversations_booking_id_fkey";
+            columns: ["booking_id"];
+            isOneToOne: true;
+            referencedRelation: "bookings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "chat_conversations_ride_id_fkey";
+            columns: ["ride_id"];
+            isOneToOne: false;
+            referencedRelation: "rides";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "chat_conversations_driver_id_fkey";
+            columns: ["driver_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "chat_conversations_passenger_id_fkey";
+            columns: ["passenger_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      chat_messages: {
+        Row: {
+          id: string;
+          conversation_id: string;
+          sender_id: string;
+          content: string;
+          message_type: string;
+          read_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          conversation_id: string;
+          sender_id: string;
+          content: string;
+          message_type?: string;
+          read_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          conversation_id?: string;
+          sender_id?: string;
+          content?: string;
+          message_type?: string;
+          read_at?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "chat_conversations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "chat_messages_sender_id_fkey";
+            columns: ["sender_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      notification_preferences: {
+        Row: {
+          user_id: string;
+          push_booking_requests: boolean;
+          push_booking_confirmations: boolean;
+          push_booking_cancellations: boolean;
+          push_new_messages: boolean;
+          push_ride_reminders: boolean;
+          push_route_alerts: boolean;
+          email_booking_confirmations: boolean;
+          email_ride_reminders: boolean;
+          email_cancellations: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          push_booking_requests?: boolean;
+          push_booking_confirmations?: boolean;
+          push_booking_cancellations?: boolean;
+          push_new_messages?: boolean;
+          push_ride_reminders?: boolean;
+          push_route_alerts?: boolean;
+          email_booking_confirmations?: boolean;
+          email_ride_reminders?: boolean;
+          email_cancellations?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          push_booking_requests?: boolean;
+          push_booking_confirmations?: boolean;
+          push_booking_cancellations?: boolean;
+          push_new_messages?: boolean;
+          push_ride_reminders?: boolean;
+          push_route_alerts?: boolean;
+          email_booking_confirmations?: boolean;
+          email_ride_reminders?: boolean;
+          email_cancellations?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
@@ -528,7 +682,39 @@ export interface Database {
           total_bookings_received: number;
         }[];
       };
+      send_chat_message: {
+        Args: {
+          p_conversation_id: string;
+          p_content: string;
+          p_message_type?: string;
+        };
+        Returns: string;
+      };
+      mark_messages_read: {
+        Args: {
+          p_conversation_id: string;
+        };
+        Returns: undefined;
+      };
+      get_or_create_conversation: {
+        Args: {
+          p_booking_id: string;
+        };
+        Returns: string;
+      };
+      get_unread_count: {
+        Args: Record<string, never>;
+        Returns: number;
+      };
     };
     Enums: Record<string, never>;
   };
 }
+
+// Derived types for convenience
+export type ChatConversation =
+  Database['public']['Tables']['chat_conversations']['Row'];
+export type ChatMessage =
+  Database['public']['Tables']['chat_messages']['Row'];
+export type NotificationPreferencesRow =
+  Database['public']['Tables']['notification_preferences']['Row'];
