@@ -95,14 +95,14 @@ Plans:
   3. Driver and passenger can view upcoming and past rides on the My Rides screen
   4. Either party can cancel a booking with a reason, the other party is notified, and cancellations are tracked for driver reliability scoring
   5. Driver can mark a ride as completed, which updates ride status and prepares for the rating prompt
-**Plans**: TBD
+**Plans:** 5 plans
 
 Plans:
-- [ ] 04-01: Instant booking flow
-- [ ] 04-02: Request-and-approve booking flow
-- [ ] 04-03: My Rides screen (upcoming + history)
-- [ ] 04-04: Cancellation handling and reliability scoring
-- [ ] 04-05: Ride completion flow and passenger management
+- [ ] 04-01-PLAN.md — Database foundation: bookings table, RPC functions, shared types/schemas/queries
+- [ ] 04-02-PLAN.md — Instant booking flow with seat selector and passenger list on ride detail
+- [ ] 04-03-PLAN.md — Request-and-approve booking flow with driver manage page
+- [ ] 04-04-PLAN.md — Cancellation handling with reason tracking and My Rides passenger view
+- [ ] 04-05-PLAN.md — Ride completion flow and driver reliability score badge
 
 ### Phase 5: Communication & Notifications
 **Goal**: Drivers and passengers can coordinate via in-app chat and receive timely push/email notifications for all ride events
