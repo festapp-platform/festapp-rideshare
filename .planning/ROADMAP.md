@@ -13,7 +13,7 @@ Festapp Rideshare is built as a web-first PWA with a shared TypeScript monorepo,
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Auth** - Monorepo scaffolding, Supabase setup, authentication, app shell with navigation
-- [ ] **Phase 2: Profiles & Identity** - User profiles, vehicle info, verification badges, social links
+- [x] **Phase 2: Profiles & Identity** - User profiles, vehicle info, verification badges, social links
 - [ ] **Phase 3: Ride Posting & Search** - Drivers post rides, passengers search and view ride details on a map
 - [ ] **Phase 4: Booking & Ride Management** - Seat booking (instant + request/approve), ride lifecycle, My Rides
 - [ ] **Phase 5: Communication & Notifications** - In-app chat, contact sharing, push and email notifications
@@ -251,7 +251,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Auth | 5/5 | ✓ Complete | 2026-02-15 |
-| 2. Profiles & Identity | 0/5 | Not started | - |
+| 2. Profiles & Identity | 5/5 | ✓ Complete | 2026-02-15 |
 | 3. Ride Posting & Search | 0/7 | Not started | - |
 | 4. Booking & Ride Management | 0/5 | Not started | - |
 | 5. Communication & Notifications | 0/7 | Not started | - |
