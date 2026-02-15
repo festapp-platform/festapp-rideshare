@@ -55,6 +55,7 @@ Progress: [████████░░] 48%
 | Phase 05 P06 | 2min | 2 tasks | 3 files |
 | Phase 06 P01 | 3min | 2 tasks | 3 files |
 | Phase 06 P02 | 3min | 2 tasks | 7 files |
+| Phase 06 P03 | 5min | 2 tasks | 12 files |
 | Phase 06 P04 | 4min | 2 tasks | 5 files |
 
 ## Accumulated Context
@@ -150,6 +151,9 @@ Recent decisions affecting current work:
 - [06-01]: Reports RLS uses inline JWT check to avoid forward dependency on is_admin() in migration 031
 - [06-01]: Rating aggregation trigger fires on INSERT and UPDATE OF revealed_at for immediate recalculation
 - [06-02]: No index.ts barrel files in subdirectories -- project uses flat exports from src/index.ts
+- [06-03]: StarRating component with sm/md variants replaces all inline star rendering; "New" label for unrated users
+- [06-03]: justCompleted query param triggers rating modal on ride detail page; server-side review eligibility check
+- [06-03]: PendingRatingBanner uses sessionStorage for session-scoped dismiss (not persistent localStorage)
 - [06-04]: Three-dot ellipsis menu for Report/Block actions on profile page (not inline buttons)
 - [06-04]: Block confirmation required, unblock instant; optimistic UI with error revert
 - [06-04]: Banned profiles show "account suspended" to visitors; suspended users see banner on own profile only
