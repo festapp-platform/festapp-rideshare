@@ -36,6 +36,7 @@ Progress: [████░░░░░░] 24%
 
 *Updated after each plan completion*
 | Phase 03 P01 | 3min | 2 tasks | 8 files |
+| Phase 03 P02 | 2min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,8 @@ Recent decisions affecting current work:
 - [Phase 03]: PostGIS functions use extensions. prefix throughout (ST_DWithin, ST_Distance, ST_MakePoint, ST_SetSRID) per Supabase requirement
 - [Phase 03]: pg_cron extension enabled explicitly in migration (not pre-installed on Supabase hosted)
 - [Phase 03]: nearby_rides RPC falls back to point matching when route_geometry is NULL
+- [Phase 03-02]: Added @supabase/supabase-js to shared package for typed query builders (SupabaseClient<Database> pattern)
+- [Phase 03-02]: PostGIS geography columns typed as unknown (opaque binary format); NearbyRideResult derived from Database Functions type
 
 ### Pending Todos
 
