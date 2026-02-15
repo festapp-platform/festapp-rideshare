@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 4 of 11 (Booking & Ride Management)
-Plan: 0 of 5 in current phase
-Status: Ready to plan
-Last activity: 2026-02-15 -- Phase 3 complete (verified, 5/5 success criteria, 23/23 requirements)
+Plan: 1 of 5 in current phase
+Status: Executing
+Last activity: 2026-02-15 -- Completed 04-01 (booking database foundation)
 
-Progress: [████░░░░░░] 27%
+Progress: [█████░░░░░] 30%
 
 ## Performance Metrics
 
@@ -41,6 +41,7 @@ Progress: [████░░░░░░] 27%
 | Phase 03 P05 | 4min | 2 tasks | 4 files |
 | Phase 03 P06 | 4min | 2 tasks | 6 files |
 | Phase 03 P07 | 4min | 2 tasks | 6 files |
+| Phase 04 P01 | 3min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,8 @@ Recent decisions affecting current work:
 - [03-07]: Favorite routes match by address string (not coordinates) for deduplication simplicity
 - [03-07]: Skipped Share button on ride-detail.tsx since 03-06 runs in parallel
 - [03-07]: Recurring ride form uses local state (not react-hook-form) for simpler one-off page
+- [04-01]: All booking mutations via SECURITY DEFINER RPCs -- no direct INSERT/UPDATE/DELETE RLS policies
+- [04-01]: expire_past_rides collects expired ride IDs into array first, then batch-updates bookings
 
 ### Pending Todos
 
@@ -117,5 +120,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 03-06-PLAN.md (ride detail, edit, My Rides)
+Stopped at: Completed 04-01-PLAN.md (booking database foundation)
 Resume file: None
