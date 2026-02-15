@@ -67,5 +67,15 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Admin route protection: only users with is_admin metadata can access /admin
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    const isAdmin = user?.app_metadata?.is_admin === true;
+    if (!isAdmin) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
+      return NextResponse.redirect(url);
+    }
+  }
+
   return supabaseResponse;
 }
