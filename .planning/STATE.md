@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 4 of 11 (Booking & Ride Management)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: Executing
-Last activity: 2026-02-15 -- Completed 04-01 (booking database foundation)
+Last activity: 2026-02-15 -- Completed 04-02 (instant booking UI)
 
 Progress: [█████░░░░░] 30%
 
@@ -42,6 +42,7 @@ Progress: [█████░░░░░] 30%
 | Phase 03 P06 | 4min | 2 tasks | 6 files |
 | Phase 03 P07 | 4min | 2 tasks | 6 files |
 | Phase 04 P01 | 3min | 2 tasks | 7 files |
+| Phase 04 P02 | 5min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,8 @@ Recent decisions affecting current work:
 - [03-07]: Recurring ride form uses local state (not react-hook-form) for simpler one-off page
 - [04-01]: All booking mutations via SECURITY DEFINER RPCs -- no direct INSERT/UPDATE/DELETE RLS policies
 - [04-01]: expire_past_rides collects expired ride IDs into array first, then batch-updates bookings
+- [04-02]: Installed sonner for toast notifications (no existing toast library); Toaster in app layout
+- [04-02]: PostgREST FK hint !bookings_passenger_id_fkey for profiles disambiguation (passenger_id vs cancelled_by)
 
 ### Pending Todos
 
@@ -120,5 +123,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-15
-Stopped at: Completed 04-01-PLAN.md (booking database foundation)
+Stopped at: Completed 04-02-PLAN.md (instant booking UI)
 Resume file: None
