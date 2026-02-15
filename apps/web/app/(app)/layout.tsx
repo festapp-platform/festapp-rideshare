@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { AppNav } from "./app-nav";
 import { GoogleMapsProvider } from "@/lib/google-maps-provider";
+import { PostRideFab } from "./components/post-ride-fab";
 
 /**
  * Authenticated app layout (NAV-01).
@@ -48,6 +49,9 @@ export default async function AppLayout({
         <main className="flex-1 pb-16 md:pb-0">
           <div className="mx-auto max-w-4xl px-4 py-6">{children}</div>
         </main>
+
+        {/* Post-a-Ride FAB on all authenticated pages (NAV-07) */}
+        <PostRideFab />
       </div>
     </GoogleMapsProvider>
   );

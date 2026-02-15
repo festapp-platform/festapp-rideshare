@@ -13,6 +13,8 @@ import {
   type SearchFilters,
   type SortOption,
 } from '../components/search-filters';
+import { SaveRouteButton, FavoriteRoutesList } from '../components/favorite-routes';
+import type { PlaceResult } from '../components/address-autocomplete';
 
 /**
  * Search page -- the main passenger experience.
@@ -20,6 +22,7 @@ import {
  * Calls the nearby_rides RPC for geospatial corridor matching,
  * then applies client-side filtering and sorting on the results.
  * Search params are persisted in the URL for shareability.
+ * Includes favorite routes for quick-fill saved searches (SRCH-07).
  */
 export default function SearchPage() {
   const router = useRouter();
@@ -31,11 +34,18 @@ export default function SearchPage() {
   const [hasSearched, setHasSearched] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS);
+  const [lastSearchOrigin, setLastSearchOrigin] = useState<PlaceResult | null>(null);
+  const [lastSearchDest, setLastSearchDest] = useState<PlaceResult | null>(null);
+  const [favoritesKey, setFavoritesKey] = useState(0);
 
   // Read initial values from URL params
   const initialOrigin = searchParams.get('origin') ?? undefined;
   const initialDest = searchParams.get('dest') ?? undefined;
   const initialDate = searchParams.get('date') ?? undefined;
+
+  // State for pre-filling search form from favorite route
+  const [prefillOrigin, setPrefillOrigin] = useState<string | undefined>(undefined);
+  const [prefillDest, setPrefillDest] = useState<string | undefined>(undefined);
 
   const handleSearch = useCallback(
     async (params: SearchParams) => {
@@ -51,6 +61,20 @@ export default function SearchPage() {
       url.set('destLng', String(params.destLng));
       url.set('date', params.searchDate);
       router.replace(`/search?${url.toString()}`, { scroll: false });
+
+      // Track last searched origin/dest for save-route button
+      setLastSearchOrigin({
+        lat: params.originLat,
+        lng: params.originLng,
+        address: '', // Address will be from the form
+        placeId: '',
+      });
+      setLastSearchDest({
+        lat: params.destLat,
+        lng: params.destLng,
+        address: '',
+        placeId: '',
+      });
 
       try {
         const { data, error: rpcError } = await searchNearbyRides(
@@ -73,6 +97,35 @@ export default function SearchPage() {
       }
     },
     [supabase, router],
+  );
+
+  /** Called with origin+dest addresses extracted from SearchParams */
+  const handleSearchWithAddresses = useCallback(
+    async (params: SearchParams, originAddr: string, destAddr: string) => {
+      setLastSearchOrigin({
+        lat: params.originLat,
+        lng: params.originLng,
+        address: originAddr,
+        placeId: '',
+      });
+      setLastSearchDest({
+        lat: params.destLat,
+        lng: params.destLng,
+        address: destAddr,
+        placeId: '',
+      });
+      await handleSearch(params);
+    },
+    [handleSearch],
+  );
+
+  /** Handle favorite route click -- prefill search form addresses */
+  const handleFavoriteRouteSelect = useCallback(
+    (origin: PlaceResult, destination: PlaceResult) => {
+      setPrefillOrigin(origin.address);
+      setPrefillDest(destination.address);
+    },
+    [],
   );
 
   // Apply client-side filters and sorting
@@ -127,13 +180,31 @@ export default function SearchPage() {
     <div>
       <h1 className="mb-6 text-2xl font-bold text-text-main">Search Rides</h1>
 
+      {/* Favorite routes quick-access panel (SRCH-07) */}
+      {!hasSearched && (
+        <div className="mb-4">
+          <FavoriteRoutesList onRouteSelect={handleFavoriteRouteSelect} />
+        </div>
+      )}
+
       <SearchForm
         onSearch={handleSearch}
         isLoading={isLoading}
-        initialOrigin={initialOrigin}
-        initialDestination={initialDest}
+        initialOrigin={prefillOrigin ?? initialOrigin}
+        initialDestination={prefillDest ?? initialDest}
         initialDate={initialDate}
       />
+
+      {/* Save route button after search */}
+      {hasSearched && lastSearchOrigin?.address && lastSearchDest?.address && (
+        <div className="mt-3 flex justify-end">
+          <SaveRouteButton
+            origin={lastSearchOrigin}
+            destination={lastSearchDest}
+            onToggle={() => setFavoritesKey((k) => k + 1)}
+          />
+        </div>
+      )}
 
       {/* Filters -- only show after first search */}
       {hasSearched && !isLoading && results.length > 0 && (
