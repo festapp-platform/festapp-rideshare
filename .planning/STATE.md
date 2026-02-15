@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 7 of 11 (Live Location)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In Progress
-Last activity: 2026-02-16 -- Completed 07-01 (live location foundation)
+Last activity: 2026-02-16 -- Completed 07-02 (driver UI & passenger live map)
 
 Progress: [██████████░] 55%
 
@@ -59,6 +59,7 @@ Progress: [██████████░] 55%
 | Phase 06 P04 | 4min | 2 tasks | 5 files |
 | Phase 06 P05 | 7min | 2 tasks | 14 files |
 | Phase 07 P01 | 1min | 2 tasks | 5 files |
+| Phase 07 P02 | 2min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -165,6 +166,8 @@ Recent decisions affecting current work:
 - [06-05]: Installed lucide-react for admin panel icons (LayoutDashboard, Flag, Users, Star)
 - [07-01]: start_ride follows complete_ride pattern: SECURITY DEFINER, FOR UPDATE row lock, validated driver ownership
 - [07-01]: Broadcast-only location sharing (no database persistence) for ephemeral driver positions
+- [07-02]: LiveLocationMap replaces RouteMap during active sharing (conditional swap, not side-by-side)
+- [07-02]: Passenger auto-subscribes to Broadcast when ride is in_progress and booking is confirmed
 
 ### Pending Todos
 
@@ -183,5 +186,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 07-01-PLAN.md
-Resume file: .planning/phases/07-live-location/07-01-SUMMARY.md
+Stopped at: Completed 07-02-PLAN.md
+Resume file: .planning/phases/07-live-location/07-02-SUMMARY.md
