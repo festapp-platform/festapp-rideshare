@@ -65,6 +65,9 @@ Drivers and passengers can find each other for shared rides quickly and effortle
 - **Push:** OneSignal for push notifications (mobile + web push)
 - **Data access:** Prefer Supabase RPC functions (PostgreSQL functions) over direct table queries for write operations and complex reads. Direct queries only for simple reads protected by RLS.
 - **DB schema files:** All table definitions in `tables.sql`. Each RPC/Edge function in its own `.sql` file (e.g., `book_ride.sql`, `cancel_booking.sql`). Version-controlled alongside code.
+- **Reference codebase:** Festapp (`/Users/miakh/source/festapp`) — adopt proven patterns (see `.planning/research/FESTAPP_PATTERNS.md`)
+- **Deployment:** Netlify for web (Next.js), EAS Build for mobile (Expo)
+- **Supabase:** Single project (no separate dev/staging/prod for now)
 - **Cost:** Minimize infrastructure costs (Supabase free tier, AWS for email/SMS, open-source map options)
 
 ## Key Decisions
