@@ -37,6 +37,7 @@ Progress: [████░░░░░░] 24%
 *Updated after each plan completion*
 | Phase 03 P01 | 3min | 2 tasks | 8 files |
 | Phase 03 P02 | 2min | 2 tasks | 9 files |
+| Phase 03 P04 | 7min | 2 tasks | 10 files |
 | Phase 03 P05 | 4min | 2 tasks | 4 files |
 
 ## Accumulated Context
@@ -84,6 +85,10 @@ Recent decisions affecting current work:
 - [Phase 03]: nearby_rides RPC falls back to point matching when route_geometry is NULL
 - [Phase 03-02]: Added @supabase/supabase-js to shared package for typed query builders (SupabaseClient<Database> pattern)
 - [Phase 03-02]: PostGIS geography columns typed as unknown (opaque binary format); NearbyRideResult derived from Database Functions type
+- [03-04]: GoogleMapsProvider wraps entire app layout for consistent Maps/Places availability
+- [03-04]: AddressAutocomplete backward-compat with onSelect/label props for existing search-form consumers
+- [03-04]: PostGIS geography columns inserted via WKT text strings (POINT, LINESTRING) -- no RPC needed
+- [03-04]: AdvancedMarkerElement used for map pins (future-proof vs legacy Marker)
 - [03-05]: Client-side filtering on RPC results for price/mode/seats refinement; RPC handles spatial filtering
 - [03-05]: URL search params persist coordinates and date for shareable/bookmarkable searches
 - [03-05]: Skeleton cards as loading state instead of spinner for better perceived performance
