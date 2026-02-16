@@ -15,7 +15,7 @@ describe('AiRequestSchema', () => {
     });
     expect(result.message).toBe('Find rides');
     expect(result.conversation_history).toHaveLength(1);
-    expect(result.conversation_history![0].role).toBe('user');
+    expect(result.conversation_history![0]!.role).toBe('user');
   });
 
   it('accepts message with assistant role in history', () => {

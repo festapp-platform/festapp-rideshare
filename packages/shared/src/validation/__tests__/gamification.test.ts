@@ -67,16 +67,20 @@ describe('USER_LEVELS thresholds', () => {
 
   it('has monotonically increasing minRides thresholds', () => {
     for (let i = 1; i < levelKeys.length; i++) {
-      expect(USER_LEVELS[levelKeys[i]].minRides).toBeGreaterThan(
-        USER_LEVELS[levelKeys[i - 1]].minRides,
+      const current = levelKeys[i]!;
+      const previous = levelKeys[i - 1]!;
+      expect(USER_LEVELS[current].minRides).toBeGreaterThan(
+        USER_LEVELS[previous].minRides,
       );
     }
   });
 
   it('has monotonically non-decreasing minRating thresholds', () => {
     for (let i = 1; i < levelKeys.length; i++) {
-      expect(USER_LEVELS[levelKeys[i]].minRating).toBeGreaterThanOrEqual(
-        USER_LEVELS[levelKeys[i - 1]].minRating,
+      const current = levelKeys[i]!;
+      const previous = levelKeys[i - 1]!;
+      expect(USER_LEVELS[current].minRating).toBeGreaterThanOrEqual(
+        USER_LEVELS[previous].minRating,
       );
     }
   });
