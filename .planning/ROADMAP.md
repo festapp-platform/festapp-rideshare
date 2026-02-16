@@ -1,8 +1,8 @@
-# Roadmap: Festapp Rideshare
+# Roadmap: spolujizda.online
 
 ## Overview
 
-Festapp Rideshare is built as a web-first PWA with a shared TypeScript monorepo, then extended to native mobile. The roadmap moves from foundation (monorepo + auth) through the core ride marketplace loop (post, search, book), then layers communication, trust, and differentiating features (live location, flexible rides, gamification). An AI & Voice phase adds natural language control and MCP server for external AI assistants. Web-specific optimizations (SEO, PWA) form their own phase since the launch strategy is web-first. The final phase covers internationalization, accessibility, and app store preparation. Testing (unit, integration, UI verification) is continuous — each phase includes tests for the features it delivers, with CI pipeline set up from Phase 1.
+spolujizda.online (formerly Festapp Rideshare) is built as a web-first PWA with a shared TypeScript monorepo, then extended to native mobile. The roadmap moves from foundation (monorepo + auth) through the core ride marketplace loop (post, search, book), then layers communication, trust, and differentiating features (live location, flexible rides, gamification). An AI & Voice phase adds natural language control and MCP server for external AI assistants. Web-specific optimizations (SEO, PWA) form their own phase since the launch strategy is web-first. The final phase covers internationalization, accessibility, and app store preparation. Testing (unit, integration, UI verification) is continuous — each phase includes tests for the features it delivers, with CI pipeline set up from Phase 1.
 
 ## Phases
 
@@ -58,11 +58,11 @@ Plans:
 **Plans:** 5 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Database foundation: vehicles table, storage buckets, profile columns, shared schemas
-- [ ] 02-02-PLAN.md — Profile editing with avatar upload (web + mobile)
-- [ ] 02-03-PLAN.md — Vehicle management with car photo upload (web + mobile)
-- [ ] 02-04-PLAN.md — Verification badges, social links, and public profile viewing
-- [ ] 02-05-PLAN.md — Extended onboarding: profile creation, role selection, vehicle setup
+- [x] 02-01-PLAN.md — Database foundation: vehicles table, storage buckets, profile columns, shared schemas
+- [x] 02-02-PLAN.md — Profile editing with avatar upload (web + mobile)
+- [x] 02-03-PLAN.md — Vehicle management with car photo upload (web + mobile)
+- [x] 02-04-PLAN.md — Verification badges, social links, and public profile viewing
+- [x] 02-05-PLAN.md — Extended onboarding: profile creation, role selection, vehicle setup
 
 ### Phase 3: Ride Posting & Search
 **Goal**: Drivers can publish rides and passengers can find them by route and date with map-based results
@@ -77,13 +77,13 @@ Plans:
 **Plans:** 7 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Database foundation: PostGIS, rides table, waypoints, recurring patterns, favorite routes, RLS, search RPC, expiry cron
-- [ ] 03-02-PLAN.md — Shared schemas, types, constants, and query builders for rides
-- [ ] 03-03-PLAN.md — Edge Function: compute-route proxy for Google Routes API + price suggestion
-- [ ] 03-04-PLAN.md — Ride posting form with Google Places autocomplete, route map, and price suggestion
-- [ ] 03-05-PLAN.md — Search results page with geospatial matching, ride cards, filtering and sorting
-- [ ] 03-06-PLAN.md — Ride detail page with SSR/OG metadata, ride editing, cancellation, and My Rides management
-- [ ] 03-07-PLAN.md — Post-a-Ride FAB, favorite routes, recurring ride patterns, deep link sharing
+- [x] 03-01-PLAN.md — Database foundation: PostGIS, rides table, waypoints, recurring patterns, favorite routes, RLS, search RPC, expiry cron
+- [x] 03-02-PLAN.md — Shared schemas, types, constants, and query builders for rides
+- [x] 03-03-PLAN.md — Edge Function: compute-route proxy for Google Routes API + price suggestion
+- [x] 03-04-PLAN.md — Ride posting form with Google Places autocomplete, route map, and price suggestion
+- [x] 03-05-PLAN.md — Search results page with geospatial matching, ride cards, filtering and sorting
+- [x] 03-06-PLAN.md — Ride detail page with SSR/OG metadata, ride editing, cancellation, and My Rides management
+- [x] 03-07-PLAN.md — Post-a-Ride FAB, favorite routes, recurring ride patterns, deep link sharing
 
 ### Phase 4: Booking & Ride Management
 **Goal**: Passengers can book seats and both parties can manage their upcoming and past rides
@@ -117,12 +117,12 @@ Plans:
 **Plans:** 6 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Database foundation: chat tables, notification preferences, RPCs, shared types/schemas/queries
-- [ ] 05-02-PLAN.md — Push notification infrastructure: send-notification Edge Function, OneSignal + SES helpers, web setup
-- [ ] 05-03-PLAN.md — Chat UI: conversation list, real-time chat, typing indicators, read receipts, contact sharing
-- [ ] 05-04-PLAN.md — Push notification triggers: booking/cancellation/message triggers via pg_net, ride reminders via pg_cron
-- [ ] 05-05-PLAN.md — Email notifications, notification preferences UI, OneSignal web initialization
-- [ ] 05-06-PLAN.md — Route alerts: alert toggle on saved routes, trigger on new ride match
+- [x] 05-01-PLAN.md — Database foundation: chat tables, notification preferences, RPCs, shared types/schemas/queries
+- [x] 05-02-PLAN.md — Push notification infrastructure: send-notification Edge Function, OneSignal + SES helpers, web setup
+- [x] 05-03-PLAN.md — Chat UI: conversation list, real-time chat, typing indicators, read receipts, contact sharing
+- [x] 05-04-PLAN.md — Push notification triggers: booking/cancellation/message triggers via pg_net, ride reminders via pg_cron
+- [x] 05-05-PLAN.md — Email notifications, notification preferences UI, OneSignal web initialization
+- [x] 05-06-PLAN.md — Route alerts: alert toggle on saved routes, trigger on new ride match
 
 ### Phase 6: Ratings, Trust & Safety
 **Goal**: Users can rate each other after rides, report bad behavior, and admins can moderate the platform
@@ -137,11 +137,11 @@ Plans:
 **Plans:** 5 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — Database foundation: reviews, reports, blocks, moderation tables, RPCs, triggers, cron jobs, RLS
-- [ ] 06-02-PLAN.md — Shared package: constants, Zod schemas, query builders, Database types for Phase 6
-- [ ] 06-03-PLAN.md — Rating modal, review display on profiles, experienced badge, pending rating detection
-- [ ] 06-04-PLAN.md — Report dialog, block/unblock, blocked users settings, profile integration
-- [ ] 06-05-PLAN.md — Admin panel: dashboard, reports management, user moderation, review management
+- [x] 06-01-PLAN.md — Database foundation: reviews, reports, blocks, moderation tables, RPCs, triggers, cron jobs, RLS
+- [x] 06-02-PLAN.md — Shared package: constants, Zod schemas, query builders, Database types for Phase 6
+- [x] 06-03-PLAN.md — Rating modal, review display on profiles, experienced badge, pending rating detection
+- [x] 06-04-PLAN.md — Report dialog, block/unblock, blocked users settings, profile integration
+- [x] 06-05-PLAN.md — Admin panel: dashboard, reports management, user moderation, review management
 
 ### Phase 7: Live Location
 **Goal**: Drivers and passengers can find each other at the pickup point using real-time location sharing on a map
@@ -155,9 +155,9 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — start_ride RPC, shared location constants/types, useLiveLocation Broadcast hook
-- [ ] 07-02-PLAN.md — LiveLocationMap component with animated driver marker, ride detail integration
-- [ ] 07-03-PLAN.md — Adaptive GPS frequency, auto-stop logic, unit and integration tests
+- [x] 07-01-PLAN.md — start_ride RPC, shared location constants/types, useLiveLocation Broadcast hook
+- [x] 07-02-PLAN.md — LiveLocationMap component with animated driver marker, ride detail integration
+- [x] 07-03-PLAN.md — Adaptive GPS frequency, auto-stop logic, unit and integration tests
 
 ### Phase 8: Events, Flexible Rides & Gamification
 **Goal**: Users can create events with ride listings, drivers can post route intents that passengers subscribe to, and users are motivated by impact stats and achievement badges
@@ -172,11 +172,11 @@ Plans:
 **Plans:** 5 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — Events foundation: DB migration, admin approval RPCs, shared types/schemas/queries
-- [ ] 08-02-PLAN.md — Events UI: event creation/browsing/detail pages, admin management, ride form event linking
-- [ ] 08-03-PLAN.md — Flexible rides: route intents DB, subscriptions, route intent UI, date confirmation with subscriber notifications
-- [ ] 08-04-PLAN.md — Gamification: badges, levels, route streaks, nearby_rides extension, impact dashboard, profile/search integration
-- [ ] 08-05-PLAN.md — Community stats page, share component, event deep links, unit tests
+- [x] 08-01-PLAN.md — Events foundation: DB migration, admin approval RPCs, shared types/schemas/queries
+- [x] 08-02-PLAN.md — Events UI: event creation/browsing/detail pages, admin management, ride form event linking
+- [x] 08-03-PLAN.md — Flexible rides: route intents DB, subscriptions, route intent UI, date confirmation with subscriber notifications
+- [x] 08-04-PLAN.md — Gamification: badges, levels, route streaks, nearby_rides extension, impact dashboard, profile/search integration
+- [x] 08-05-PLAN.md — Community stats page, share component, event deep links, unit tests
 
 ### Phase 9: AI & Voice
 **Goal**: Users can interact with the app via natural language (text or voice) for all core flows, and external AI assistants can operate the app via MCP tools
@@ -191,10 +191,10 @@ Plans:
 **Plans:** 4 plans
 
 Plans:
-- [ ] 09-01-PLAN.md — AI processing Edge Function with Claude tool_use for intent parsing + shared AI types
-- [ ] 09-02-PLAN.md — MCP server with authenticated ride operation tools
-- [ ] 09-03-PLAN.md — AI assistant chat UI with voice input and confirmation flow
-- [ ] 09-04-PLAN.md — Unit and integration tests for AI pipeline, MCP, and UI components
+- [x] 09-01-PLAN.md — AI processing Edge Function (Gemini 2.5 Flash) for intent parsing + shared AI types
+- [x] 09-02-PLAN.md — MCP server with authenticated ride operation tools
+- [x] 09-03-PLAN.md — AI assistant chat UI with voice input and confirmation flow
+- [x] 09-04-PLAN.md — Unit and integration tests for AI pipeline, MCP, and UI components
 
 ### Phase 10: Web Platform & SEO
 **Goal**: The web app is a fully-featured PWA with SEO-optimized ride pages that drive organic traffic and convert visitors
@@ -209,10 +209,10 @@ Plans:
 **Plans:** 4 plans
 
 Plans:
-- [ ] 10-01-PLAN.md — PWA manifest, service worker, offline support, and install prompt banner
-- [ ] 10-02-PLAN.md — Public ride/profile pages with short URLs, OG meta tags, robots.txt, and sitemap
-- [ ] 10-03-PLAN.md — Responsive design audit with tablet breakpoints, API rate limiting on Edge Functions
-- [ ] 10-04-PLAN.md — Unit tests for PWA/SEO/rate-limiting, web push finalization, feature parity check
+- [x] 10-01-PLAN.md — PWA manifest, service worker, offline support, and install prompt banner
+- [x] 10-02-PLAN.md — Public ride/profile pages with short URLs, OG meta tags, robots.txt, and sitemap
+- [x] 10-03-PLAN.md — Responsive design audit with tablet breakpoints, API rate limiting on Edge Functions
+- [x] 10-04-PLAN.md — Unit tests for PWA/SEO/rate-limiting, web push finalization, feature parity check
 
 ### Phase 11: Polish, Testing & Launch
 **Goal**: The app is production-ready with multi-language support, accessibility, error monitoring, and app store assets
@@ -228,10 +228,10 @@ Plans:
 
 Plans:
 - [x] 11-01-PLAN.md — Internationalization (Czech, Slovak, English) with i18n provider and translations
-- [ ] 11-02-PLAN.md — Offline handling, skeleton loading states, empty states, and error pages
+- [x] 11-02-PLAN.md — Offline handling, skeleton loading states, empty states, and error pages
 - [x] 11-03-PLAN.md — Crash reporting (Sentry), analytics, GDPR (cookie consent + data export), force-update
-- [ ] 11-04-PLAN.md — Accessibility audit: ARIA labels, skip navigation, focus indicators, color contrast, touch targets
-- [ ] 11-05-PLAN.md — Legal pages (ToS, privacy), help/FAQ, donation, invite friends, app store metadata
+- [x] 11-04-PLAN.md — Accessibility audit: ARIA labels, skip navigation, focus indicators, color contrast, touch targets
+- [x] 11-05-PLAN.md — Legal pages (ToS, privacy), help/FAQ, donation, invite friends, app store metadata
 
 ## Progress
 
@@ -246,10 +246,30 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -
 | 2. Profiles & Identity | 5/5 | ✓ Complete | 2026-02-15 |
 | 3. Ride Posting & Search | 7/7 | ✓ Complete | 2026-02-15 |
 | 4. Booking & Ride Management | 5/5 | ✓ Complete | 2026-02-15 |
-| 5. Communication & Notifications | 0/6 | Not started | - |
-| 6. Ratings, Trust & Safety | 0/5 | Not started | - |
-| 7. Live Location | 0/4 | Not started | - |
-| 8. Events, Flexible Rides & Gamification | 0/5 | Not started | - |
-| 9. AI & Voice | 0/5 | Not started | - |
+| 5. Communication & Notifications | 6/6 | ✓ Complete | 2026-02-15 |
+| 6. Ratings, Trust & Safety | 5/5 | ✓ Complete | 2026-02-15 |
+| 7. Live Location | 3/3 | ✓ Complete | 2026-02-15 |
+| 8. Events, Flexible Rides & Gamification | 5/5 | ✓ Complete | 2026-02-15 |
+| 9. AI & Voice | 4/4 | ✓ Complete | 2026-02-16 |
 | 10. Web Platform & SEO | 4/4 | ✓ Complete | 2026-02-16 |
-| 11. Polish, Testing & Launch | 3/5 | In Progress | - |
+| 11. Polish, Testing & Launch | 5/5 | ✓ Complete | 2026-02-16 |
+
+## Post-Launch: Deployment & Operations
+
+**Completed:**
+- [x] Migration squash: 38 migrations → 11 domain-grouped files
+- [x] 83 integration tests passing (all RPCs, triggers, RLS)
+- [x] Rebrand to spolujizda.online
+- [x] AI assistant switched from Anthropic Claude to Google Gemini 2.5 Flash
+- [x] All Supabase secrets configured (OneSignal, Mapy.cz, SMTP/SES, Google AI)
+- [x] AWS IAM: dedicated `festapp-rideshare-sms` user for SNS (sns:Publish only)
+- [x] Cloudflare Pages project created, OpenNext build working
+- [x] Landing page (Czech), styled confirm dialogs, toast notifications
+
+**Pending:**
+- [ ] Domain setup: point `spolujizda.online` CNAME → `festapp-rideshare.pages.dev`
+- [ ] First production deploy to Cloudflare Workers
+- [ ] Push migrations to remote Supabase (`supabase db push`)
+- [ ] Deploy Edge Functions (`supabase functions deploy`)
+- [ ] GitHub Actions CI/CD: auto-deploy on push to main
+- [ ] DNS propagation + SSL verification

@@ -6,6 +6,7 @@ node_modules
 .expo
 dist
 .turbo
+.open-next
 *.tsbuildinfo
 
 # Environment variables

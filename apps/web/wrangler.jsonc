@@ -1,0 +1,9 @@
+{
+  "name": "festapp-rideshare",
+  "main": ".open-next/worker.js",
+  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_date": "2025-12-01",
+  "assets": {
+    "directory": ".open-next/assets"
+  }
+}
