@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 9 of 11 (AI & Voice)
-Plan: 3 of 4 in current phase
-Status: In Progress
-Last activity: 2026-02-16 -- Completed 09-03 (AI assistant chat UI)
+Plan: 4 of 4 in current phase
+Status: Phase Complete
+Last activity: 2026-02-16 -- Completed 09-04 (AI pipeline tests)
 
 Progress: [████████████████████] 81%
 
@@ -69,6 +69,7 @@ Progress: [████████████████████] 81%
 | Phase 09 P01 | 3min | 2 tasks | 5 files |
 | Phase 09 P02 | 3min | 2 tasks | 5 files |
 | Phase 09 P03 | 5min | 2 tasks | 7 files |
+| Phase 09 P04 | 7min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -206,6 +207,9 @@ Recent decisions affecting current work:
 - [Phase 09]: Web Speech API types via any cast (SpeechRecognition not in default TS DOM lib)
 - [Phase 09]: Server actions proxy AI Edge Function calls (keeps key server-side)
 - [Phase 09]: Voice transcript auto-submits to sendMessage for faster UX
+- [09-04]: Inline JSX test pattern (no hooks) for VoiceInput/IntentConfirmation due to pnpm dual-React issue with useState
+- [09-04]: Mock McpServer captures registerTool calls to verify tool definitions without real MCP transport
+- [09-04]: Extended web vitest include to app/**/__tests__/ for component-colocated tests
 
 ### Pending Todos
 
@@ -224,5 +228,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 09-03-PLAN.md (AI assistant chat UI)
-Resume file: .planning/phases/09-ai-voice/09-03-SUMMARY.md
+Stopped at: Completed 09-04-PLAN.md (AI pipeline tests) -- Phase 09 complete
+Resume file: .planning/phases/09-ai-voice/09-04-SUMMARY.md
