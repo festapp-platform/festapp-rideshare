@@ -3,7 +3,12 @@
   "main": ".open-next/worker.js",
   "compatibility_flags": ["nodejs_compat"],
   "compatibility_date": "2025-12-01",
+  "workers_dev": true,
   "assets": {
     "directory": ".open-next/assets"
-  }
+  },
+  "routes": [
+    { "pattern": "spolujizda.online", "custom_domain": true },
+    { "pattern": "www.spolujizda.online", "custom_domain": true }
+  ]
 }
