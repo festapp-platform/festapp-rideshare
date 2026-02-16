@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 9 of 11 (AI & Voice)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: In Progress
-Last activity: 2026-02-16 -- Completed 09-01 (AI intent parsing Edge Function)
+Last activity: 2026-02-16 -- Completed 09-02 (MCP server for ride operations)
 
-Progress: [███████████████████] 79%
+Progress: [████████████████████] 81%
 
 ## Performance Metrics
 
@@ -67,6 +67,7 @@ Progress: [███████████████████] 79%
 | Phase 08 P02 | 6min | 2 tasks | 11 files |
 | Phase 08 P05 | 4min | 2 tasks | 11 files |
 | Phase 09 P01 | 3min | 2 tasks | 5 files |
+| Phase 09 P02 | 3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -198,6 +199,9 @@ Recent decisions affecting current work:
 - [09-01]: Language detection via diacritics/word heuristic (not separate API call)
 - [09-01]: Mutations always need_confirmation=true; search and general_chat do not
 - [09-01]: System prompt uses {today} placeholder injected at runtime for relative date resolution
+- [09-02]: Used McpServer high-level API instead of deprecated Server class for cleaner tool registration
+- [09-02]: search_rides geocodes via compute-route Edge Function with text-based ilike fallback
+- [09-02]: Auth helper reads SUPABASE_USER_JWT env var for RLS-scoped access; falls back to service_role
 
 ### Pending Todos
 
@@ -216,5 +220,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 09-01-PLAN.md (AI intent parsing Edge Function)
-Resume file: .planning/phases/09-ai-voice/09-01-SUMMARY.md
+Stopped at: Completed 09-02-PLAN.md (MCP server for ride operations)
+Resume file: .planning/phases/09-ai-voice/09-02-SUMMARY.md
