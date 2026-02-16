@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 9 of 11 (AI & Voice)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In Progress
-Last activity: 2026-02-16 -- Completed 09-02 (MCP server for ride operations)
+Last activity: 2026-02-16 -- Completed 09-03 (AI assistant chat UI)
 
 Progress: [████████████████████] 81%
 
@@ -68,6 +68,7 @@ Progress: [████████████████████] 81%
 | Phase 08 P05 | 4min | 2 tasks | 11 files |
 | Phase 09 P01 | 3min | 2 tasks | 5 files |
 | Phase 09 P02 | 3min | 2 tasks | 5 files |
+| Phase 09 P03 | 5min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -202,6 +203,9 @@ Recent decisions affecting current work:
 - [09-02]: Used McpServer high-level API instead of deprecated Server class for cleaner tool registration
 - [09-02]: search_rides geocodes via compute-route Edge Function with text-based ilike fallback
 - [09-02]: Auth helper reads SUPABASE_USER_JWT env var for RLS-scoped access; falls back to service_role
+- [Phase 09]: Web Speech API types via any cast (SpeechRecognition not in default TS DOM lib)
+- [Phase 09]: Server actions proxy AI Edge Function calls (keeps key server-side)
+- [Phase 09]: Voice transcript auto-submits to sendMessage for faster UX
 
 ### Pending Todos
 
@@ -220,5 +224,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 09-02-PLAN.md (MCP server for ride operations)
-Resume file: .planning/phases/09-ai-voice/09-02-SUMMARY.md
+Stopped at: Completed 09-03-PLAN.md (AI assistant chat UI)
+Resume file: .planning/phases/09-ai-voice/09-03-SUMMARY.md
