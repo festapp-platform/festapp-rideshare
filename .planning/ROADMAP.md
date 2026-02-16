@@ -16,13 +16,13 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Profiles & Identity** - User profiles, vehicle info, verification badges, social links
 - [x] **Phase 3: Ride Posting & Search** - Drivers post rides, passengers search and view ride details on a map
 - [x] **Phase 4: Booking & Ride Management** - Seat booking (instant + request/approve), ride lifecycle, My Rides
-- [ ] **Phase 5: Communication & Notifications** - In-app chat, contact sharing, push and email notifications
-- [ ] **Phase 6: Ratings, Trust & Safety** - Mutual ratings/reviews, reporting, blocking, admin moderation panel
-- [ ] **Phase 7: Live Location** - Real-time driver location sharing for pickup coordination
-- [ ] **Phase 8: Events, Flexible Rides & Gamification** - Event pages with ride listings, route intents with subscriber alerts, impact dashboard, badges, levels
-- [ ] **Phase 9: AI & Voice** - In-app AI assistant, natural language ride operations, voice input, MCP server for external AI
-- [ ] **Phase 10: Web Platform & SEO** - PWA features, SSR for ride pages, social meta tags, web push, service worker
-- [ ] **Phase 11: Polish, Testing & Launch** - Test suite, i18n, accessibility, error monitoring, app store assets, launch prep
+- [x] **Phase 5: Communication & Notifications** - In-app chat, contact sharing, push and email notifications
+- [x] **Phase 6: Ratings, Trust & Safety** - Mutual ratings/reviews, reporting, blocking, admin moderation panel
+- [x] **Phase 7: Live Location** - Real-time driver location sharing for pickup coordination
+- [x] **Phase 8: Events, Flexible Rides & Gamification** - Event pages with ride listings, route intents with subscriber alerts, impact dashboard, badges, levels
+- [x] **Phase 9: AI & Voice** - In-app AI assistant, natural language ride operations, voice input, MCP server for external AI
+- [x] **Phase 10: Web Platform & SEO** - PWA features, SSR for ride pages, social meta tags, web push, service worker
+- [x] **Phase 11: Polish, Testing & Launch** - Test suite, i18n, accessibility, error monitoring, app store assets, launch prep
 
 ## Phase Details
 
