@@ -6,7 +6,8 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
-    "test": "turbo test"
+    "test": "turbo test",
+    "test:integration": "pnpm --filter @festapp/integration-tests test"
   },
   "packageManager": "pnpm@10.24.0",
   "engines": {

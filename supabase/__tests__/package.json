@@ -1,0 +1,16 @@
+{
+  "name": "@festapp/integration-tests",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "pretest": "supabase db execute --local -f ./sql/test-helpers.sql && supabase db execute --local -f ./sql/disable-triggers.sql",
+    "posttest": "supabase db execute --local -f ./sql/enable-triggers.sql"
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "^2.95.3",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
+  }
+}
