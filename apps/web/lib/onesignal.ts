@@ -26,6 +26,8 @@ export async function initOneSignal(): Promise<void> {
   await OneSignal.init({
     appId,
     allowLocalhostAsSecureOrigin: process.env.NODE_ENV === "development",
+    serviceWorkerPath: "/OneSignalSDKWorker.js",
+    serviceWorkerUpdaterPath: "/OneSignalSDKWorker.js",
   });
   initialized = true;
 }
