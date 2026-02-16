@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 
 ## Current Position
 
-Phase: 12 - Critical Bug Fixes & Admin Setup
-Plan: 03 of 3 (phase complete)
-Status: Phase 12 complete
-Last activity: 2026-02-16 -- Completed 12-03-PLAN.md (admin setup script)
+Phase: 13 - Legal, Privacy & Observability
+Plan: 01 of 3
+Status: Executing
+Last activity: 2026-02-16 -- Completed 13-01-PLAN.md (communication logging & audit enhancement)
 
 Progress: [████████████████████████████] 100%
 
@@ -81,6 +81,7 @@ Progress: [███████████████████████
 | Phase 12 P02 | 2min | 2 tasks | 1 files |
 | Phase 12 P03 | 2min | 2 tasks | 1 files |
 | Phase 12 P01 | 3min | 2 tasks | 4 files |
+| Phase 13 P01 | 3min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -246,6 +247,9 @@ Recent decisions affecting current work:
 - [Phase 12]: AI fix uses forwardGeocode bridge (Mapy.cz /v1/geocode) at module level with parallel Promise.all for origin+destination
 - [Phase 12]: shouldUnregister:false on wizard useForm to preserve AI-set values across step navigation
 - [Phase 12]: try/finally for reverseGeocode loading flag; fresh Date() for time filtering; COALESCE for backward-compat UUID dedup
+- [13-01]: Used public.is_admin() for audit RLS policy (consistent with safety migration pattern)
+- [13-01]: Auth email logging uses user?.id ?? null since user_id is now nullable for signup confirmations
+- [13-01]: Best-effort logging in auth hooks: never block auth flow for observability
 
 ### Pending Todos
 
@@ -264,5 +268,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 12-03-PLAN.md (Phase 12 complete)
+Stopped at: Completed 13-01-PLAN.md (communication logging & audit enhancement)
 Resume file: N/A
