@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useI18n } from "@/lib/i18n/provider";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -15,6 +16,7 @@ const DISMISS_KEY = "pwa-install-dismissed";
  * Persists dismissal to localStorage.
  */
 export function PwaInstallBanner() {
+  const { t } = useI18n();
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
@@ -74,7 +76,7 @@ export function PwaInstallBanner() {
 
         {/* Text */}
         <p className="flex-1 text-sm font-medium text-gray-900">
-          Install Rideshare on your phone
+          {t("pwaInstall.message")}
         </p>
 
         {/* Install button */}
@@ -82,7 +84,7 @@ export function PwaInstallBanner() {
           onClick={handleInstall}
           className="flex-shrink-0 rounded-lg bg-[#6B8F71] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5a7a60]"
         >
-          Install
+          {t("pwaInstall.install")}
         </button>
 
         {/* Dismiss button */}

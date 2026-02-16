@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { ConfirmDialog } from "./confirm-dialog";
+import { useI18n } from "@/lib/i18n/provider";
 
 interface BlockButtonProps {
   userId: string;
@@ -24,6 +25,7 @@ export function BlockButton({
   initialBlocked,
   onBlockChange,
 }: BlockButtonProps) {
+  const { t } = useI18n();
   const supabase = createClient();
   const [isBlocked, setIsBlocked] = useState(initialBlocked ?? false);
   const [isLoading, setIsLoading] = useState(false);
@@ -64,12 +66,12 @@ export function BlockButton({
         p_blocked_id: userId,
       });
       if (error) throw error;
-      toast.success(`${userName || "User"} blocked`);
+      toast.success(t("block.blocked", { name: userName || t("block.user") }));
       onBlockChange?.(true);
     } catch (err) {
       // Revert optimistic
       setIsBlocked(false);
-      const message = err instanceof Error ? err.message : "Failed to block user";
+      const message = err instanceof Error ? err.message : t("block.failedToBlock");
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -86,12 +88,12 @@ export function BlockButton({
         p_blocked_id: userId,
       });
       if (error) throw error;
-      toast.success(`${userName || "User"} unblocked`);
+      toast.success(t("block.unblocked", { name: userName || t("block.user") }));
       onBlockChange?.(false);
     } catch (err) {
       // Revert optimistic
       setIsBlocked(true);
-      const message = err instanceof Error ? err.message : "Failed to unblock user";
+      const message = err instanceof Error ? err.message : t("block.failedToUnblock");
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -111,17 +113,17 @@ export function BlockButton({
             : "text-red-600 hover:bg-red-50"
         }`}
       >
-        {isLoading ? "..." : isBlocked ? "Unblock" : "Block"}
+        {isLoading ? "..." : isBlocked ? t("block.unblock") : t("block.block")}
       </button>
 
       <ConfirmDialog
         open={showConfirm}
         onClose={() => setShowConfirm(false)}
         onConfirm={handleBlock}
-        title={`Block ${userName || "this user"}?`}
-        message="They won't be notified, but their rides and messages will become invisible to you."
-        confirmLabel="Block"
-        cancelLabel="Cancel"
+        title={t("block.confirmTitle", { name: userName || t("block.thisUser") })}
+        message={t("block.confirmMessage")}
+        confirmLabel={t("block.block")}
+        cancelLabel={t("common.cancel")}
         variant="danger"
       />
     </>

@@ -5,6 +5,7 @@ import { format, parseISO } from 'date-fns';
 import { getUserLevel, formatPrice } from '@festapp/shared';
 import type { NearbyRideResult } from '@festapp/shared';
 import { StarRating } from './star-rating';
+import { useI18n } from '@/lib/i18n/provider';
 
 /**
  * Ride result card displaying driver info, route, pricing, and availability.
@@ -18,6 +19,7 @@ interface RideCardProps {
 }
 
 export function RideCard({ ride }: RideCardProps) {
+  const { t } = useI18n();
   const departureDate = parseISO(ride.departure_time);
   const formattedTime = format(departureDate, "EEE, MMM d 'at' h:mm a");
   const originDistanceKm = ride.origin_distance_m
@@ -104,7 +106,7 @@ export function RideCard({ ride }: RideCardProps) {
                   d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              {ride.seats_available} {ride.seats_available === 1 ? 'seat' : 'seats'} left
+              {t('rideCard.seatsLeft', { count: String(ride.seats_available) })}
             </span>
 
             {/* Vehicle */}
@@ -130,7 +132,7 @@ export function RideCard({ ride }: RideCardProps) {
 
             {/* Distance from pickup */}
             {originDistanceKm && (
-              <span>{originDistanceKm} km from your pickup</span>
+              <span>{t('rideCard.kmFromPickup', { km: originDistanceKm! })}</span>
             )}
           </div>
         </div>
@@ -147,7 +149,7 @@ export function RideCard({ ride }: RideCardProps) {
                 : 'bg-warning/15 text-warning'
             }`}
           >
-            {ride.booking_mode === 'instant' ? 'Instant' : 'Request'}
+            {ride.booking_mode === 'instant' ? t('rideCard.instant') : t('rideCard.request')}
           </span>
         </div>
       </div>

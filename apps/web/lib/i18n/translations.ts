@@ -431,6 +431,54 @@ export type TranslationKeys = {
   "publicRide.review": string;
   "publicRide.reviews": string;
   "publicRide.bookThisRide": string;
+
+  // Block button
+  "block.block": string;
+  "block.unblock": string;
+  "block.user": string;
+  "block.thisUser": string;
+  "block.confirmTitle": string;
+  "block.confirmMessage": string;
+  "block.blocked": string;
+  "block.unblocked": string;
+  "block.failedToBlock": string;
+  "block.failedToUnblock": string;
+
+  // Ride card
+  "rideCard.seatsLeft": string;
+  "rideCard.kmFromPickup": string;
+  "rideCard.instant": string;
+  "rideCard.request": string;
+
+  // Cookie consent
+  "cookieConsent.message": string;
+  "cookieConsent.decline": string;
+  "cookieConsent.accept": string;
+
+  // Force update banner
+  "forceUpdate.message": string;
+  "forceUpdate.dismiss": string;
+  "forceUpdate.refresh": string;
+
+  // PWA install banner
+  "pwaInstall.message": string;
+  "pwaInstall.install": string;
+
+  // Offline banner
+  "offlineBanner.message": string;
+
+  // Share button
+  "shareButton.copied": string;
+  "shareButton.share": string;
+
+  // Pending rating banner
+  "pendingRating.ridesToRate": string;
+  "pendingRating.rateNow": string;
+
+  // Not found page
+  "notFound.title": string;
+  "notFound.message": string;
+  "notFound.goHome": string;
 };
 
 const cs: TranslationKeys = {
@@ -857,6 +905,54 @@ const cs: TranslationKeys = {
   "publicRide.review": "hodnocení",
   "publicRide.reviews": "hodnocení",
   "publicRide.bookThisRide": "Rezervovat tuto jízdu",
+
+  // Block button
+  "block.block": "Zablokovat",
+  "block.unblock": "Odblokovat",
+  "block.user": "Uživatel",
+  "block.thisUser": "tohoto uživatele",
+  "block.confirmTitle": "Zablokovat {name}?",
+  "block.confirmMessage": "Nedostane upozornění, ale jeho jízdy a zprávy se vám přestanou zobrazovat.",
+  "block.blocked": "{name} zablokován",
+  "block.unblocked": "{name} odblokován",
+  "block.failedToBlock": "Nepodařilo se zablokovat uživatele",
+  "block.failedToUnblock": "Nepodařilo se odblokovat uživatele",
+
+  // Ride card
+  "rideCard.seatsLeft": "{count} volných míst",
+  "rideCard.kmFromPickup": "{km} km od vašeho místa",
+  "rideCard.instant": "Okamžité",
+  "rideCard.request": "Na vyžádání",
+
+  // Cookie consent
+  "cookieConsent.message": "Používáme cookies pro analytiku ke zlepšení vašeho zážitku. Žádné osobní údaje neshromažďujeme.",
+  "cookieConsent.decline": "Odmítnout",
+  "cookieConsent.accept": "Přijmout",
+
+  // Force update banner
+  "forceUpdate.message": "Je k dispozici nová verze. Obnovte stránku pro aktualizaci.",
+  "forceUpdate.dismiss": "Zavřít",
+  "forceUpdate.refresh": "Obnovit",
+
+  // PWA install banner
+  "pwaInstall.message": "Nainstalujte si Rideshare na telefon",
+  "pwaInstall.install": "Nainstalovat",
+
+  // Offline banner
+  "offlineBanner.message": "Jste offline. Některé funkce nemusí fungovat.",
+
+  // Share button
+  "shareButton.copied": "Zkopírováno!",
+  "shareButton.share": "Sdílet",
+
+  // Pending rating banner
+  "pendingRating.ridesToRate": "Máte {count} jízd k ohodnocení",
+  "pendingRating.rateNow": "Ohodnotit",
+
+  // Not found page
+  "notFound.title": "404",
+  "notFound.message": "Tato stránka neexistuje nebo byla odstraněna.",
+  "notFound.goHome": "Přejít domů",
 };
 
 const sk: TranslationKeys = {
@@ -1283,6 +1379,54 @@ const sk: TranslationKeys = {
   "publicRide.review": "hodnotenie",
   "publicRide.reviews": "hodnotení",
   "publicRide.bookThisRide": "Rezervovať túto jazdu",
+
+  // Block button
+  "block.block": "Zablokovať",
+  "block.unblock": "Odblokovať",
+  "block.user": "Používateľ",
+  "block.thisUser": "tohto používateľa",
+  "block.confirmTitle": "Zablokovať {name}?",
+  "block.confirmMessage": "Nedostane upozornenie, ale jeho jazdy a správy sa vám prestanú zobrazovať.",
+  "block.blocked": "{name} zablokovaný",
+  "block.unblocked": "{name} odblokovaný",
+  "block.failedToBlock": "Nepodarilo sa zablokovať používateľa",
+  "block.failedToUnblock": "Nepodarilo sa odblokovať používateľa",
+
+  // Ride card
+  "rideCard.seatsLeft": "{count} voľných miest",
+  "rideCard.kmFromPickup": "{km} km od vášho miesta",
+  "rideCard.instant": "Okamžité",
+  "rideCard.request": "Na vyžiadanie",
+
+  // Cookie consent
+  "cookieConsent.message": "Používame cookies na analytiku na zlepšenie vášho zážitku. Žiadne osobné údaje nezhromažďujeme.",
+  "cookieConsent.decline": "Odmietnuť",
+  "cookieConsent.accept": "Prijať",
+
+  // Force update banner
+  "forceUpdate.message": "Je k dispozícii nová verzia. Obnovte stránku pre aktualizáciu.",
+  "forceUpdate.dismiss": "Zavrieť",
+  "forceUpdate.refresh": "Obnoviť",
+
+  // PWA install banner
+  "pwaInstall.message": "Nainštalujte si Rideshare na telefón",
+  "pwaInstall.install": "Nainštalovať",
+
+  // Offline banner
+  "offlineBanner.message": "Ste offline. Niektoré funkcie nemusia fungovať.",
+
+  // Share button
+  "shareButton.copied": "Skopírované!",
+  "shareButton.share": "Zdieľať",
+
+  // Pending rating banner
+  "pendingRating.ridesToRate": "Máte {count} jázd na ohodnotenie",
+  "pendingRating.rateNow": "Ohodnotiť",
+
+  // Not found page
+  "notFound.title": "404",
+  "notFound.message": "Táto stránka neexistuje alebo bola odstránená.",
+  "notFound.goHome": "Prejsť domov",
 };
 
 const en: TranslationKeys = {
@@ -1709,6 +1853,54 @@ const en: TranslationKeys = {
   "publicRide.review": "review",
   "publicRide.reviews": "reviews",
   "publicRide.bookThisRide": "Book this ride",
+
+  // Block button
+  "block.block": "Block",
+  "block.unblock": "Unblock",
+  "block.user": "User",
+  "block.thisUser": "this user",
+  "block.confirmTitle": "Block {name}?",
+  "block.confirmMessage": "They won't be notified, but their rides and messages will become invisible to you.",
+  "block.blocked": "{name} blocked",
+  "block.unblocked": "{name} unblocked",
+  "block.failedToBlock": "Failed to block user",
+  "block.failedToUnblock": "Failed to unblock user",
+
+  // Ride card
+  "rideCard.seatsLeft": "{count} seats left",
+  "rideCard.kmFromPickup": "{km} km from your pickup",
+  "rideCard.instant": "Instant",
+  "rideCard.request": "Request",
+
+  // Cookie consent
+  "cookieConsent.message": "We use cookies for analytics to improve your experience. No personal data is collected.",
+  "cookieConsent.decline": "Decline",
+  "cookieConsent.accept": "Accept",
+
+  // Force update banner
+  "forceUpdate.message": "A new version is available. Please refresh to update.",
+  "forceUpdate.dismiss": "Dismiss",
+  "forceUpdate.refresh": "Refresh",
+
+  // PWA install banner
+  "pwaInstall.message": "Install Rideshare on your phone",
+  "pwaInstall.install": "Install",
+
+  // Offline banner
+  "offlineBanner.message": "You're offline. Some features may not work.",
+
+  // Share button
+  "shareButton.copied": "Copied!",
+  "shareButton.share": "Share",
+
+  // Pending rating banner
+  "pendingRating.ridesToRate": "You have {count} rides to rate",
+  "pendingRating.rateNow": "Rate now",
+
+  // Not found page
+  "notFound.title": "404",
+  "notFound.message": "This page doesn't exist or has been removed.",
+  "notFound.goHome": "Go to home",
 };
 
 export const translations: Record<SupportedLocale, TranslationKeys> = {
