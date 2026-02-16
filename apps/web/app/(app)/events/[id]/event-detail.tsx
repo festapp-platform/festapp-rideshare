@@ -10,7 +10,7 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
-import { EVENT_STATUS } from "@festapp/shared";
+import { EVENT_STATUS, formatPrice } from "@festapp/shared";
 import type { EventRide } from "@festapp/shared";
 import { ShareButton } from "../../components/share-button";
 
@@ -229,7 +229,7 @@ function EventRideCard({ ride }: { ride: EventRide }) {
 
         <div className="flex flex-col items-end gap-1">
           <span className="text-lg font-bold text-primary">
-            {ride.price_czk != null ? `${ride.price_czk} CZK` : "Free"}
+            {formatPrice(ride.price_czk)}
           </span>
           <span
             className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${

@@ -1,6 +1,6 @@
 "use client";
 
-import { getUserLevel, USER_LEVELS } from "@festapp/shared";
+import { getUserLevel, USER_LEVELS, formatPrice } from "@festapp/shared";
 import type { UserLevelKey } from "@festapp/shared";
 import { Wallet, Car, Route, Users, Flame } from "lucide-react";
 import { ShareButton } from "../components/share-button";
@@ -147,7 +147,7 @@ export function ImpactDashboard({
         <StatCard
           icon={<Wallet className="h-5 w-5 text-secondary" />}
           label="Money Saved"
-          value={`${impact?.total_money_saved_czk ?? 0} CZK`}
+          value={formatPrice(impact?.total_money_saved_czk ?? 0)}
           gradient="from-blue-50 to-sky-50 dark:from-blue-950/30 dark:to-sky-950/30"
         />
         <StatCard

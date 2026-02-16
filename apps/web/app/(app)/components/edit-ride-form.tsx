@@ -11,6 +11,7 @@ import {
   calculateSuggestedPrice,
   updateRide,
   deleteRide,
+  formatPrice,
 } from "@festapp/shared";
 import { decode as decodePolyline } from "@googlemaps/polyline-codec";
 import { createClient } from "@/lib/supabase/client";
@@ -393,17 +394,13 @@ export function EditRideForm({ ride }: EditRideFormProps) {
                   onChange={(e) => field.onChange(Number(e.target.value))}
                   className="w-full accent-primary"
                 />
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-text-secondary">
-                    {priceRange.min} {PRICING.CURRENCY_SYMBOL}
-                  </span>
-                  <span className="text-lg font-bold text-primary">
-                    {field.value ?? 0} {PRICING.CURRENCY_SYMBOL}
-                  </span>
-                  <span className="text-text-secondary">
-                    {priceRange.max} {PRICING.CURRENCY_SYMBOL}
-                  </span>
+                <div className="flex items-center justify-between text-xs text-text-secondary">
+                  <span>{formatPrice(priceRange.min)}</span>
+                  <span>{formatPrice(priceRange.max)}</span>
                 </div>
+                <p className="text-center text-2xl font-bold text-primary">
+                  {formatPrice(field.value ?? 0)}
+                </p>
               </div>
             )}
           />

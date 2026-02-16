@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
-import { getUserLevel } from '@festapp/shared';
+import { getUserLevel, formatPrice } from '@festapp/shared';
 import type { NearbyRideResult } from '@festapp/shared';
 import { StarRating } from './star-rating';
 
@@ -138,7 +138,7 @@ export function RideCard({ ride }: RideCardProps) {
         {/* Price and booking mode */}
         <div className="flex items-center gap-3 md:flex-col md:items-end md:gap-2">
           <span className="text-lg font-bold text-primary">
-            {ride.price_czk != null ? `${ride.price_czk} CZK` : 'Free'}
+            {formatPrice(ride.price_czk)}
           </span>
           <span
             className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${

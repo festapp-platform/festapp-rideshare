@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ROUTE_INTENT_STATUS } from "@festapp/shared";
+import { ROUTE_INTENT_STATUS, formatPrice } from "@festapp/shared";
 import { SubscribeButton } from "../../components/subscribe-button";
 import { ConfirmDate } from "./confirm-date";
 import { RouteMap } from "../../components/route-map";
@@ -157,7 +157,7 @@ export function RouteDetail({
           </span>
           {intent.price_czk != null && (
             <span className="rounded-lg bg-primary/5 px-3 py-1.5 text-text-main">
-              {intent.price_czk} CZK
+              {formatPrice(intent.price_czk)}
             </span>
           )}
           <span className="rounded-lg bg-primary/5 px-3 py-1.5 text-text-main">

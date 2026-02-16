@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
-import { PRICING, calculateSuggestedPrice } from '@festapp/shared';
+import { PRICING, calculateSuggestedPrice, formatPrice } from '@festapp/shared';
 import {
   AddressInput,
   type PlaceResult,
@@ -357,7 +357,7 @@ export default function RecurringRidePage() {
                 htmlFor="price"
                 className="mb-1 block text-sm font-medium text-text-main"
               >
-                Price ({PRICING.CURRENCY_SYMBOL})
+                Price (CZK)
               </label>
               <input
                 id="price"
@@ -369,7 +369,7 @@ export default function RecurringRidePage() {
                 }
                 placeholder={
                   routeInfo
-                    ? `Suggested: ${routeInfo.suggestedPriceCzk}`
+                    ? `Suggested: ${formatPrice(routeInfo.suggestedPriceCzk)}`
                     : 'Enter price'
                 }
                 className="w-full rounded-xl border border-border-pastel bg-background px-4 py-3 text-sm text-text-main placeholder:text-text-secondary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"

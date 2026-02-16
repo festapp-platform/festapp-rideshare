@@ -1,5 +1,7 @@
 "use client";
 
+import { formatPrice } from "@festapp/shared";
+
 interface IntentConfirmationProps {
   intent: {
     action: string;
@@ -66,7 +68,7 @@ function formatParamValue(key: string, value: unknown): string {
 
   // Price formatting
   if (key.includes("price")) {
-    return `${value} CZK`;
+    return formatPrice(value as number | null);
   }
 
   return String(value);

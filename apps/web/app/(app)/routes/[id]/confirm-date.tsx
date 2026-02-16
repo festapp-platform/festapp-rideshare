@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { ConfirmRouteIntentSchema, type ConfirmRouteIntent } from "@festapp/shared";
+import { ConfirmRouteIntentSchema, type ConfirmRouteIntent, formatPrice } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
@@ -143,7 +143,7 @@ export function ConfirmDate({
           htmlFor="price-override"
           className="mb-1 block text-sm font-medium text-text-main"
         >
-          Price per seat (optional override{defaultPrice != null ? `, default: ${defaultPrice} CZK` : ""})
+          Price per seat (optional override{defaultPrice != null ? `, default: ${formatPrice(defaultPrice)}` : ""})
         </label>
         <input
           id="price-override"

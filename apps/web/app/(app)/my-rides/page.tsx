@@ -8,6 +8,7 @@ import {
   getPassengerBookings,
   RIDE_STATUS,
   BOOKING_STATUS,
+  formatPrice,
 } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/client";
 import { RideStatusBadge } from "../components/ride-status-badge";
@@ -366,7 +367,7 @@ function DriverRidesList({
                     {ride.seats_available}/{ride.seats_total} seats
                   </span>
                   <span className="font-medium text-primary">
-                    {ride.price_czk != null ? `${ride.price_czk} CZK` : "Free"}
+                    {formatPrice(ride.price_czk)}
                   </span>
                 </div>
               </div>
@@ -494,9 +495,7 @@ function PassengerBookingsList({
                       {booking.seats_booked === 1 ? "seat" : "seats"}
                     </span>
                     <span className="font-medium text-primary">
-                      {ride.price_czk != null
-                        ? `${ride.price_czk} CZK`
-                        : "Free"}
+                      {formatPrice(ride.price_czk)}
                     </span>
                   </div>
                 </div>

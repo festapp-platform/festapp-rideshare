@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { formatPrice } from "@festapp/shared";
 
 interface RouteIntentItem {
   id: string;
@@ -108,7 +109,7 @@ export function RouteIntentList({ intents }: RouteIntentListProps) {
                 </span>
                 {intent.price_czk != null && (
                   <span className="rounded-lg bg-primary/5 px-2 py-1">
-                    {intent.price_czk} CZK
+                    {formatPrice(intent.price_czk)}
                   </span>
                 )}
                 <span className="rounded-lg bg-primary/5 px-2 py-1">

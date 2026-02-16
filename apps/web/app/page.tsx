@@ -13,6 +13,7 @@ import {
   HandCoins,
   Radio,
 } from "lucide-react";
+import { formatPrice } from "@festapp/shared";
 
 /**
  * Root landing page.
@@ -465,7 +466,7 @@ function RideCard({
         <div className="flex items-center gap-2">
           {price != null && (
             <span className="text-xs font-semibold text-success">
-              {price} CZK
+              {formatPrice(price)}
             </span>
           )}
           <span className="text-xs text-text-secondary">

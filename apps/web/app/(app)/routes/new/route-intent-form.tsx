@@ -9,6 +9,7 @@ import {
   type CreateRouteIntent,
   PRICING,
   calculateSuggestedPrice,
+  formatPrice,
 } from "@festapp/shared";
 import { decode as decodePolyline } from "@googlemaps/polyline-codec";
 import { createClient } from "@/lib/supabase/client";
@@ -228,7 +229,7 @@ export function RouteIntentForm() {
                 <div className="rounded-lg bg-primary/5 px-3 py-1.5">
                   <span className="text-text-secondary">Suggested: </span>
                   <span className="font-medium text-text-main">
-                    {routeInfo.suggestedPriceCzk} {PRICING.CURRENCY_SYMBOL}
+                    {formatPrice(routeInfo.suggestedPriceCzk)}
                   </span>
                 </div>
               )}

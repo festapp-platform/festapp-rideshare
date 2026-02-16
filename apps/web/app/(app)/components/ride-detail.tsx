@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
-import { RIDE_STATUS, type BookingStatus } from "@festapp/shared";
+import { RIDE_STATUS, type BookingStatus, formatPrice } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/client";
 import { useLiveLocation } from "@/app/(app)/hooks/use-live-location";
 import { RouteMap } from "./route-map";
@@ -425,7 +425,7 @@ export function RideDetail({
         <div className="flex items-center justify-between">
           <h2 className="text-base font-semibold text-text-main">Price</h2>
           <span className="text-2xl font-bold text-primary">
-            {ride.price_czk != null ? `${ride.price_czk} CZK` : "Free"}
+            {formatPrice(ride.price_czk)}
           </span>
         </div>
       </section>

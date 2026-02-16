@@ -4,7 +4,7 @@ import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { getRideByShortId } from "@/lib/short-id";
-import { SITE_URL, SITE_NAME, DEFAULT_OG_IMAGE } from "@festapp/shared";
+import { SITE_URL, SITE_NAME, DEFAULT_OG_IMAGE, formatPrice } from "@festapp/shared";
 
 interface PageProps {
   params: Promise<{ shortId: string }>;
@@ -24,7 +24,7 @@ export async function generateMetadata({
   const departureDate = parseISO(ride.departure_time);
   const formattedDate = format(departureDate, "MMM d, yyyy 'at' h:mm a");
   const title = `${ride.origin_address} -> ${ride.destination_address} | ${SITE_NAME}`;
-  const description = `${ride.price_czk != null ? `${ride.price_czk} CZK` : "Free"}, ${ride.seats_available} ${ride.seats_available === 1 ? "seat" : "seats"} available, ${formattedDate}`;
+  const description = `${formatPrice(ride.price_czk)}, ${ride.seats_available} ${ride.seats_available === 1 ? "seat" : "seats"} available, ${formattedDate}`;
   const url = `${SITE_URL}/ride/${shortId}`;
 
   return {
@@ -129,10 +129,10 @@ export default async function PublicRidePage({ params }: PageProps) {
       <div className="mb-6 grid grid-cols-3 gap-4">
         <div className="rounded-lg border bg-white p-4 text-center">
           <p className="text-2xl font-bold text-gray-900">
-            {ride.price_czk != null ? `${ride.price_czk}` : "Free"}
+            {formatPrice(ride.price_czk)}
           </p>
           <p className="text-xs text-gray-500">
-            {ride.price_czk != null ? "CZK" : "ride"}
+            {ride.price_czk != null ? "per seat" : "ride"}
           </p>
         </div>
         <div className="rounded-lg border bg-white p-4 text-center">

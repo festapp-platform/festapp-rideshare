@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { formatPrice } from "@festapp/shared";
 
 // ---- Short ID format tests ----
 
@@ -95,7 +96,7 @@ describe("OG meta generation for rides", () => {
     const DEFAULT_OG_IMAGE = "/og-default.png";
 
     const title = `${ride.origin_address} -> ${ride.destination_address} | ${SITE_NAME}`;
-    const description = `${ride.price_czk != null ? `${ride.price_czk} CZK` : "Free"}, ${ride.seats_available} ${ride.seats_available === 1 ? "seat" : "seats"} available`;
+    const description = `${formatPrice(ride.price_czk)}, ${ride.seats_available} ${ride.seats_available === 1 ? "seat" : "seats"} available`;
     const url = `${SITE_URL}/ride/${ride.short_id}`;
 
     return {
@@ -135,7 +136,7 @@ describe("OG meta generation for rides", () => {
 
   it("description contains price", () => {
     const meta = generateRideMetadata(mockRide);
-    expect(meta.description).toContain("250 CZK");
+    expect(meta.description).toContain(formatPrice(250));
   });
 
   it("description contains seats", () => {
@@ -153,7 +154,7 @@ describe("OG meta generation for rides", () => {
   it("description shows Free when price is null", () => {
     const freeRide = { ...mockRide, price_czk: null as number | null };
     const meta = generateRideMetadata(freeRide);
-    expect(meta.description).toContain("Free");
+    expect(meta.description).toContain("Zdarma");
   });
 
   it("openGraph.type is website", () => {
