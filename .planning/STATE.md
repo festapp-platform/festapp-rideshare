@@ -87,6 +87,7 @@ Progress: [███████████████████████
 | Phase 14 P01 | 3min | 2 tasks | 4 files |
 | Phase 14 P04 | 2min | 1 tasks | 1 files |
 | Phase 14 P03 | 3min | 2 tasks | 2 files |
+| Phase 14 P02 | 4min | 2 tasks | 17 files |
 
 ## Accumulated Context
 
@@ -261,6 +262,7 @@ Recent decisions affecting current work:
 - [Phase 13-02]: Single acceptedTerms state above tab switcher gates all signup methods (not per-form Zod); social OAuth consent proven by UI checkbox flow
 - [Phase 14-04]: Vitest 4 requires it(name, {timeout}, fn) instead of deprecated it(name, fn, {timeout})
 - [Phase 14-03]: No duplicate index: existing idx_chat_messages_conversation covers pagination and archival
+- [Phase 14]: [14-02]: Form labels kept as plain text CZK (input currency label, not price display); formatPrice() is single source for all user-facing price strings
 
 ### Pending Todos
 
@@ -279,5 +281,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 14-03-PLAN.md (chat optimization -- was missing from phase 14)
+Stopped at: Completed 14-02-PLAN.md (price formatting adoption across all display files)
 Resume file: N/A
