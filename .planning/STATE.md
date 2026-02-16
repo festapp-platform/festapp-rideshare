@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** Drivers and passengers can find each other for shared rides quickly and effortlessly -- simpler, more trustworthy, and completely free.
-**Current focus:** Phase 9 - AI & Voice
+**Current focus:** Phase 10 - Web Platform & SEO
 
 ## Current Position
 
-Phase: 9 of 11 (AI & Voice)
-Plan: 4 of 4 in current phase
-Status: Phase Complete
-Last activity: 2026-02-16 -- Completed 09-04 (AI pipeline tests)
+Phase: 10 of 11 (Web Platform & SEO)
+Plan: 1 of 4 in current phase
+Status: In Progress
+Last activity: 2026-02-16 -- Completed 10-01 (PWA setup)
 
-Progress: [████████████████████] 81%
+Progress: [█████████████████████] 84%
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Progress: [████████████████████] 81%
 | Phase 09 P02 | 3min | 2 tasks | 5 files |
 | Phase 09 P03 | 5min | 2 tasks | 7 files |
 | Phase 09 P04 | 7min | 2 tasks | 7 files |
+| Phase 10 P01 | 3min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -210,6 +211,9 @@ Recent decisions affecting current work:
 - [09-04]: Inline JSX test pattern (no hooks) for VoiceInput/IntentConfirmation due to pnpm dual-React issue with useState
 - [09-04]: Mock McpServer captures registerTool calls to verify tool definitions without real MCP transport
 - [09-04]: Extended web vitest include to app/**/__tests__/ for component-colocated tests
+- [10-01]: SW uses cache-first for statics, network-first for navigation, network-only for API/Supabase
+- [10-01]: SW explicitly excludes OneSignal URLs to avoid interference with push notification worker
+- [10-01]: Install banner dismissal persisted to localStorage; standalone mode check prevents re-showing
 
 ### Pending Todos
 
@@ -228,5 +232,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 09-04-PLAN.md (AI pipeline tests) -- Phase 09 complete
-Resume file: .planning/phases/09-ai-voice/09-04-SUMMARY.md
+Stopped at: Completed 10-01-PLAN.md (PWA setup)
+Resume file: .planning/phases/10-web-platform-seo/10-01-SUMMARY.md
