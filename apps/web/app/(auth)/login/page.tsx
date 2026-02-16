@@ -5,36 +5,50 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { EmailSchema, PasswordSchema } from "@festapp/shared";
+import { EmailSchema, PasswordSchema, PhoneSchema, OtpSchema, OTP_LENGTH } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { EyeIcon, EyeSlashIcon } from "@/components/icons";
+import { useI18n } from "@/lib/i18n/provider";
 
-const LoginFormSchema = z.object({
+// --- Email login schema ---
+const EmailLoginSchema = z.object({
   email: EmailSchema,
   password: PasswordSchema,
 });
+type EmailLoginValues = z.infer<typeof EmailLoginSchema>;
 
-type LoginFormValues = z.infer<typeof LoginFormSchema>;
+// --- Phone login schema ---
+const PhoneLoginSchema = z.object({
+  phone: PhoneSchema,
+});
+type PhoneLoginValues = z.infer<typeof PhoneLoginSchema>;
+
+const OtpVerifySchema = z.object({
+  otp: OtpSchema,
+});
+type OtpVerifyValues = z.infer<typeof OtpVerifySchema>;
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useI18n();
+  const [activeTab, setActiveTab] = useState<"phone" | "email">("phone");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSocialLoading, setIsSocialLoading] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(LoginFormSchema),
-  });
+  // Phone OTP flow state
+  const [phoneForOtp, setPhoneForOtp] = useState<string | null>(null);
 
   const supabase = createClient();
 
-  async function onSubmit(values: LoginFormValues) {
+  // --- Email form ---
+  const emailForm = useForm<EmailLoginValues>({
+    resolver: zodResolver(EmailLoginSchema),
+  });
+
+  async function onEmailSubmit(values: EmailLoginValues) {
     setError(null);
     setIsLoading(true);
     try {
@@ -48,19 +62,67 @@ export default function LoginPage() {
         router.replace("/search");
       }
     } catch {
-      setError("An unexpected error occurred");
+      setError(t("common.unexpectedError"));
     } finally {
       setIsLoading(false);
     }
   }
 
+  // --- Phone form ---
+  const phoneForm = useForm<PhoneLoginValues>({
+    resolver: zodResolver(PhoneLoginSchema),
+  });
+
+  const otpForm = useForm<OtpVerifyValues>({
+    resolver: zodResolver(OtpVerifySchema),
+  });
+
+  async function onPhoneSubmit(values: PhoneLoginValues) {
+    setError(null);
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: values.phone,
+      });
+      if (error) {
+        setError(error.message);
+      } else {
+        setPhoneForOtp(values.phone);
+      }
+    } catch {
+      setError(t("common.unexpectedError"));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function onOtpSubmit(values: OtpVerifyValues) {
+    if (!phoneForOtp) return;
+    setError(null);
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        phone: phoneForOtp,
+        token: values.otp,
+        type: "sms",
+      });
+      if (error) {
+        setError(error.message);
+      } else {
+        router.replace("/search");
+      }
+    } catch {
+      setError(t("common.unexpectedError"));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  // --- Social auth ---
   async function signInWithGoogle() {
     setError(null);
     setIsSocialLoading("google");
     try {
-      // Web Google auth: use Supabase OAuth redirect flow
-      // signInWithIdToken requires a Google JS SDK credential;
-      // for web, OAuth redirect is simpler and more reliable
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -93,95 +155,223 @@ export default function LoginPage() {
 
   return (
     <div>
-      <h2 className="mb-6 text-xl font-semibold text-gray-900">Sign in</h2>
+      <h2 className="mb-6 text-xl font-semibold text-gray-900 dark:text-gray-100">
+        {t("auth.signIn")}
+      </h2>
 
       {error && (
-        <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
+        <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label
-            htmlFor="email"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            {...register("email")}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            placeholder="you@example.com"
-          />
-          {errors.email && (
-            <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label
-            htmlFor="password"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Password
-          </label>
-          <div className="relative">
-            <input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
-              {...register("password")}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-              placeholder="••••••••"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-              tabIndex={-1}
-            >
-              {showPassword ? (
-                <EyeSlashIcon className="h-4 w-4" />
-              ) : (
-                <EyeIcon className="h-4 w-4" />
-              )}
-            </button>
-          </div>
-          {errors.password && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
-
+      {/* Tab switcher: Phone first */}
+      <div className="mb-6 flex rounded-lg bg-gray-100 p-1 dark:bg-gray-700">
         <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+          type="button"
+          onClick={() => {
+            setActiveTab("phone");
+            setError(null);
+            setPhoneForOtp(null);
+          }}
+          className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition ${
+            activeTab === "phone"
+              ? "bg-white text-gray-900 shadow-sm dark:bg-gray-600 dark:text-gray-100"
+              : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          }`}
         >
-          {isLoading ? "Signing in..." : "Sign in"}
+          {t("auth.phone")}
         </button>
-      </form>
-
-      <div className="mt-4 text-right">
-        <Link
-          href="/reset-password"
-          className="text-sm text-blue-600 hover:underline"
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab("email");
+            setError(null);
+          }}
+          className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition ${
+            activeTab === "email"
+              ? "bg-white text-gray-900 shadow-sm dark:bg-gray-600 dark:text-gray-100"
+              : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          }`}
         >
-          Forgot password?
-        </Link>
+          {t("auth.email")}
+        </button>
       </div>
+
+      {/* Phone tab */}
+      {activeTab === "phone" && !phoneForOtp && (
+        <form
+          onSubmit={phoneForm.handleSubmit(onPhoneSubmit)}
+          className="space-y-4"
+        >
+          <div>
+            <label
+              htmlFor="login-phone"
+              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              {t("auth.phoneNumber")}
+            </label>
+            <input
+              id="login-phone"
+              type="tel"
+              autoComplete="tel"
+              {...phoneForm.register("phone")}
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              placeholder={t("auth.phonePlaceholder")}
+            />
+            {phoneForm.formState.errors.phone && (
+              <p className="mt-1 text-xs text-red-500">
+                {phoneForm.formState.errors.phone.message}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+          >
+            {isLoading ? t("auth.sendingCode") : t("auth.sendCode")}
+          </button>
+        </form>
+      )}
+
+      {/* Phone OTP verification */}
+      {activeTab === "phone" && phoneForOtp && (
+        <form
+          onSubmit={otpForm.handleSubmit(onOtpSubmit)}
+          className="space-y-4"
+        >
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {t("auth.otpSent").replace("{length}", String(OTP_LENGTH))}{" "}
+            <strong>{phoneForOtp}</strong>
+          </p>
+
+          <div>
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={OTP_LENGTH}
+              autoComplete="one-time-code"
+              {...otpForm.register("otp")}
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-center text-lg tracking-widest text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              placeholder={t("auth.otpPlaceholder")}
+            />
+            {otpForm.formState.errors.otp && (
+              <p className="mt-1 text-xs text-red-500">
+                {otpForm.formState.errors.otp.message}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+          >
+            {isLoading ? t("auth.verifying") : t("auth.verifyCode")}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setPhoneForOtp(null)}
+            className="w-full text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            {t("auth.useDifferentNumber")}
+          </button>
+        </form>
+      )}
+
+      {/* Email tab */}
+      {activeTab === "email" && (
+        <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-4">
+          <div>
+            <label
+              htmlFor="login-email"
+              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              {t("auth.email")}
+            </label>
+            <input
+              id="login-email"
+              type="email"
+              autoComplete="email"
+              {...emailForm.register("email")}
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              placeholder={t("auth.emailPlaceholder")}
+            />
+            {emailForm.formState.errors.email && (
+              <p className="mt-1 text-xs text-red-500">
+                {emailForm.formState.errors.email.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="login-password"
+              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              {t("auth.password")}
+            </label>
+            <div className="relative">
+              <input
+                id="login-password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                {...emailForm.register("password")}
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                placeholder={t("auth.passwordPlaceholder")}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="h-4 w-4" />
+                ) : (
+                  <EyeIcon className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+            {emailForm.formState.errors.password && (
+              <p className="mt-1 text-xs text-red-500">
+                {emailForm.formState.errors.password.message}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+          >
+            {isLoading ? t("auth.signingIn") : t("auth.signIn")}
+          </button>
+        </form>
+      )}
+
+      {activeTab === "email" && (
+        <div className="mt-4 text-right">
+          <Link
+            href="/reset-password"
+            className="text-sm text-blue-600 hover:underline"
+          >
+            {t("auth.forgotPassword")}
+          </Link>
+        </div>
+      )}
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200" />
+          <div className="w-full border-t border-gray-200 dark:border-gray-600" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-2 text-gray-500">or continue with</span>
+          <span className="bg-white px-2 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+            {t("auth.orContinueWith")}
+          </span>
         </div>
       </div>
 
@@ -190,7 +380,7 @@ export default function LoginPage() {
           type="button"
           onClick={signInWithGoogle}
           disabled={isSocialLoading !== null}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
@@ -210,7 +400,7 @@ export default function LoginPage() {
               fill="#EA4335"
             />
           </svg>
-          {isSocialLoading === "google" ? "Connecting..." : "Google"}
+          {isSocialLoading === "google" ? t("auth.connecting") : "Google"}
         </button>
 
         <button
@@ -222,14 +412,14 @@ export default function LoginPage() {
           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="white">
             <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
           </svg>
-          {isSocialLoading === "apple" ? "Connecting..." : "Apple"}
+          {isSocialLoading === "apple" ? t("auth.connecting") : "Apple"}
         </button>
       </div>
 
-      <p className="mt-6 text-center text-sm text-gray-500">
-        Don&apos;t have an account?{" "}
+      <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+        {t("auth.noAccount")}{" "}
         <Link href="/signup" className="text-blue-600 hover:underline">
-          Sign up
+          {t("auth.signup")}
         </Link>
       </p>
     </div>
