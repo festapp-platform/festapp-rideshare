@@ -25,6 +25,9 @@ const SignUpFormSchema = z.object({
   display_name: DisplayNameSchema,
   email: EmailSchema,
   password: PasswordSchema,
+  accepted_terms: z.literal(true, {
+    errorMap: () => ({ message: "You must accept the Terms of Service and Privacy Policy" }),
+  }),
 });
 
 type SignUpFormValues = z.infer<typeof SignUpFormSchema>;
@@ -53,7 +56,10 @@ export default function SignupScreen() {
         email: values.email,
         password: values.password,
         options: {
-          data: { display_name: values.display_name },
+          data: {
+            display_name: values.display_name,
+            accepted_terms_at: new Date().toISOString(),
+          },
         },
       });
       if (error) {
@@ -257,6 +263,65 @@ export default function SignupScreen() {
             </Text>
           )}
         </View>
+
+        {/* Terms of Service checkbox */}
+        <Controller
+          control={control}
+          name="accepted_terms"
+          render={({ field: { onChange, value } }) => (
+            <TouchableOpacity
+              onPress={() => onChange(!value)}
+              activeOpacity={0.7}
+              style={{
+                flexDirection: "row",
+                alignItems: "flex-start",
+                gap: 8,
+                marginBottom: 16,
+              }}
+            >
+              <View
+                style={{
+                  width: 20,
+                  height: 20,
+                  borderWidth: 1.5,
+                  borderRadius: 4,
+                  borderColor: value ? "#A8D5BA" : "#ccc",
+                  backgroundColor: value ? "#A8D5BA" : "transparent",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: 2,
+                }}
+              >
+                {value && (
+                  <Text
+                    style={{
+                      color: "white",
+                      fontSize: 14,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    ✓
+                  </Text>
+                )}
+              </View>
+              <Text style={{ fontSize: 12, color: "#666", flex: 1 }}>
+                I agree to the Terms of Service and Privacy Policy
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+        {errors.accepted_terms && (
+          <Text
+            style={{
+              fontSize: 12,
+              color: "#ef4444",
+              marginTop: -8,
+              marginBottom: 16,
+            }}
+          >
+            {errors.accepted_terms.message}
+          </Text>
+        )}
 
         <TouchableOpacity
           onPress={handleSubmit(onSubmit)}

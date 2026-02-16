@@ -141,6 +141,11 @@ export type TranslationKeys = {
   "empty.noReviews": string;
   "empty.noEvents": string;
 
+  // Location sharing banner (LEGAL-03)
+  "location.sharingWith": string;
+  "location.stop": string;
+  "location.passengers": string;
+
   // Errors
   "errors.networkError": string;
   "errors.notFound": string;
@@ -278,6 +283,13 @@ export type TranslationKeys = {
   "onboarding.ready.title": string;
   "onboarding.ready.description": string;
   "onboarding.ready.button": string;
+
+  // Legal / ToS consent
+  "auth.agreeToTermsPre": string;
+  "auth.termsOfService": string;
+  "auth.privacyPolicy": string;
+  "auth.mustAcceptTerms": string;
+  "common.and": string;
 };
 
 const cs: TranslationKeys = {
@@ -413,6 +425,11 @@ const cs: TranslationKeys = {
   "empty.noBookings": "Žádné rezervace",
   "empty.noReviews": "Žádná hodnocení",
   "empty.noEvents": "Žádné události",
+
+  // Location sharing banner (LEGAL-03)
+  "location.sharingWith": "Sdílení polohy s {names}",
+  "location.stop": "Zastavit",
+  "location.passengers": "spolucestujícími",
 
   // Errors
   "errors.networkError": "Chyba sítě. Zkontrolujte připojení.",
@@ -551,6 +568,13 @@ const cs: TranslationKeys = {
   "onboarding.ready.title": "Vše je připraveno!",
   "onboarding.ready.description": "Začněte hledáním spolujízdy na váš další festival, nebo nabídněte svou jízdu ostatním.",
   "onboarding.ready.button": "Začít",
+
+  // Legal / ToS consent
+  "auth.agreeToTermsPre": "Souhlasím s",
+  "auth.termsOfService": "Obchodními podmínkami",
+  "auth.privacyPolicy": "Zásadami ochrany osobních údajů",
+  "auth.mustAcceptTerms": "Musíte souhlasit s obchodními podmínkami a zásadami ochrany osobních údajů",
+  "common.and": "a",
 };
 
 const sk: TranslationKeys = {
@@ -686,6 +710,11 @@ const sk: TranslationKeys = {
   "empty.noBookings": "Žiadne rezervácie",
   "empty.noReviews": "Žiadne hodnotenia",
   "empty.noEvents": "Žiadne udalosti",
+
+  // Location sharing banner (LEGAL-03)
+  "location.sharingWith": "Zdieľanie polohy s {names}",
+  "location.stop": "Zastaviť",
+  "location.passengers": "spolucestujúcimi",
 
   // Errors
   "errors.networkError": "Chyba siete. Skontrolujte pripojenie.",
@@ -824,6 +853,13 @@ const sk: TranslationKeys = {
   "onboarding.ready.title": "Všetko je pripravené!",
   "onboarding.ready.description": "Začnite hľadaním spolujazdy na váš ďalší festival, alebo ponúknite svoju jazdu ostatným.",
   "onboarding.ready.button": "Začať",
+
+  // Legal / ToS consent
+  "auth.agreeToTermsPre": "Súhlasím s",
+  "auth.termsOfService": "Obchodnými podmienkami",
+  "auth.privacyPolicy": "Zásadami ochrany osobných údajov",
+  "auth.mustAcceptTerms": "Musíte súhlasiť s obchodnými podmienkami a zásadami ochrany osobných údajov",
+  "common.and": "a",
 };
 
 const en: TranslationKeys = {
@@ -959,6 +995,11 @@ const en: TranslationKeys = {
   "empty.noBookings": "No bookings",
   "empty.noReviews": "No reviews",
   "empty.noEvents": "No events",
+
+  // Location sharing banner (LEGAL-03)
+  "location.sharingWith": "Sharing location with {names}",
+  "location.stop": "Stop",
+  "location.passengers": "passengers",
 
   // Errors
   "errors.networkError": "Network error. Check your connection.",
@@ -1097,6 +1138,13 @@ const en: TranslationKeys = {
   "onboarding.ready.title": "You're all set!",
   "onboarding.ready.description": "Start by searching for a ride to your next festival, or post your own ride to share with others.",
   "onboarding.ready.button": "Get Started",
+
+  // Legal / ToS consent
+  "auth.agreeToTermsPre": "I agree to the",
+  "auth.termsOfService": "Terms of Service",
+  "auth.privacyPolicy": "Privacy Policy",
+  "auth.mustAcceptTerms": "You must accept the Terms of Service and Privacy Policy",
+  "common.and": "and",
 };
 
 export const translations: Record<SupportedLocale, TranslationKeys> = {

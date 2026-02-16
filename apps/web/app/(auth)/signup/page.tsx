@@ -46,6 +46,7 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSocialLoading, setIsSocialLoading] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   // Email confirmation dialog
   const [showEmailDialog, setShowEmailDialog] = useState(false);
@@ -61,6 +62,10 @@ export default function SignupPage() {
   });
 
   async function onEmailSubmit(values: EmailSignUpValues) {
+    if (!acceptedTerms) {
+      setError(t("auth.mustAcceptTerms"));
+      return;
+    }
     setError(null);
     setIsLoading(true);
     try {
@@ -68,7 +73,11 @@ export default function SignupPage() {
         email: values.email,
         password: values.password,
         options: {
-          data: { display_name: values.display_name, locale },
+          data: {
+            display_name: values.display_name,
+            locale,
+            accepted_terms_at: new Date().toISOString(),
+          },
         },
       });
       if (error) {
@@ -93,13 +102,17 @@ export default function SignupPage() {
   });
 
   async function onPhoneSubmit(values: PhoneSignUpValues) {
+    if (!acceptedTerms) {
+      setError(t("auth.mustAcceptTerms"));
+      return;
+    }
     setError(null);
     setIsLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOtp({
         phone: values.phone,
         options: {
-          data: { locale },
+          data: { locale, accepted_terms_at: new Date().toISOString() },
         },
       });
       if (error) {
@@ -138,6 +151,10 @@ export default function SignupPage() {
 
   // --- Social auth ---
   async function signInWithGoogle() {
+    if (!acceptedTerms) {
+      setError(t("auth.mustAcceptTerms"));
+      return;
+    }
     setError(null);
     setIsSocialLoading("google");
     try {
@@ -155,6 +172,10 @@ export default function SignupPage() {
   }
 
   async function signInWithApple() {
+    if (!acceptedTerms) {
+      setError(t("auth.mustAcceptTerms"));
+      return;
+    }
     setError(null);
     setIsSocialLoading("apple");
     try {
@@ -215,6 +236,26 @@ export default function SignupPage() {
             {error}
           </div>
         )}
+
+        {/* Terms of Service checkbox */}
+        <label className="mb-4 flex items-start gap-2">
+          <input
+            type="checkbox"
+            checked={acceptedTerms}
+            onChange={(e) => setAcceptedTerms(e.target.checked)}
+            className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+          />
+          <span className="text-xs text-text-secondary">
+            {t("auth.agreeToTermsPre")}{" "}
+            <Link href="/terms" target="_blank" className="text-primary hover:underline">
+              {t("auth.termsOfService")}
+            </Link>{" "}
+            {t("common.and")}{" "}
+            <Link href="/privacy" target="_blank" className="text-primary hover:underline">
+              {t("auth.privacyPolicy")}
+            </Link>
+          </span>
+        </label>
 
         {/* Tab switcher: Phone first */}
         <div className="mb-6 flex rounded-lg bg-background p-1">
