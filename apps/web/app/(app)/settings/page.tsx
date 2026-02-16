@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 /**
  * Settings page (NAV-06).
@@ -68,6 +69,7 @@ function SettingsSection({
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { t } = useTranslations();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -119,42 +121,48 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-text-main">Settings</h1>
+      <h1 className="mb-6 text-2xl font-bold text-text-main">
+        {t("nav.settings")}
+      </h1>
 
       <SettingsSection
-        title="Preferences"
+        title={t("settings.preferences")}
         items={[
           {
-            label: "Language",
-            onClick: () => alert("Language settings will be available in a future update."),
+            label: t("settings.language"),
+            onClick: () => router.push("/settings/language"),
           },
           {
-            label: "Notifications",
+            label: t("settings.notifications"),
             onClick: () => router.push("/settings/notifications"),
           },
         ]}
       />
 
       <SettingsSection
-        title="Privacy"
+        title={t("settings.privacy")}
         items={[
           {
-            label: "Blocked Users",
+            label: t("settings.blockedUsers"),
             onClick: () => router.push("/settings/blocked-users"),
+          },
+          {
+            label: "Export My Data",
+            onClick: () => router.push("/settings/data-export"),
           },
         ]}
       />
 
       <SettingsSection
-        title="Account"
+        title={t("settings.account")}
         items={[
           {
-            label: "Log Out",
+            label: t("auth.logout"),
             onClick: handleLogout,
             loading: isLoggingOut,
           },
           {
-            label: "Delete Account",
+            label: t("auth.deleteAccount"),
             onClick: handleDeleteAccount,
             destructive: true,
             loading: isDeleting,
@@ -163,15 +171,15 @@ export default function SettingsPage() {
       />
 
       <SettingsSection
-        title="Info"
+        title={t("settings.info")}
         items={[
           {
-            label: "Help & Support",
-            onClick: () => alert("Help center will be available in a future update."),
+            label: t("settings.help"),
+            onClick: () => router.push("/help"),
           },
           {
-            label: "Legal",
-            onClick: () => alert("Legal information will be available in a future update."),
+            label: t("settings.legal"),
+            onClick: () => router.push("/legal"),
           },
         ]}
       />
