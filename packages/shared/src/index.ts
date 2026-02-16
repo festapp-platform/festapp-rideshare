@@ -291,6 +291,14 @@ export type {
   AiResponse,
 } from './validation/ai';
 
+// Constants - SEO
+export {
+  SITE_URL,
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+} from './constants/seo';
+
 // Types
 export type {
   Database,

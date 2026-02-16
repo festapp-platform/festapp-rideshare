@@ -15,6 +15,10 @@ const PUBLIC_ROUTES = [
   "/reset-password",
   "/auth/callback",
   "/auth/confirm",
+  "/ride/",
+  "/u/",
+  "/robots.txt",
+  "/sitemap.xml",
 ];
 
 function isPublicRoute(pathname: string): boolean {

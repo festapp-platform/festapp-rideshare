@@ -27,6 +27,7 @@ export interface Database {
           account_status: string;
           suspended_until: string | null;
           completed_rides_count: number;
+          short_id: string;
           created_at: string;
           updated_at: string;
         };
@@ -45,6 +46,7 @@ export interface Database {
           account_status?: string;
           suspended_until?: string | null;
           completed_rides_count?: number;
+          short_id?: string;
           created_at?: string;
           updated_at?: string;
         };
@@ -63,6 +65,7 @@ export interface Database {
           account_status?: string;
           suspended_until?: string | null;
           completed_rides_count?: number;
+          short_id?: string;
           created_at?: string;
           updated_at?: string;
         };
@@ -148,6 +151,7 @@ export interface Database {
           status: string;
           recurring_pattern_id: string | null;
           event_id: string | null;
+          short_id: string;
           created_at: string;
           updated_at: string;
         };
@@ -175,6 +179,7 @@ export interface Database {
           status?: string;
           recurring_pattern_id?: string | null;
           event_id?: string | null;
+          short_id?: string;
           created_at?: string;
           updated_at?: string;
         };
@@ -202,6 +207,7 @@ export interface Database {
           status?: string;
           recurring_pattern_id?: string | null;
           event_id?: string | null;
+          short_id?: string;
           created_at?: string;
           updated_at?: string;
         };
