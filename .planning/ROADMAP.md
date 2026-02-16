@@ -39,7 +39,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 12: Critical Bug Fixes & Admin Setup** - Fix AI ride creation, chat duplicates, map picker, past time selection; configure admin accounts (completed 2026-02-16)
 - [x] **Phase 13: Legal, Privacy & Observability** - ToS acceptance at signup, location sharing indicator, email/SMS/push logging, audit trail (completed 2026-02-16)
 - [x] **Phase 14: Price Formatting, Chat Optimization & AI Tests** - Locale-aware price display, cash-friendly rounding, chat pagination/archival, AI integration tests (completed 2026-02-16)
-- [ ] **Phase 15: i18n Coverage** - Complete translation of all 171 remaining strings, interpolation support, cookie consent i18n, language settings
+- [x] **Phase 15: i18n Coverage** - Complete translation of all 171 remaining strings, interpolation support, cookie consent i18n, language settings (completed 2026-02-16)
 - [ ] **Phase 16: UI Polish & Route Features** - Map zoom, rating badges, simplified My Rides and notifications, waypoint management
 
 ## Phase Details
@@ -316,7 +316,7 @@ Plans:
   3. All user-facing strings in secondary and minor files (block-button, ride-card, login, signup, cookie-consent, force-update-banner, pwa-install-banner, offline-banner, share-button, pending-rating-banner, not-found, reset-password) use t() with translations in all three locales
   4. Cookie consent banner displays in the user's selected language instead of hardcoded English
   5. User can change the app language to Czech, Slovak, or English from a language settings page
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 15-01-PLAN.md -- t() interpolation + core flow translations (ride-detail, my-rides, booking-button)
@@ -333,7 +333,13 @@ Plans:
   3. "Money Saved" metric is hidden from the impact dashboard and community stats page
   4. My Rides page shows all rides in a single list (upcoming first, then past) without Upcoming/Past tab switcher, and notification settings are simplified to 2-3 grouped toggles
   5. Driver can add intermediate waypoints when creating a ride, waypoints are displayed on the route map, and passengers can search for rides where a waypoint is near their origin or destination
-**Plans**: TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 16-01-PLAN.md -- Map picker zoom, StarRating "Novy" badge, Money Saved removal (UX-01, UX-02, UX-03, UX-04)
+- [ ] 16-02-PLAN.md -- My Rides single list, simplified notification toggles (UX-05, UX-06)
+- [ ] 16-03-PLAN.md -- Waypoint proximity search in nearby_rides RPC (ROUTE-03)
+- [ ] 16-04-PLAN.md -- Waypoint input in ride form, waypoint markers on route map (ROUTE-01, ROUTE-02)
 
 **Note on ride-form.tsx:** This file (930 lines) is modified by Phase 12 (BUG-01 AI fix, BUG-04 time picker), Phase 14 (PRICE-03 slider value display), and Phase 16 (ROUTE-01 waypoints). These phases must execute sequentially -- never plan parallel modifications to ride-form.tsx.
 
@@ -361,7 +367,7 @@ Plans:
 | 12. Critical Bug Fixes & Admin Setup | v1.1 | Complete    | 2026-02-16 | - |
 | 13. Legal, Privacy & Observability | v1.1 | Complete    | 2026-02-16 | - |
 | 14. Price Formatting, Chat Optimization & AI Tests | v1.1 | Complete    | 2026-02-16 | - |
-| 15. i18n Coverage | v1.1 | 0/? | Not started | - |
+| 15. i18n Coverage | v1.1 | Complete    | 2026-02-16 | - |
 | 16. UI Polish & Route Features | v1.1 | 0/? | Not started | - |
 
 ## Post-Launch: Deployment & Operations
