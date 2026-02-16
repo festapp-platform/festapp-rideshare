@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 
 ## Current Position
 
-Phase: 13 - Legal, Privacy & Observability
-Plan: 03 of 3 (phase complete)
-Status: Phase 13 complete
-Last activity: 2026-02-16 -- Completed 13-03-PLAN.md (location sharing indicator)
+Phase: 14 - Price Formatting, Chat Optimization & AI Tests
+Plan: 04 of 4 (phase complete)
+Status: Phase 14 complete
+Last activity: 2026-02-16 -- Completed 14-04-PLAN.md (AI integration tests)
 
 Progress: [████████████████████████████] 100%
 
@@ -84,6 +84,7 @@ Progress: [███████████████████████
 | Phase 13 P03 | 5min | 2 tasks | 5 files |
 | Phase 13 P01 | 3min | 2 tasks | 3 files |
 | Phase 13 P02 | 6min | 2 tasks | 5 files |
+| Phase 14 P04 | 2min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -255,6 +256,7 @@ Recent decisions affecting current work:
 - [13-01]: Auth email logging uses user?.id ?? null since user_id is now nullable for signup confirmations
 - [13-01]: Best-effort logging in auth hooks: never block auth flow for observability
 - [Phase 13-02]: Single acceptedTerms state above tab switcher gates all signup methods (not per-form Zod); social OAuth consent proven by UI checkbox flow
+- [Phase 14-04]: Vitest 4 requires it(name, {timeout}, fn) instead of deprecated it(name, fn, {timeout})
 
 ### Pending Todos
 
@@ -273,5 +275,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 13-03-PLAN.md (Phase 13 complete)
+Stopped at: Completed 14-04-PLAN.md (AI integration tests)
 Resume file: N/A
