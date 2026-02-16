@@ -63,6 +63,16 @@ export type TranslationKeys = {
   "auth.resetEmailSentMessage": string;
   "auth.backToSignIn": string;
   "auth.rememberPassword": string;
+  "auth.newPassword": string;
+  "auth.newPasswordDescription": string;
+  "auth.newPasswordLabel": string;
+  "auth.confirmPasswordLabel": string;
+  "auth.confirmPasswordPlaceholder": string;
+  "auth.updatePassword": string;
+  "auth.updatingPassword": string;
+  "auth.passwordUpdatedTitle": string;
+  "auth.passwordUpdatedMessage": string;
+  "auth.continueToApp": string;
 
   // Settings
   "settings.language": string;
@@ -137,6 +147,90 @@ export type TranslationKeys = {
   "errors.serverError": string;
   "errors.unauthorized": string;
   "errors.rateLimited": string;
+
+  // Nav secondary
+  "nav.community": string;
+  "nav.myStats": string;
+
+  // Ride form
+  "rideForm.whereGoing": string;
+  "rideForm.from": string;
+  "rideForm.to": string;
+  "rideForm.pickupLocation": string;
+  "rideForm.destination": string;
+  "rideForm.computingRoute": string;
+  "rideForm.distance": string;
+  "rideForm.duration": string;
+  "rideForm.suggested": string;
+  "rideForm.whenLeaving": string;
+  "rideForm.time": string;
+  "rideForm.availableSeats": string;
+  "rideForm.bookingMode": string;
+  "rideForm.instant": string;
+  "rideForm.instantDesc": string;
+  "rideForm.request": string;
+  "rideForm.requestDesc": string;
+  "rideForm.priceDetails": string;
+  "rideForm.recommended": string;
+  "rideForm.vehicleOptional": string;
+  "rideForm.selectVehicle": string;
+  "rideForm.linkEvent": string;
+  "rideForm.noEvent": string;
+  "rideForm.notesPlaceholder": string;
+  "rideForm.notesLabel": string;
+  "rideForm.postingRide": string;
+  "rideForm.next": string;
+  "rideForm.selectBothPoints": string;
+  "rideForm.route": string;
+  "rideForm.when": string;
+  "rideForm.aiPromptPlaceholder": string;
+  "rideForm.aiParsing": string;
+  "rideForm.chooseOnMap": string;
+  "rideForm.selectOnMap": string;
+  "rideForm.confirmLocation": string;
+
+  // Search page
+  "search.title": string;
+  "search.searchHint": string;
+  "search.noRidesFound": string;
+  "search.noRidesHint": string;
+  "search.ridesFound": string;
+  "search.rideFound": string;
+
+  // Settings extra
+  "settings.exportData": string;
+  "settings.inviteFriends": string;
+  "settings.supportUs": string;
+  "settings.deleteConfirmTitle": string;
+  "settings.deleteConfirmMessage": string;
+  "settings.aiSuggestions": string;
+  "settings.aiSuggestionsDesc": string;
+
+  // Profile extra
+  "profile.title": string;
+  "profile.edit": string;
+  "profile.yourProfile": string;
+  "profile.tapToSetup": string;
+  "profile.phoneVerified": string;
+  "profile.idVerified": string;
+  "profile.idVerification": string;
+  "profile.idVerifiedDesc": string;
+  "profile.uploadId": string;
+  "profile.uploadingId": string;
+  "profile.uploadIdDesc": string;
+  "profile.clickToChangeAvatar": string;
+  "profile.saveChanges": string;
+  "profile.saving": string;
+  "profile.instagramUrl": string;
+  "profile.facebookUrl": string;
+  "profile.myVehicles": string;
+  "profile.addVehicleHint": string;
+  "profile.manageVehicles": string;
+  "profile.avatarRequired": string;
+
+  // Onboarding
+  "onboarding.tapToAddPhoto": string;
+  "onboarding.avatarRequired": string;
 };
 
 const cs: TranslationKeys = {
@@ -195,6 +289,16 @@ const cs: TranslationKeys = {
   "auth.resetEmailSentMessage": "Poslali jsme vám odkaz pro obnovení hesla. Klikněte na něj a nastavte si nové heslo.",
   "auth.backToSignIn": "Zpět na přihlášení",
   "auth.rememberPassword": "Vzpomínáte si na heslo?",
+  "auth.newPassword": "Nové heslo",
+  "auth.newPasswordDescription": "Zadejte své nové heslo.",
+  "auth.newPasswordLabel": "Nové heslo",
+  "auth.confirmPasswordLabel": "Potvrďte heslo",
+  "auth.confirmPasswordPlaceholder": "Zopakujte heslo",
+  "auth.updatePassword": "Nastavit heslo",
+  "auth.updatingPassword": "Nastavuji...",
+  "auth.passwordUpdatedTitle": "Heslo bylo změněno",
+  "auth.passwordUpdatedMessage": "Vaše heslo bylo úspěšně aktualizováno.",
+  "auth.continueToApp": "Pokračovat do aplikace",
 
   // Settings
   "settings.language": "Jazyk",
@@ -269,6 +373,90 @@ const cs: TranslationKeys = {
   "errors.serverError": "Chyba serveru. Zkuste to později.",
   "errors.unauthorized": "Nemáte oprávnění",
   "errors.rateLimited": "Příliš mnoho požadavků. Zkuste to později.",
+
+  // Nav secondary
+  "nav.community": "Komunita",
+  "nav.myStats": "Statistiky",
+
+  // Ride form
+  "rideForm.whereGoing": "Kam jedete?",
+  "rideForm.from": "Odkud",
+  "rideForm.to": "Kam",
+  "rideForm.pickupLocation": "Místo vyzvednutí",
+  "rideForm.destination": "Cíl cesty",
+  "rideForm.computingRoute": "Počítám trasu...",
+  "rideForm.distance": "Vzdálenost",
+  "rideForm.duration": "Doba jízdy",
+  "rideForm.suggested": "Doporučeno",
+  "rideForm.whenLeaving": "Kdy vyrážíte?",
+  "rideForm.time": "Čas",
+  "rideForm.availableSeats": "Volná místa",
+  "rideForm.bookingMode": "Způsob rezervace",
+  "rideForm.instant": "Okamžitá",
+  "rideForm.instantDesc": "Cestující rezervují ihned",
+  "rideForm.request": "Na žádost",
+  "rideForm.requestDesc": "Schvalujete každou rezervaci",
+  "rideForm.priceDetails": "Cena a detaily",
+  "rideForm.recommended": "Doporučeno: {price} {currency} (na základě nákladů na palivo)",
+  "rideForm.vehicleOptional": "Vozidlo (volitelné)",
+  "rideForm.selectVehicle": "Vyberte vozidlo",
+  "rideForm.linkEvent": "Propojit s akcí (volitelné)",
+  "rideForm.noEvent": "Žádná akce",
+  "rideForm.notesPlaceholder": "Místo setkání, zavazadla, zvířata, kouření...",
+  "rideForm.notesLabel": "Poznámky pro cestující (volitelné)",
+  "rideForm.postingRide": "Vytvářím jízdu...",
+  "rideForm.next": "Další",
+  "rideForm.selectBothPoints": "Vyberte místo odjezdu i příjezdu.",
+  "rideForm.route": "Trasa",
+  "rideForm.when": "Kdy",
+  "rideForm.aiPromptPlaceholder": "Popište svou jízdu...",
+  "rideForm.aiParsing": "Analyzuji...",
+  "rideForm.chooseOnMap": "Vybrat na mapě",
+  "rideForm.selectOnMap": "Klepněte na mapu pro výběr místa",
+  "rideForm.confirmLocation": "Potvrdit místo",
+
+  // Search page
+  "search.title": "Hledat jízdy",
+  "search.searchHint": "Vyhledejte jízdy na festivaly, akce a další",
+  "search.noRidesFound": "Žádné jízdy nenalezeny",
+  "search.noRidesHint": "Zkuste rozšířit oblast vyhledávání nebo změnit datum.",
+  "search.ridesFound": "jízd nalezeno",
+  "search.rideFound": "jízda nalezena",
+
+  // Settings extra
+  "settings.exportData": "Export mých dat",
+  "settings.inviteFriends": "Pozvat přátele",
+  "settings.supportUs": "Podpořte nás",
+  "settings.deleteConfirmTitle": "Smazat účet",
+  "settings.deleteConfirmMessage": "Opravdu chcete smazat svůj účet? Tuto akci nelze vrátit. Všechna vaše data budou trvale odstraněna.",
+  "settings.aiSuggestions": "AI návrhy",
+  "settings.aiSuggestionsDesc": "Zobrazit AI návrhy a automatické vyplňování formulářů",
+
+  // Profile extra
+  "profile.title": "Profil",
+  "profile.edit": "Upravit",
+  "profile.yourProfile": "Váš profil",
+  "profile.tapToSetup": "Klikněte na Upravit pro nastavení profilu",
+  "profile.phoneVerified": "Telefon ověřen",
+  "profile.idVerified": "ID ověřeno",
+  "profile.idVerification": "Ověření identity",
+  "profile.idVerifiedDesc": "Vaše ID bylo ověřeno",
+  "profile.uploadId": "Nahrát doklad totožnosti",
+  "profile.uploadingId": "Nahrávám...",
+  "profile.uploadIdDesc": "Nahrajte fotografii svého dokladu pro zvýšení důvěryhodnosti.",
+  "profile.clickToChangeAvatar": "Klikněte na avatar pro změnu fotky",
+  "profile.saveChanges": "Uložit změny",
+  "profile.saving": "Ukládám...",
+  "profile.instagramUrl": "Instagram URL",
+  "profile.facebookUrl": "Facebook URL",
+  "profile.myVehicles": "Moje vozidla",
+  "profile.addVehicleHint": "Přidejte vozidlo pro nabízení jízd",
+  "profile.manageVehicles": "Spravovat vozidla",
+  "profile.avatarRequired": "Profilová fotka je povinná",
+
+  // Onboarding
+  "onboarding.tapToAddPhoto": "Klepněte pro přidání fotky",
+  "onboarding.avatarRequired": "Přidejte prosím profilovou fotku pro pokračování.",
 };
 
 const sk: TranslationKeys = {
@@ -327,6 +515,16 @@ const sk: TranslationKeys = {
   "auth.resetEmailSentMessage": "Poslali sme vám odkaz na obnovenie hesla. Kliknite naň a nastavte si nové heslo.",
   "auth.backToSignIn": "Späť na prihlásenie",
   "auth.rememberPassword": "Pamätáte si heslo?",
+  "auth.newPassword": "Nové heslo",
+  "auth.newPasswordDescription": "Zadajte svoje nové heslo.",
+  "auth.newPasswordLabel": "Nové heslo",
+  "auth.confirmPasswordLabel": "Potvrďte heslo",
+  "auth.confirmPasswordPlaceholder": "Zopakujte heslo",
+  "auth.updatePassword": "Nastaviť heslo",
+  "auth.updatingPassword": "Nastavujem...",
+  "auth.passwordUpdatedTitle": "Heslo bolo zmenené",
+  "auth.passwordUpdatedMessage": "Vaše heslo bolo úspešne aktualizované.",
+  "auth.continueToApp": "Pokračovať do aplikácie",
 
   // Settings
   "settings.language": "Jazyk",
@@ -401,6 +599,90 @@ const sk: TranslationKeys = {
   "errors.serverError": "Chyba servera. Skúste to neskôr.",
   "errors.unauthorized": "Nemáte oprávnenie",
   "errors.rateLimited": "Príliš veľa požiadavkov. Skúste to neskôr.",
+
+  // Nav secondary
+  "nav.community": "Komunita",
+  "nav.myStats": "Štatistiky",
+
+  // Ride form
+  "rideForm.whereGoing": "Kam idete?",
+  "rideForm.from": "Odkiaľ",
+  "rideForm.to": "Kam",
+  "rideForm.pickupLocation": "Miesto vyzdvihnutia",
+  "rideForm.destination": "Cieľ cesty",
+  "rideForm.computingRoute": "Počítam trasu...",
+  "rideForm.distance": "Vzdialenosť",
+  "rideForm.duration": "Doba jazdy",
+  "rideForm.suggested": "Odporúčané",
+  "rideForm.whenLeaving": "Kedy vyrážate?",
+  "rideForm.time": "Čas",
+  "rideForm.availableSeats": "Voľné miesta",
+  "rideForm.bookingMode": "Spôsob rezervácie",
+  "rideForm.instant": "Okamžitá",
+  "rideForm.instantDesc": "Cestujúci rezervujú ihneď",
+  "rideForm.request": "Na žiadosť",
+  "rideForm.requestDesc": "Schvaľujete každú rezerváciu",
+  "rideForm.priceDetails": "Cena a detaily",
+  "rideForm.recommended": "Odporúčané: {price} {currency} (na základe nákladov na palivo)",
+  "rideForm.vehicleOptional": "Vozidlo (voliteľné)",
+  "rideForm.selectVehicle": "Vyberte vozidlo",
+  "rideForm.linkEvent": "Prepojiť s akciou (voliteľné)",
+  "rideForm.noEvent": "Žiadna akcia",
+  "rideForm.notesPlaceholder": "Miesto stretnutia, batožina, zvieratá, fajčenie...",
+  "rideForm.notesLabel": "Poznámky pre cestujúcich (voliteľné)",
+  "rideForm.postingRide": "Vytváranie jazdy...",
+  "rideForm.next": "Ďalej",
+  "rideForm.selectBothPoints": "Vyberte miesto odchodu aj príchodu.",
+  "rideForm.route": "Trasa",
+  "rideForm.when": "Kedy",
+  "rideForm.aiPromptPlaceholder": "Popíšte svoju jazdu...",
+  "rideForm.aiParsing": "Analyzujem...",
+  "rideForm.chooseOnMap": "Vybrať na mape",
+  "rideForm.selectOnMap": "Klepnite na mapu pre výber miesta",
+  "rideForm.confirmLocation": "Potvrdiť miesto",
+
+  // Search page
+  "search.title": "Hľadať jazdy",
+  "search.searchHint": "Vyhľadajte jazdy na festivaly, akcie a ďalšie",
+  "search.noRidesFound": "Žiadne jazdy nenájdené",
+  "search.noRidesHint": "Skúste rozšíriť oblasť vyhľadávania alebo zmeniť dátum.",
+  "search.ridesFound": "jázd nájdených",
+  "search.rideFound": "jazda nájdená",
+
+  // Settings extra
+  "settings.exportData": "Export mojich dát",
+  "settings.inviteFriends": "Pozvať priateľov",
+  "settings.supportUs": "Podporte nás",
+  "settings.deleteConfirmTitle": "Zmazať účet",
+  "settings.deleteConfirmMessage": "Naozaj chcete zmazať svoj účet? Túto akciu nemožno vrátiť. Všetky vaše dáta budú natrvalo odstránené.",
+  "settings.aiSuggestions": "AI návrhy",
+  "settings.aiSuggestionsDesc": "Zobrazovať AI návrhy a automatické vypĺňanie formulárov",
+
+  // Profile extra
+  "profile.title": "Profil",
+  "profile.edit": "Upraviť",
+  "profile.yourProfile": "Váš profil",
+  "profile.tapToSetup": "Kliknite na Upraviť pre nastavenie profilu",
+  "profile.phoneVerified": "Telefón overený",
+  "profile.idVerified": "ID overené",
+  "profile.idVerification": "Overenie identity",
+  "profile.idVerifiedDesc": "Vaše ID bolo overené",
+  "profile.uploadId": "Nahrať doklad totožnosti",
+  "profile.uploadingId": "Nahrávam...",
+  "profile.uploadIdDesc": "Nahrajte fotografiu svojho dokladu pre zvýšenie dôveryhodnosti.",
+  "profile.clickToChangeAvatar": "Kliknite na avatar pre zmenu fotky",
+  "profile.saveChanges": "Uložiť zmeny",
+  "profile.saving": "Ukladám...",
+  "profile.instagramUrl": "Instagram URL",
+  "profile.facebookUrl": "Facebook URL",
+  "profile.myVehicles": "Moje vozidlá",
+  "profile.addVehicleHint": "Pridajte vozidlo pre ponúkanie jázd",
+  "profile.manageVehicles": "Spravovať vozidlá",
+  "profile.avatarRequired": "Profilová fotka je povinná",
+
+  // Onboarding
+  "onboarding.tapToAddPhoto": "Klepnite pre pridanie fotky",
+  "onboarding.avatarRequired": "Pridajte prosím profilovú fotku pre pokračovanie.",
 };
 
 const en: TranslationKeys = {
@@ -459,6 +741,16 @@ const en: TranslationKeys = {
   "auth.resetEmailSentMessage": "We sent a password reset link to your email address. Click the link to set a new password.",
   "auth.backToSignIn": "Back to sign in",
   "auth.rememberPassword": "Remember your password?",
+  "auth.newPassword": "New password",
+  "auth.newPasswordDescription": "Enter your new password.",
+  "auth.newPasswordLabel": "New password",
+  "auth.confirmPasswordLabel": "Confirm password",
+  "auth.confirmPasswordPlaceholder": "Repeat password",
+  "auth.updatePassword": "Set password",
+  "auth.updatingPassword": "Updating...",
+  "auth.passwordUpdatedTitle": "Password updated",
+  "auth.passwordUpdatedMessage": "Your password has been successfully updated.",
+  "auth.continueToApp": "Continue to app",
 
   // Settings
   "settings.language": "Language",
@@ -533,6 +825,90 @@ const en: TranslationKeys = {
   "errors.serverError": "Server error. Try again later.",
   "errors.unauthorized": "Unauthorized",
   "errors.rateLimited": "Too many requests. Try again later.",
+
+  // Nav secondary
+  "nav.community": "Community",
+  "nav.myStats": "My Stats",
+
+  // Ride form
+  "rideForm.whereGoing": "Where are you going?",
+  "rideForm.from": "From",
+  "rideForm.to": "To",
+  "rideForm.pickupLocation": "Pickup location",
+  "rideForm.destination": "Destination",
+  "rideForm.computingRoute": "Computing route...",
+  "rideForm.distance": "Distance",
+  "rideForm.duration": "Duration",
+  "rideForm.suggested": "Suggested",
+  "rideForm.whenLeaving": "When are you leaving?",
+  "rideForm.time": "Time",
+  "rideForm.availableSeats": "Available seats",
+  "rideForm.bookingMode": "Booking mode",
+  "rideForm.instant": "Instant",
+  "rideForm.instantDesc": "Passengers book immediately",
+  "rideForm.request": "Request",
+  "rideForm.requestDesc": "You approve each booking",
+  "rideForm.priceDetails": "Price & details",
+  "rideForm.recommended": "Recommended: {price} {currency} (based on fuel costs)",
+  "rideForm.vehicleOptional": "Vehicle (optional)",
+  "rideForm.selectVehicle": "Select a vehicle",
+  "rideForm.linkEvent": "Link to event (optional)",
+  "rideForm.noEvent": "No event",
+  "rideForm.notesPlaceholder": "Meeting point, luggage info, pets, smoking policy...",
+  "rideForm.notesLabel": "Notes for passengers (optional)",
+  "rideForm.postingRide": "Posting ride...",
+  "rideForm.next": "Next",
+  "rideForm.selectBothPoints": "Please select both pickup and destination.",
+  "rideForm.route": "Route",
+  "rideForm.when": "When",
+  "rideForm.aiPromptPlaceholder": "Describe your ride...",
+  "rideForm.aiParsing": "Parsing...",
+  "rideForm.chooseOnMap": "Choose on map",
+  "rideForm.selectOnMap": "Tap the map to select a location",
+  "rideForm.confirmLocation": "Confirm location",
+
+  // Search page
+  "search.title": "Search Rides",
+  "search.searchHint": "Search for rides to festivals, events, and more",
+  "search.noRidesFound": "No rides found",
+  "search.noRidesHint": "Try expanding your search radius or changing the date.",
+  "search.ridesFound": "rides found",
+  "search.rideFound": "ride found",
+
+  // Settings extra
+  "settings.exportData": "Export My Data",
+  "settings.inviteFriends": "Invite Friends",
+  "settings.supportUs": "Support Us",
+  "settings.deleteConfirmTitle": "Delete Account",
+  "settings.deleteConfirmMessage": "Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently removed.",
+  "settings.aiSuggestions": "AI Suggestions",
+  "settings.aiSuggestionsDesc": "Show AI suggestions and auto-fill in forms",
+
+  // Profile extra
+  "profile.title": "Profile",
+  "profile.edit": "Edit",
+  "profile.yourProfile": "Your Profile",
+  "profile.tapToSetup": "Tap Edit to set up your profile",
+  "profile.phoneVerified": "Phone Verified",
+  "profile.idVerified": "ID Verified",
+  "profile.idVerification": "ID Verification",
+  "profile.idVerifiedDesc": "Your ID has been verified",
+  "profile.uploadId": "Upload ID Document",
+  "profile.uploadingId": "Uploading...",
+  "profile.uploadIdDesc": "Upload a photo of your ID to increase trust with other users.",
+  "profile.clickToChangeAvatar": "Click avatar to change photo",
+  "profile.saveChanges": "Save changes",
+  "profile.saving": "Saving...",
+  "profile.instagramUrl": "Instagram URL",
+  "profile.facebookUrl": "Facebook URL",
+  "profile.myVehicles": "My Vehicles",
+  "profile.addVehicleHint": "Add a vehicle to offer rides",
+  "profile.manageVehicles": "Manage Vehicles",
+  "profile.avatarRequired": "Profile photo is required",
+
+  // Onboarding
+  "onboarding.tapToAddPhoto": "Tap to add a photo",
+  "onboarding.avatarRequired": "Please add a profile photo to continue.",
 };
 
 export const translations: Record<SupportedLocale, TranslationKeys> = {

@@ -50,10 +50,10 @@ interface ImpactDashboardProps {
 }
 
 const LEVEL_COLORS: Record<string, string> = {
-  New: "bg-gray-100 text-gray-700 border-gray-200",
-  Regular: "bg-blue-50 text-blue-700 border-blue-200",
-  Experienced: "bg-purple-50 text-purple-700 border-purple-200",
-  Ambassador: "bg-amber-50 text-amber-700 border-amber-200",
+  New: "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700",
+  Regular: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800/40",
+  Experienced: "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/30 dark:text-purple-300 dark:border-purple-800/40",
+  Ambassador: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800/40",
 };
 
 const LEVEL_ORDER: UserLevelKey[] = ["NEW", "REGULAR", "EXPERIENCED", "AMBASSADOR"];
@@ -139,28 +139,28 @@ export function ImpactDashboard({
       {/* Stats cards */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard
-          icon={<Car className="h-5 w-5 text-purple-600" />}
+          icon={<Car className="h-5 w-5 text-primary" />}
           label="Rides"
           value={String(impact?.total_rides_completed ?? 0)}
-          gradient="from-purple-50 to-fuchsia-50"
+          gradient="from-purple-50 to-fuchsia-50 dark:from-purple-950/30 dark:to-fuchsia-950/30"
         />
         <StatCard
-          icon={<Wallet className="h-5 w-5 text-blue-600" />}
+          icon={<Wallet className="h-5 w-5 text-secondary" />}
           label="Money Saved"
           value={`${impact?.total_money_saved_czk ?? 0} CZK`}
-          gradient="from-blue-50 to-sky-50"
+          gradient="from-blue-50 to-sky-50 dark:from-blue-950/30 dark:to-sky-950/30"
         />
         <StatCard
-          icon={<Route className="h-5 w-5 text-orange-600" />}
+          icon={<Route className="h-5 w-5 text-accent" />}
           label="Distance"
           value={`${impact?.total_distance_km?.toFixed(0) ?? "0"} km`}
-          gradient="from-orange-50 to-amber-50"
+          gradient="from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30"
         />
         <StatCard
-          icon={<Users className="h-5 w-5 text-teal-600" />}
+          icon={<Users className="h-5 w-5 text-secondary" />}
           label="Passengers"
           value={String(impact?.total_passengers_carried ?? 0)}
-          gradient="from-teal-50 to-cyan-50"
+          gradient="from-teal-50 to-cyan-50 dark:from-teal-950/30 dark:to-cyan-950/30"
         />
       </div>
 

@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import {
@@ -17,8 +16,7 @@ import {
 
 /**
  * Root landing page.
- * Authenticated users are redirected to /search.
- * Unauthenticated users see a public marketing landing page.
+ * Visible to everyone. Authenticated users see a "Go to app" CTA.
  */
 export default async function Home() {
   const supabase = await createClient();
@@ -26,9 +24,7 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user) {
-    redirect("/search");
-  }
+  const isAuthenticated = !!user;
 
   // Fetch community stats (accessible to anon users)
   const { data: impactData } = await supabase.rpc("get_community_impact");
@@ -59,18 +55,29 @@ export default async function Home() {
             </span>
           </Link>
           <nav className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:text-text-main"
-            >
-              Přihlásit se
-            </Link>
-            <Link
-              href="/signup"
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:opacity-90"
-            >
-              Registrace
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                href="/search"
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:opacity-90"
+              >
+                Přejít do aplikace
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:text-text-main"
+                >
+                  Přihlásit se
+                </Link>
+                <Link
+                  href="/signup"
+                  className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:opacity-90"
+                >
+                  Registrace
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       </header>
@@ -102,21 +109,33 @@ export default async function Home() {
             </p>
 
             <div className="flex flex-wrap gap-4">
-              <Link
-                href="/search"
-                className="group inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 hover:opacity-95"
-              >
-                <Search className="h-4 w-4" />
-                Najít jízdu
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-              <Link
-                href="/signup"
-                className="inline-flex items-center gap-2 rounded-xl border-2 border-border-pastel bg-surface px-6 py-3 text-base font-semibold text-text-main transition-colors hover:border-primary/30 hover:bg-primary/5"
-              >
-                <Car className="h-4 w-4" />
-                Nabídnout jízdu
-              </Link>
+              {isAuthenticated ? (
+                <Link
+                  href="/search"
+                  className="group inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 hover:opacity-95"
+                >
+                  Přejít do aplikace
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/search"
+                    className="group inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 hover:opacity-95"
+                  >
+                    <Search className="h-4 w-4" />
+                    Najít jízdu
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="inline-flex items-center gap-2 rounded-xl border-2 border-border-pastel bg-surface px-6 py-3 text-base font-semibold text-text-main transition-colors hover:border-primary/30 hover:bg-primary/5"
+                  >
+                    <Car className="h-4 w-4" />
+                    Nabídnout jízdu
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -284,17 +303,18 @@ export default async function Home() {
 
             <div className="relative">
               <h2 className="mb-4 text-3xl font-bold text-text-main sm:text-4xl">
-                Připojte se
+                {isAuthenticated ? "Pokračujte v jízdě" : "Připojte se"}
               </h2>
               <p className="mx-auto mb-8 max-w-md text-lg text-text-secondary">
-                Zaregistrujte se a začněte sdílet jízdy již dnes. Je to zdarma
-                &mdash; a vždy bude.
+                {isAuthenticated
+                  ? "Najděte svou další spolujízdu nebo nabídněte místo ve svém autě."
+                  : "Zaregistrujte se a začněte sdílet jízdy již dnes. Je to zdarma \u2014 a vždy bude."}
               </p>
               <Link
-                href="/signup"
+                href={isAuthenticated ? "/search" : "/signup"}
                 className="group inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 hover:opacity-95"
               >
-                Vytvořit účet zdarma
+                {isAuthenticated ? "Přejít do aplikace" : "Vytvořit účet zdarma"}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </div>

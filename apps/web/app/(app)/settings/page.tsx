@@ -76,6 +76,10 @@ export default function SettingsPage() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [aiEnabled, setAiEnabled] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return localStorage.getItem("ai_suggestions_enabled") !== "false";
+  });
 
   const handleInviteFriends = async () => {
     const shareData = {
@@ -109,7 +113,7 @@ export default function SettingsPage() {
         setIsLoggingOut(false);
         return;
       }
-      router.replace("/login");
+      router.replace("/");
     } catch {
       toast.error("An unexpected error occurred.");
       setIsLoggingOut(false);
@@ -128,7 +132,7 @@ export default function SettingsPage() {
       }
       // Sign out after successful deletion
       await supabase.auth.signOut();
-      router.replace("/login");
+      router.replace("/");
     } catch {
       toast.error("An unexpected error occurred.");
       setIsDeleting(false);
@@ -159,6 +163,38 @@ export default function SettingsPage() {
         ]}
       />
 
+      {/* AI toggle (GROUP-E4) */}
+      <div className="mb-6">
+        <h3 className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-text-secondary">
+          AI
+        </h3>
+        <div className="overflow-hidden rounded-xl border border-border-pastel bg-surface">
+          <div className="flex items-center justify-between px-4 py-3">
+            <div>
+              <span className="text-sm text-text-main">{t("settings.aiSuggestions")}</span>
+              <p className="text-xs text-text-secondary">{t("settings.aiSuggestionsDesc")}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const next = !aiEnabled;
+                setAiEnabled(next);
+                localStorage.setItem("ai_suggestions_enabled", String(next));
+              }}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                aiEnabled ? "bg-primary" : "bg-border-pastel"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  aiEnabled ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+
       <SettingsSection
         title={t("settings.privacy")}
         items={[
@@ -167,7 +203,7 @@ export default function SettingsPage() {
             onClick: () => router.push("/settings/blocked-users"),
           },
           {
-            label: "Export My Data",
+            label: t("settings.exportData"),
             onClick: () => router.push("/settings/data-export"),
           },
         ]}
@@ -202,11 +238,11 @@ export default function SettingsPage() {
             onClick: () => router.push("/terms"),
           },
           {
-            label: "Invite Friends",
+            label: t("settings.inviteFriends"),
             onClick: handleInviteFriends,
           },
           {
-            label: "Support Us",
+            label: t("settings.supportUs"),
             onClick: () => router.push("/donate"),
           },
         ]}
@@ -219,10 +255,10 @@ export default function SettingsPage() {
           setShowDeleteDialog(false);
           deleteAccount();
         }}
-        title="Delete Account"
-        message="Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently removed."
-        confirmLabel="Delete Account"
-        cancelLabel="Cancel"
+        title={t("settings.deleteConfirmTitle")}
+        message={t("settings.deleteConfirmMessage")}
+        confirmLabel={t("auth.deleteAccount")}
+        cancelLabel={t("common.cancel")}
         variant="danger"
         loading={isDeleting}
       />

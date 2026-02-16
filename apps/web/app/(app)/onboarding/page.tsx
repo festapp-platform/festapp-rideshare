@@ -115,6 +115,10 @@ export default function OnboardingPage() {
       setError('Please enter your name (1-50 characters).');
       return;
     }
+    if (!avatarFile) {
+      setError('Please add a profile photo to continue.');
+      return;
+    }
     if (!userId) {
       setError('Not authenticated. Please sign in again.');
       return;
@@ -297,7 +301,9 @@ export default function OnboardingPage() {
           onChange={handleAvatarSelect}
         />
       </div>
-      <p className="text-center text-xs text-muted-foreground">Tap to add a photo</p>
+      <p className="text-center text-xs text-muted-foreground">
+        Tap to add a photo <span className="text-red-500">*</span>
+      </p>
 
       {/* Display name input */}
       <div>

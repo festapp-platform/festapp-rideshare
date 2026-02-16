@@ -155,7 +155,7 @@ export default function LoginPage() {
 
   return (
     <div>
-      <h2 className="mb-6 text-xl font-semibold text-gray-900 dark:text-gray-100">
+      <h2 className="mb-6 text-xl font-semibold text-text-main">
         {t("auth.signIn")}
       </h2>
 
@@ -166,7 +166,7 @@ export default function LoginPage() {
       )}
 
       {/* Tab switcher: Phone first */}
-      <div className="mb-6 flex rounded-lg bg-gray-100 p-1 dark:bg-gray-700">
+      <div className="mb-6 flex rounded-lg bg-background p-1">
         <button
           type="button"
           onClick={() => {
@@ -176,8 +176,8 @@ export default function LoginPage() {
           }}
           className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition ${
             activeTab === "phone"
-              ? "bg-white text-gray-900 shadow-sm dark:bg-gray-600 dark:text-gray-100"
-              : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              ? "bg-surface text-text-main shadow-sm"
+              : "text-text-secondary hover:text-text-main"
           }`}
         >
           {t("auth.phone")}
@@ -190,8 +190,8 @@ export default function LoginPage() {
           }}
           className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition ${
             activeTab === "email"
-              ? "bg-white text-gray-900 shadow-sm dark:bg-gray-600 dark:text-gray-100"
-              : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              ? "bg-surface text-text-main shadow-sm"
+              : "text-text-secondary hover:text-text-main"
           }`}
         >
           {t("auth.email")}
@@ -207,7 +207,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="login-phone"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="mb-1 block text-sm font-medium text-text-secondary"
             >
               {t("auth.phoneNumber")}
             </label>
@@ -216,7 +216,7 @@ export default function LoginPage() {
               type="tel"
               autoComplete="tel"
               {...phoneForm.register("phone")}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
               placeholder={t("auth.phonePlaceholder")}
             />
             {phoneForm.formState.errors.phone && (
@@ -229,7 +229,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+            className="w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:opacity-50"
           >
             {isLoading ? t("auth.sendingCode") : t("auth.sendCode")}
           </button>
@@ -242,7 +242,7 @@ export default function LoginPage() {
           onSubmit={otpForm.handleSubmit(onOtpSubmit)}
           className="space-y-4"
         >
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-text-secondary">
             {t("auth.otpSent").replace("{length}", String(OTP_LENGTH))}{" "}
             <strong>{phoneForOtp}</strong>
           </p>
@@ -254,7 +254,7 @@ export default function LoginPage() {
               maxLength={OTP_LENGTH}
               autoComplete="one-time-code"
               {...otpForm.register("otp")}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-center text-lg tracking-widest text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-center text-lg tracking-widest text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
               placeholder={t("auth.otpPlaceholder")}
             />
             {otpForm.formState.errors.otp && (
@@ -267,7 +267,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+            className="w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:opacity-50"
           >
             {isLoading ? t("auth.verifying") : t("auth.verifyCode")}
           </button>
@@ -275,7 +275,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => setPhoneForOtp(null)}
-            className="w-full text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            className="w-full text-sm text-text-secondary hover:text-text-main"
           >
             {t("auth.useDifferentNumber")}
           </button>
@@ -288,7 +288,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="login-email"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="mb-1 block text-sm font-medium text-text-secondary"
             >
               {t("auth.email")}
             </label>
@@ -297,7 +297,7 @@ export default function LoginPage() {
               type="email"
               autoComplete="email"
               {...emailForm.register("email")}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
               placeholder={t("auth.emailPlaceholder")}
             />
             {emailForm.formState.errors.email && (
@@ -310,7 +310,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="login-password"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="mb-1 block text-sm font-medium text-text-secondary"
             >
               {t("auth.password")}
             </label>
@@ -320,13 +320,13 @@ export default function LoginPage() {
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 {...emailForm.register("password")}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                className="w-full rounded-lg border border-border bg-surface px-3 py-2 pr-10 text-sm text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
                 placeholder={t("auth.passwordPlaceholder")}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-text-secondary hover:text-text-main"
                 tabIndex={-1}
               >
                 {showPassword ? (
@@ -346,7 +346,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+            className="w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:opacity-50"
           >
             {isLoading ? t("auth.signingIn") : t("auth.signIn")}
           </button>
@@ -357,7 +357,7 @@ export default function LoginPage() {
         <div className="mt-4 text-right">
           <Link
             href="/reset-password"
-            className="text-sm text-blue-600 hover:underline"
+            className="text-sm text-primary hover:underline"
           >
             {t("auth.forgotPassword")}
           </Link>
@@ -366,10 +366,10 @@ export default function LoginPage() {
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200 dark:border-gray-600" />
+          <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-2 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+          <span className="bg-surface px-2 text-text-secondary">
             {t("auth.orContinueWith")}
           </span>
         </div>
@@ -380,7 +380,7 @@ export default function LoginPage() {
           type="button"
           onClick={signInWithGoogle}
           disabled={isSocialLoading !== null}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-text-main hover:bg-primary/5 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:opacity-50"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
@@ -407,7 +407,7 @@ export default function LoginPage() {
           type="button"
           onClick={signInWithApple}
           disabled={isSocialLoading !== null}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-900 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-900 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:opacity-50"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="white">
             <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
@@ -416,9 +416,9 @@ export default function LoginPage() {
         </button>
       </div>
 
-      <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+      <p className="mt-6 text-center text-sm text-text-secondary">
         {t("auth.noAccount")}{" "}
-        <Link href="/signup" className="text-blue-600 hover:underline">
+        <Link href="/signup" className="text-primary hover:underline">
           {t("auth.signup")}
         </Link>
       </p>

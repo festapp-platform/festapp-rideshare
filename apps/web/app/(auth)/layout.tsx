@@ -21,7 +21,9 @@ export default function AuthLayout({
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
+      // Allow authenticated users to access reset-password (to change their password)
+      const isResetPassword = window.location.pathname === "/reset-password";
+      if (user && !isResetPassword) {
         router.replace("/search");
       } else {
         setIsChecking(false);
@@ -31,24 +33,24 @@ export default function AuthLayout({
 
   if (isChecking) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="animate-pulse text-gray-400">{t("common.loading")}</div>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="animate-pulse text-text-secondary">{t("common.loading")}</div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-gray-900">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl font-bold text-text-main">
             spolujizda.online
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-sm text-text-secondary">
             {t("brand.subtitle")}
           </p>
         </div>
-        <div className="rounded-xl bg-white p-8 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+        <div className="rounded-xl bg-surface p-8 shadow-sm border border-border">
           {children}
         </div>
       </div>

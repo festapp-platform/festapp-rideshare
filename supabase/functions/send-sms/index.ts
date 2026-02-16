@@ -95,6 +95,24 @@ Deno.serve(async (req) => {
       `Your spolujizda.online code is: ${sms.otp}`,
     );
 
+    // Store OTP for E2E test retrieval (RLS-protected, service_role only)
+    try {
+      const sbUrl = Deno.env.get("SUPABASE_URL") ?? "";
+      const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+      if (sbUrl && sbKey) {
+        await fetch(`${sbUrl}/rest/v1/_test_otp_codes`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": sbKey,
+            "Authorization": `Bearer ${sbKey}`,
+            "Prefer": "return=minimal",
+          },
+          body: JSON.stringify({ phone: user.phone, otp: sms.otp }),
+        });
+      }
+    } catch { /* best-effort, don't fail SMS delivery */ }
+
     return new Response(JSON.stringify({}), {
       status: 200,
       headers: { "Content-Type": "application/json" },

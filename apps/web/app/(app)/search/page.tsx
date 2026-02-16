@@ -15,6 +15,7 @@ import {
 } from '../components/search-filters';
 import { SaveRouteButton, FavoriteRoutesList } from '../components/favorite-routes';
 import type { PlaceResult } from '../components/address-autocomplete';
+import { useI18n } from '@/lib/i18n/provider';
 
 /**
  * Search page -- the main passenger experience.
@@ -28,6 +29,7 @@ export default function SearchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
+  const { t } = useI18n();
 
   const [results, setResults] = useState<NearbyRideResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -178,7 +180,7 @@ export default function SearchPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-text-main">Search Rides</h1>
+      <h1 className="mb-6 text-2xl font-bold text-text-main">{t("search.title")}</h1>
 
       {/* Favorite routes quick-access panel (SRCH-07) */}
       {!hasSearched && (
@@ -247,7 +249,7 @@ export default function SearchPage() {
         <div className="mt-6">
           <p className="mb-3 text-sm text-text-secondary">
             {filteredResults.length}{' '}
-            {filteredResults.length === 1 ? 'ride' : 'rides'} found
+            {filteredResults.length === 1 ? t("search.rideFound") : t("search.ridesFound")}
           </p>
 
           {filteredResults.length > 0 ? (
@@ -274,10 +276,10 @@ export default function SearchPage() {
                 </svg>
               </span>
               <h2 className="mb-2 text-lg font-bold text-text-main">
-                No rides found
+                {t("search.noRidesFound")}
               </h2>
               <p className="text-sm text-text-secondary">
-                Try expanding your search radius or changing the date.
+                {t("search.noRidesHint")}
               </p>
             </div>
           )}
@@ -288,7 +290,7 @@ export default function SearchPage() {
       {!hasSearched && !isLoading && (
         <div className="mt-8 text-center">
           <p className="text-sm text-text-secondary">
-            Search for rides to festivals, events, and more
+            {t("search.searchHint")}
           </p>
         </div>
       )}

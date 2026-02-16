@@ -16,6 +16,7 @@ import { PassengerList } from "./passenger-list";
 import { CancellationDialog } from "./cancellation-dialog";
 import { ReliabilityBadge, type DriverReliability } from "./reliability-badge";
 import { RatingModal } from "./rating-modal";
+import { Cigarette, PawPrint, Music, MessageCircle, Car as CarIcon } from "lucide-react";
 
 interface RideProfile {
   display_name: string;
@@ -105,11 +106,18 @@ function formatDistance(meters: number): string {
   return `${(meters / 1000).toFixed(1)} km`;
 }
 
-const preferenceIcons: { key: string; label: string; icon: string }[] = [
-  { key: "smoking", label: "Smoking allowed", icon: "🚬" },
-  { key: "pets", label: "Pets welcome", icon: "🐾" },
-  { key: "music", label: "Music on", icon: "🎵" },
-  { key: "chat", label: "Chatty", icon: "💬" },
+const preferenceIconMap: Record<string, React.ReactNode> = {
+  smoking: <Cigarette className="h-4 w-4" />,
+  pets: <PawPrint className="h-4 w-4" />,
+  music: <Music className="h-4 w-4" />,
+  chat: <MessageCircle className="h-4 w-4" />,
+};
+
+const preferenceIcons: { key: string; label: string; icon: React.ReactNode }[] = [
+  { key: "smoking", label: "Smoking allowed", icon: preferenceIconMap.smoking },
+  { key: "pets", label: "Pets welcome", icon: preferenceIconMap.pets },
+  { key: "music", label: "Music on", icon: preferenceIconMap.music },
+  { key: "chat", label: "Chatty", icon: preferenceIconMap.chat },
 ];
 
 /** Button that creates/opens a conversation from a ride detail page (CHAT-04). */
@@ -486,8 +494,8 @@ export function RideDetail({
                 className="h-16 w-24 rounded-lg object-cover"
               />
             ) : (
-              <div className="flex h-16 w-24 items-center justify-center rounded-lg bg-primary/5 text-2xl">
-                🚗
+              <div className="flex h-16 w-24 items-center justify-center rounded-lg bg-primary/5">
+                <CarIcon className="h-8 w-8 text-primary" />
               </div>
             )}
             <div>
@@ -518,11 +526,11 @@ export function RideDetail({
                     key={key}
                     className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm ${
                       val
-                        ? "bg-green-50 text-green-700"
-                        : "bg-gray-100 text-gray-500 line-through"
+                        ? "bg-success/10 text-success dark:bg-success/20"
+                        : "bg-background text-text-secondary line-through"
                     }`}
                   >
-                    <span>{icon}</span>
+                    {icon}
                     <span>{label}</span>
                   </div>
                 );

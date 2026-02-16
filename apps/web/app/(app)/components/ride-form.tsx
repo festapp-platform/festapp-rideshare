@@ -16,6 +16,10 @@ import { decode as decodePolyline } from "@googlemaps/polyline-codec";
 import { createClient } from "@/lib/supabase/client";
 import { AddressInput, type PlaceResult } from "./address-input";
 import { RouteMap } from "./route-map";
+import { DateTimePicker } from "./date-time-picker";
+import { useI18n } from "@/lib/i18n/provider";
+import { sendAiMessage } from "../assistant/actions";
+import { MapLocationPicker } from "./map-location-picker";
 
 interface RouteInfo {
   distanceMeters: number;
@@ -39,11 +43,11 @@ interface RideFormProps {
 }
 
 type WizardStep = 0 | 1 | 2;
-const STEP_LABELS = ["Route", "When", "Price"] as const;
 
 export function RideForm({ linkedEvent }: RideFormProps) {
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useI18n();
 
   // Wizard step
   const [currentStep, setCurrentStep] = useState<WizardStep>(0);
@@ -59,6 +63,17 @@ export function RideForm({ linkedEvent }: RideFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // AI prompt state (GROUP-E2)
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [isAiParsing, setIsAiParsing] = useState(false);
+  const [aiEnabled] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return localStorage.getItem("ai_suggestions_enabled") !== "false";
+  });
+
+  // Map picker state (GROUP-F1)
+  const [showMapPicker, setShowMapPicker] = useState<"origin" | "destination" | null>(null);
+
   // Event linking
   const [selectedEventId, setSelectedEventId] = useState<string | null>(
     linkedEvent?.id ?? null,
@@ -73,10 +88,9 @@ export function RideForm({ linkedEvent }: RideFormProps) {
   >([]);
 
   // Departure time decomposition
-  const [selectedDate, setSelectedDate] = useState<
-    "today" | "tomorrow" | "custom"
-  >("today");
-  const [customDate, setCustomDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().slice(0, 10),
+  );
   const [selectedHour, setSelectedHour] = useState("08");
   const [selectedMinute, setSelectedMinute] = useState("00");
 
@@ -91,24 +105,11 @@ export function RideForm({ linkedEvent }: RideFormProps) {
 
   // Compose departure time from date/time parts
   useEffect(() => {
-    const now = new Date();
-    let dateStr: string;
-
-    if (selectedDate === "today") {
-      dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-    } else if (selectedDate === "tomorrow") {
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      dateStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
-    } else {
-      dateStr = customDate;
-    }
-
-    if (dateStr) {
-      const isoString = `${dateStr}T${selectedHour}:${selectedMinute}:00.000Z`;
+    if (selectedDate) {
+      const isoString = `${selectedDate}T${selectedHour}:${selectedMinute}:00.000Z`;
       form.setValue("departureTime", isoString);
     }
-  }, [selectedDate, customDate, selectedHour, selectedMinute, form]);
+  }, [selectedDate, selectedHour, selectedMinute, form]);
 
   // Fetch user's vehicles
   useEffect(() => {
@@ -236,7 +237,7 @@ export function RideForm({ linkedEvent }: RideFormProps) {
   function goNext() {
     if (currentStep === 0) {
       if (!routeInfo) {
-        setRouteError("Please select both pickup and destination.");
+        setRouteError(t("rideForm.selectBothPoints"));
         return;
       }
     }
@@ -245,6 +246,40 @@ export function RideForm({ linkedEvent }: RideFormProps) {
 
   function goBack() {
     setCurrentStep((s) => Math.max(s - 1, 0) as WizardStep);
+  }
+
+  // AI prompt handler (GROUP-E2)
+  async function handleAiPrompt() {
+    if (!aiPrompt.trim() || isAiParsing) return;
+    setIsAiParsing(true);
+    try {
+      const result = await sendAiMessage(aiPrompt, []);
+      if (result.intent?.params) {
+        const params = result.intent.params;
+        // Fill departure time from AI parsed params
+        if (params.departure_date) {
+          setSelectedDate(params.departure_date as string);
+        }
+        if (params.departure_time) {
+          const timeParts = (params.departure_time as string).split(":");
+          if (timeParts[0]) setSelectedHour(timeParts[0].padStart(2, "0"));
+          if (timeParts[1]) setSelectedMinute(timeParts[1].padStart(2, "0"));
+        }
+        if (params.available_seats) {
+          form.setValue("seatsTotal", params.available_seats as number);
+        }
+        if (params.price_per_seat) {
+          form.setValue("priceCzk", params.price_per_seat as number);
+        }
+        if (params.notes) {
+          form.setValue("notes", params.notes as string);
+        }
+      }
+    } catch {
+      // AI failed silently -- user can still fill form manually
+    } finally {
+      setIsAiParsing(false);
+    }
   }
 
   async function onSubmit(values: CreateRide) {
@@ -311,6 +346,17 @@ export function RideForm({ linkedEvent }: RideFormProps) {
     }
   }
 
+  // Handle map location selection (GROUP-F1)
+  function handleMapConfirm(lat: number, lng: number, address: string) {
+    const place: PlaceResult = { lat, lng, address, placeId: "" };
+    if (showMapPicker === "origin") {
+      setOrigin(place);
+    } else if (showMapPicker === "destination") {
+      setDestination(place);
+    }
+    setShowMapPicker(null);
+  }
+
   const watchedSeats = form.watch("seatsTotal");
   const watchedBookingMode = form.watch("bookingMode");
 
@@ -319,26 +365,86 @@ export function RideForm({ linkedEvent }: RideFormProps) {
       onSubmit={form.handleSubmit(onSubmit)}
       className="mx-auto max-w-2xl space-y-6"
     >
+      {/* AI prompt field (GROUP-E2) */}
+      {aiEnabled && currentStep === 0 && (
+        <div className="rounded-2xl border border-border-pastel bg-surface p-4">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={aiPrompt}
+              onChange={(e) => setAiPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAiPrompt();
+                }
+              }}
+              placeholder={t("rideForm.aiPromptPlaceholder")}
+              className="flex-1 rounded-xl border border-border-pastel bg-background px-4 py-3 text-sm text-text-main placeholder:text-text-secondary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={handleAiPrompt}
+              disabled={isAiParsing || !aiPrompt.trim()}
+              className="rounded-xl bg-primary/10 px-4 py-3 text-sm font-medium text-primary transition-colors hover:bg-primary/20 disabled:opacity-50"
+            >
+              {isAiParsing ? (
+                <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              ) : (
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Step indicator */}
-      <StepIndicator currentStep={currentStep} labels={STEP_LABELS} />
+      <StepIndicator currentStep={currentStep} labels={[t("rideForm.route"), t("rideForm.when"), t("rides.price")]} />
 
       {/* Step 0: Route */}
       {currentStep === 0 && (
         <section className="rounded-2xl border border-border-pastel bg-surface p-6">
           <h2 className="mb-4 text-lg font-semibold text-text-main">
-            Where are you going?
+            {t("rideForm.whereGoing")}
           </h2>
           <div className="space-y-3">
             <AddressInput
-              label="From"
-              placeholder="Pickup location"
+              label={t("rideForm.from")}
+              placeholder={t("rideForm.pickupLocation")}
               onPlaceSelect={setOrigin}
             />
+            <button
+              type="button"
+              onClick={() => setShowMapPicker("origin")}
+              className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {t("rideForm.chooseOnMap")}
+            </button>
             <AddressInput
-              label="To"
-              placeholder="Destination"
+              label={t("rideForm.to")}
+              placeholder={t("rideForm.destination")}
               onPlaceSelect={setDestination}
             />
+            <button
+              type="button"
+              onClick={() => setShowMapPicker("destination")}
+              className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {t("rideForm.chooseOnMap")}
+            </button>
           </div>
 
           {isComputingRoute && (
@@ -362,7 +468,7 @@ export function RideForm({ linkedEvent }: RideFormProps) {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                 />
               </svg>
-              Computing route...
+              {t("rideForm.computingRoute")}
             </div>
           )}
 
@@ -374,21 +480,21 @@ export function RideForm({ linkedEvent }: RideFormProps) {
             <div className="mt-4 space-y-3">
               <div className="flex flex-wrap gap-4 text-sm">
                 <div className="rounded-lg bg-primary/5 px-3 py-1.5">
-                  <span className="text-text-secondary">Distance: </span>
+                  <span className="text-text-secondary">{t("rideForm.distance")}: </span>
                   <span className="font-medium text-text-main">
                     {formatDistance(routeInfo.distanceMeters)}
                   </span>
                 </div>
                 {routeInfo.durationSeconds > 0 && (
                   <div className="rounded-lg bg-primary/5 px-3 py-1.5">
-                    <span className="text-text-secondary">Duration: </span>
+                    <span className="text-text-secondary">{t("rideForm.duration")}: </span>
                     <span className="font-medium text-text-main">
                       {formatDuration(routeInfo.durationSeconds)}
                     </span>
                   </div>
                 )}
                 <div className="rounded-lg bg-primary/5 px-3 py-1.5">
-                  <span className="text-text-secondary">Suggested: </span>
+                  <span className="text-text-secondary">{t("rideForm.suggested")}: </span>
                   <span className="font-medium text-text-main">
                     {routeInfo.suggestedPriceCzk} {PRICING.CURRENCY_SYMBOL}
                   </span>
@@ -412,90 +518,27 @@ export function RideForm({ linkedEvent }: RideFormProps) {
       {currentStep === 1 && (
         <section className="rounded-2xl border border-border-pastel bg-surface p-6">
           <h2 className="mb-4 text-lg font-semibold text-text-main">
-            When are you leaving?
+            {t("rideForm.whenLeaving")}
           </h2>
 
-          {/* Date quick-pick */}
+          {/* Date & Time picker */}
           <div className="mb-6">
-            <span className="mb-2 block text-sm font-medium text-text-main">
-              Date
-            </span>
-            <div className="flex gap-3">
-              {(["today", "tomorrow"] as const).map((opt) => (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => setSelectedDate(opt)}
-                  className={`flex-1 rounded-xl px-4 py-3 text-base font-semibold capitalize transition-colors ${
-                    selectedDate === opt
-                      ? "bg-primary text-surface"
-                      : "border border-border-pastel bg-background text-text-main hover:bg-primary/5"
-                  }`}
-                >
-                  {opt}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => setSelectedDate("custom")}
-                className={`flex-1 rounded-xl px-4 py-3 text-base font-semibold transition-colors ${
-                  selectedDate === "custom"
-                    ? "bg-primary text-surface"
-                    : "border border-border-pastel bg-background text-text-main hover:bg-primary/5"
-                }`}
-              >
-                Pick date
-              </button>
-            </div>
-            {selectedDate === "custom" && (
-              <input
-                type="date"
-                value={customDate}
-                onChange={(e) => setCustomDate(e.target.value)}
-                min={new Date().toISOString().slice(0, 10)}
-                className="mt-3 w-full rounded-xl border border-border-pastel bg-background px-4 py-3 text-sm text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-              />
-            )}
-          </div>
-
-          {/* Time picker */}
-          <div className="mb-6">
-            <span className="mb-2 block text-sm font-medium text-text-main">
-              Time
-            </span>
-            <div className="flex items-center gap-2">
-              <select
-                value={selectedHour}
-                onChange={(e) => setSelectedHour(e.target.value)}
-                className="flex-1 rounded-xl border border-border-pastel bg-background px-4 py-3 text-center text-lg font-semibold text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-              >
-                {Array.from({ length: 24 }, (_, i) =>
-                  String(i).padStart(2, "0"),
-                ).map((h) => (
-                  <option key={h} value={h}>
-                    {h}
-                  </option>
-                ))}
-              </select>
-              <span className="text-2xl font-bold text-text-secondary">:</span>
-              <select
-                value={selectedMinute}
-                onChange={(e) => setSelectedMinute(e.target.value)}
-                className="flex-1 rounded-xl border border-border-pastel bg-background px-4 py-3 text-center text-lg font-semibold text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-              >
-                {["00", "15", "30", "45"].map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <DateTimePicker
+              selectedDate={selectedDate}
+              selectedHour={selectedHour}
+              selectedMinute={selectedMinute}
+              onDateChange={setSelectedDate}
+              onHourChange={setSelectedHour}
+              onMinuteChange={setSelectedMinute}
+              dateLabel={t("rides.date")}
+              timeLabel={t("rideForm.time")}
+            />
           </div>
 
           {/* Seats */}
           <div className="mb-6">
             <span className="mb-2 block text-sm font-medium text-text-main">
-              Available seats
+              {t("rideForm.availableSeats")}
             </span>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
@@ -523,19 +566,19 @@ export function RideForm({ linkedEvent }: RideFormProps) {
           {/* Booking mode */}
           <div>
             <span className="mb-2 block text-sm font-medium text-text-main">
-              Booking mode
+              {t("rideForm.bookingMode")}
             </span>
             <div className="flex gap-3">
               {[
                 {
                   value: "instant" as const,
-                  label: "Instant",
-                  desc: "Passengers book immediately",
+                  label: t("rideForm.instant"),
+                  desc: t("rideForm.instantDesc"),
                 },
                 {
                   value: "request" as const,
-                  label: "Request",
-                  desc: "You approve each booking",
+                  label: t("rideForm.request"),
+                  desc: t("rideForm.requestDesc"),
                 },
               ].map((opt) => (
                 <button
@@ -563,7 +606,7 @@ export function RideForm({ linkedEvent }: RideFormProps) {
       {currentStep === 2 && (
         <section className="rounded-2xl border border-border-pastel bg-surface p-6">
           <h2 className="mb-4 text-lg font-semibold text-text-main">
-            Price & details
+            {t("rideForm.priceDetails")}
           </h2>
 
           {/* Route summary reminder */}
@@ -586,12 +629,12 @@ export function RideForm({ linkedEvent }: RideFormProps) {
               htmlFor="price"
               className="mb-1 block text-sm font-medium text-text-main"
             >
-              Price ({PRICING.CURRENCY_SYMBOL})
+              {t("rides.price")} ({PRICING.CURRENCY_SYMBOL})
             </label>
             {routeInfo && (
               <p className="mb-2 text-xs text-text-secondary">
-                Recommended: {routeInfo.suggestedPriceCzk}{" "}
-                {PRICING.CURRENCY_SYMBOL} (based on fuel costs)
+                {t("rideForm.suggested")}: {routeInfo.suggestedPriceCzk}{" "}
+                {PRICING.CURRENCY_SYMBOL}
               </p>
             )}
             <Controller
@@ -637,14 +680,14 @@ export function RideForm({ linkedEvent }: RideFormProps) {
                 htmlFor="vehicle"
                 className="mb-1 block text-sm font-medium text-text-main"
               >
-                Vehicle (optional)
+                {t("rideForm.vehicleOptional")}
               </label>
               <select
                 id="vehicle"
                 {...form.register("vehicleId")}
                 className="w-full rounded-xl border border-border-pastel bg-background px-4 py-3 text-sm text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
               >
-                <option value="">Select a vehicle</option>
+                <option value="">{t("rideForm.selectVehicle")}</option>
                 {vehicles.map((v) => (
                   <option key={v.id} value={v.id}>
                     {v.make} {v.model}
@@ -661,7 +704,7 @@ export function RideForm({ linkedEvent }: RideFormProps) {
                 htmlFor="event"
                 className="mb-1 block text-sm font-medium text-text-main"
               >
-                Link to event (optional)
+                {t("rideForm.linkEvent")}
               </label>
               <select
                 id="event"
@@ -671,7 +714,7 @@ export function RideForm({ linkedEvent }: RideFormProps) {
                 }
                 className="w-full rounded-xl border border-border-pastel bg-background px-4 py-3 text-sm text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
               >
-                <option value="">No event</option>
+                <option value="">{t("rideForm.noEvent")}</option>
                 {availableEvents.map((ev) => (
                   <option key={ev.id} value={ev.id}>
                     {ev.name}
@@ -687,14 +730,14 @@ export function RideForm({ linkedEvent }: RideFormProps) {
               htmlFor="notes"
               className="mb-1 block text-sm font-medium text-text-main"
             >
-              Notes for passengers (optional)
+              {t("rideForm.notesLabel")}
             </label>
             <textarea
               id="notes"
               {...form.register("notes")}
               rows={3}
               maxLength={500}
-              placeholder="Meeting point, luggage info, pets, smoking policy..."
+              placeholder={t("rideForm.notesPlaceholder")}
               className="w-full resize-none rounded-xl border border-border-pastel bg-background px-4 py-3 text-sm text-text-main placeholder:text-text-secondary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
             />
             <div className="mt-1 flex justify-between">
@@ -726,7 +769,7 @@ export function RideForm({ linkedEvent }: RideFormProps) {
             onClick={goBack}
             className="flex-1 rounded-xl border border-border-pastel px-4 py-3 text-base font-semibold text-text-main transition-colors hover:bg-primary/5"
           >
-            Back
+            {t("common.back")}
           </button>
         )}
         {currentStep < 2 ? (
@@ -736,7 +779,7 @@ export function RideForm({ linkedEvent }: RideFormProps) {
             disabled={currentStep === 0 && (!routeInfo || isComputingRoute)}
             className="flex-1 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-surface transition-colors hover:bg-primary/90 disabled:opacity-50"
           >
-            Next
+            {t("rideForm.next")}
           </button>
         ) : (
           <button
@@ -765,14 +808,22 @@ export function RideForm({ linkedEvent }: RideFormProps) {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                   />
                 </svg>
-                Posting ride...
+                {t("rideForm.postingRide")}
               </span>
             ) : (
-              "Post Ride"
+              t("rides.postRide")
             )}
           </button>
         )}
       </div>
+
+      {/* Map location picker overlay (GROUP-F1) */}
+      {showMapPicker && (
+        <MapLocationPicker
+          onConfirm={handleMapConfirm}
+          onCancel={() => setShowMapPicker(null)}
+        />
+      )}
     </form>
   );
 }

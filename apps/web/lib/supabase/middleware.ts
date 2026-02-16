@@ -88,6 +88,32 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Check for incomplete profile (no display_name or no avatar) -- redirect to onboarding
+  // Skip this check on onboarding page itself, API routes, and static assets
+  if (
+    user &&
+    !request.nextUrl.pathname.startsWith("/onboarding") &&
+    !request.nextUrl.pathname.startsWith("/api") &&
+    !isPublicRoute(request.nextUrl.pathname) &&
+    !isLandingPage(request.nextUrl.pathname)
+  ) {
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("display_name, avatar_url")
+        .eq("id", user.id)
+        .single();
+
+      if (profile && (!profile.display_name || !profile.avatar_url)) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/onboarding";
+        return NextResponse.redirect(url);
+      }
+    } catch {
+      // If profile check fails, don't block -- let user through
+    }
+  }
+
   // Admin route protection: only users with is_admin metadata can access /admin
   if (request.nextUrl.pathname.startsWith("/admin")) {
     const isAdmin = user?.app_metadata?.is_admin === true;

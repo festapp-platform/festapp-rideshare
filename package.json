@@ -7,7 +7,9 @@
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
-    "test:integration": "pnpm --filter @festapp/integration-tests test"
+    "test:integration": "pnpm --filter @festapp/integration-tests test",
+    "test:production": "pnpm --filter @festapp/production-tests test",
+    "test:e2e": "pnpm --filter @festapp/production-tests test:e2e"
   },
   "packageManager": "pnpm@10.24.0",
   "engines": {

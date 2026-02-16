@@ -12,6 +12,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { RideStatusBadge } from "../components/ride-status-badge";
 import { CancellationDialog } from "../components/cancellation-dialog";
+import { Car, ClipboardList, Backpack } from "lucide-react";
 
 type RideRow = {
   id: string;
@@ -301,9 +302,13 @@ function DriverRidesList({
   if (rides.length === 0) {
     return (
       <div className="flex flex-col items-center rounded-2xl border border-border-pastel bg-surface p-12">
-        <span className="mb-2 text-4xl">
-          {subTab === "upcoming" ? "🚗" : "📋"}
-        </span>
+        <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+          {subTab === "upcoming" ? (
+            <Car className="h-7 w-7 text-primary" />
+          ) : (
+            <ClipboardList className="h-7 w-7 text-primary" />
+          )}
+        </div>
         <h2 className="mb-2 text-xl font-bold text-text-main">
           {subTab === "upcoming" ? "No upcoming rides" : "No past rides"}
         </h2>
@@ -388,9 +393,13 @@ function PassengerBookingsList({
   if (bookings.length === 0) {
     return (
       <div className="flex flex-col items-center rounded-2xl border border-border-pastel bg-surface p-12">
-        <span className="mb-2 text-4xl">
-          {subTab === "upcoming" ? "🎒" : "📋"}
-        </span>
+        <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+          {subTab === "upcoming" ? (
+            <Backpack className="h-7 w-7 text-primary" />
+          ) : (
+            <ClipboardList className="h-7 w-7 text-primary" />
+          )}
+        </div>
         <h2 className="mb-2 text-xl font-bold text-text-main">
           {subTab === "upcoming"
             ? "No upcoming rides"

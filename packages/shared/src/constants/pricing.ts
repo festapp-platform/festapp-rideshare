@@ -13,8 +13,8 @@ export const PRICING = {
   /** Average car fuel consumption in liters per 100km */
   AVG_CONSUMPTION_L_PER_100KM: 7,
 
-  /** Suggested price = 60% of fuel cost (driver shares savings) */
-  COST_SHARING_FACTOR: 0.6,
+  /** Suggested price = 36% of fuel cost (driver shares savings) */
+  COST_SHARING_FACTOR: 0.36,
   /** Minimum price = 50% of suggested */
   MIN_PRICE_FACTOR: 0.5,
   /** Maximum price = 200% of suggested */

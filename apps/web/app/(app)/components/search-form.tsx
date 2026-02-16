@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { AddressInput, type PlaceResult } from './address-input';
+import { DateTimePicker } from './date-time-picker';
+import { useI18n } from '@/lib/i18n/provider';
 import type { SearchParams } from '@festapp/shared';
 
 /**
@@ -27,11 +29,13 @@ export function SearchForm({
   initialDestination,
   initialDate,
 }: SearchFormProps) {
+  const { t } = useI18n();
   const [origin, setOrigin] = useState<PlaceResult | null>(null);
   const [destination, setDestination] = useState<PlaceResult | null>(null);
   const [searchDate, setSearchDate] = useState(
     initialDate ?? new Date().toISOString().split('T')[0],
   );
+  const [showCalendar, setShowCalendar] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -83,24 +87,40 @@ export function SearchForm({
 
       {/* Date and Search button */}
       <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end md:mt-4">
-        <div className="flex-1 sm:max-w-48">
+        <div className="relative flex-1 sm:max-w-48">
           <label className="mb-1 block text-sm font-medium text-text-main">
-            Date
+            {t("rides.date")}
           </label>
-          <input
-            type="date"
-            value={searchDate}
-            onChange={(e) => setSearchDate(e.target.value)}
-            min={new Date().toISOString().split('T')[0]}
-            className="w-full rounded-xl border border-border-pastel bg-surface px-4 py-2.5 text-sm text-text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-          />
+          <button
+            type="button"
+            onClick={() => setShowCalendar(!showCalendar)}
+            className="w-full rounded-xl border border-border-pastel bg-surface px-4 py-2.5 text-left text-sm text-text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            {searchDate || t("rides.date")}
+          </button>
+          {showCalendar && (
+            <div className="absolute left-0 top-full z-50 mt-1 w-80">
+              <DateTimePicker
+                selectedDate={searchDate}
+                selectedHour="00"
+                selectedMinute="00"
+                onDateChange={(d) => {
+                  setSearchDate(d);
+                  setShowCalendar(false);
+                }}
+                onHourChange={() => {}}
+                onMinuteChange={() => {}}
+                showTime={false}
+              />
+            </div>
+          )}
         </div>
         <button
           type="submit"
           disabled={isLoading}
           className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50"
         >
-          {isLoading ? 'Searching...' : 'Search'}
+          {isLoading ? t("common.loading") : t("nav.search")}
         </button>
       </div>
 

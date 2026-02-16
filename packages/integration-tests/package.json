@@ -1,0 +1,14 @@
+{
+  "name": "@festapp/production-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run --config vitest.config.ts",
+    "test:e2e": "E2E=true vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts"
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "^2",
+    "vitest": "^4"
+  }
+}
