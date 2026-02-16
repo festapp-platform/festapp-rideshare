@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** Drivers and passengers can find each other for shared rides quickly and effortlessly -- simpler, more trustworthy, and completely free.
-**Current focus:** Phase 10 - Web Platform & SEO
+**Current focus:** Phase 11 - Polish, Testing & Launch
 
 ## Current Position
 
-Phase: 10 of 11 (Web Platform & SEO)
-Plan: 4 of 4 in current phase
-Status: Complete
-Last activity: 2026-02-16 -- Completed 10-04 (Tests + Web Push + Feature Parity)
+Phase: 11 of 11 (Polish, Testing & Launch)
+Plan: 2 of 5 in current phase
+Status: In Progress
+Last activity: 2026-02-16 -- Completed 11-02 (Offline handling, skeleton loading, empty states, error pages)
 
-Progress: [████████████████████████] 91%
+Progress: [█████████████████████████] 93%
 
 ## Performance Metrics
 
@@ -75,6 +75,7 @@ Progress: [███████████████████████
 | Phase 10 P02 | 3min | 2 tasks | 13 files |
 | Phase 10 P01 | 3min | 2 tasks | 8 files |
 | Phase 10 P04 | 4min | 2 tasks | 5 files |
+| Phase 11 P02 | 3min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -225,6 +226,9 @@ Recent decisions affecting current work:
 - [10-02]: Public route group (public) has minimal header + CTA footer, no auth check
 - [10-02]: Canonical URLs on authenticated ride pages point to public short URLs for SEO consolidation
 - [10-02]: Default OG image placeholder used; future OG image API endpoint can replace it
+- [11-02]: OfflineBanner placed outside main flex container for fixed overlay positioning
+- [11-02]: ErrorBoundary as class component (React requirement for getDerivedStateFromError)
+- [11-02]: Inline JSX test pattern reused for UI state component tests (pnpm dual-React workaround)
 
 ### Pending Todos
 
@@ -243,5 +247,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 10-04-PLAN.md (Tests + Web Push + Feature Parity) -- Phase 10 complete
-Resume file: .planning/phases/10-web-platform-seo/10-04-SUMMARY.md
+Stopped at: Completed 11-02-PLAN.md (Offline handling, skeleton loading, empty states, error pages)
+Resume file: .planning/phases/11-polish-testing-launch/11-02-SUMMARY.md
