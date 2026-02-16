@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 
 ## Current Position
 
-Phase: 15 - i18n Coverage
-Plan: 02 of 3
-Status: Executing
-Last activity: 2026-02-17 -- Completed 15-02-PLAN.md (core flow & settings i18n)
+Phase: 15 - i18n Coverage (COMPLETE)
+Plan: 03 of 3
+Status: Phase Complete
+Last activity: 2026-02-17 -- Completed 15-03-PLAN.md (secondary & minor components i18n)
 
-Progress: [███████████████████████████████████████] 67%
+Progress: [████████████████████████████████████████] 100%
 
 ## Performance Metrics
 
@@ -90,6 +90,7 @@ Progress: [███████████████████████
 | Phase 14 P02 | 4min | 2 tasks | 17 files |
 | Phase 15 P01 | 7min | 2 tasks | 8 files |
 | Phase 15 P02 | 5min | 2 tasks | 8 files |
+| Phase 15 P03 | 6min | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -267,6 +268,7 @@ Recent decisions affecting current work:
 - [Phase 14]: [14-02]: Form labels kept as plain text CZK
 - [15-01]: t() interpolation uses regex {var} replace with global flag; preference labels moved inside component render for locale reactivity (input currency label, not price display); formatPrice() is single source for all user-facing price strings
 - [15-02]: ride-status-badge converted to client component for useI18n; public ride page split into server (metadata) + PublicRideContent client sub-component for translated UI; SEO metadata stays English server-side
+- [15-03]: not-found.tsx converted to client component for useI18n (no server data needs); brand names (Google, Apple) kept untranslated in social login buttons
 
 ### Pending Todos
 
@@ -285,5 +287,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 15-02-PLAN.md (core flow & settings i18n)
+Stopped at: Completed 15-03-PLAN.md (secondary & minor components i18n) -- Phase 15 complete
 Resume file: N/A
