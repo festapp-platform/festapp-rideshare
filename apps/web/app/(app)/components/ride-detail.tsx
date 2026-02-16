@@ -543,8 +543,8 @@ export function RideDetail({
         </section>
       )}
 
-      {/* Booking section */}
-      <section className="rounded-2xl border border-border-pastel bg-surface p-5">
+      {/* Booking section -- sticky on mobile for easy access */}
+      <section className="sticky bottom-0 z-40 bg-surface p-4 border-t border-border-pastel md:static md:border-t-0 md:p-5 md:rounded-2xl md:border md:border-border-pastel">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-base font-semibold text-text-main">

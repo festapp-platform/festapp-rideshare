@@ -88,28 +88,31 @@ export function AppNav() {
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <nav className="hidden md:flex md:w-64 md:flex-col md:border-r md:border-border-pastel md:bg-surface">
-        <div className="px-6 py-6">
-          <h1 className="text-lg font-bold text-primary">Festapp Rideshare</h1>
-          <p className="text-xs text-text-secondary">Free community rides</p>
+      {/* Desktop/Tablet sidebar -- icons-only on md, full labels on lg */}
+      <nav className="hidden md:flex md:w-16 lg:w-64 md:flex-col md:border-r md:border-border-pastel md:bg-surface transition-all duration-200">
+        <div className="px-3 lg:px-6 py-6">
+          <h1 className="hidden lg:block text-lg font-bold text-primary">Festapp Rideshare</h1>
+          <h1 className="lg:hidden text-center text-lg font-bold text-primary">FR</h1>
+          <p className="hidden lg:block text-xs text-text-secondary">Free community rides</p>
         </div>
-        <div className="flex flex-1 flex-col gap-1 px-3">
+        <div className="flex flex-1 flex-col gap-1 px-1.5 lg:px-3">
           {navItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className={`relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+              aria-label={item.name}
+              title={item.name}
+              className={`relative flex items-center justify-center lg:justify-start gap-3 rounded-lg px-2 lg:px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive(item.href)
                   ? "bg-primary/10 text-primary"
                   : "text-text-secondary hover:bg-primary/5 hover:text-text-main"
               }`}
             >
-              <span className="relative">
+              <span className="relative flex-shrink-0">
                 {item.icon}
                 {item.name === "Messages" && <UnreadBadge />}
               </span>
-              {item.name}
+              <span className="hidden lg:block">{item.name}</span>
             </Link>
           ))}
           {/* Secondary links */}
@@ -118,28 +121,31 @@ export function AppNav() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+                aria-label={item.name}
+                title={item.name}
+                className={`flex items-center justify-center lg:justify-start gap-3 rounded-lg px-2 lg:px-3 py-2 text-xs font-medium transition-colors ${
                   isActive(item.href)
                     ? "bg-primary/10 text-primary"
                     : "text-text-secondary hover:bg-primary/5 hover:text-text-main"
                 }`}
               >
                 {item.icon}
-                {item.name}
+                <span className="hidden lg:block">{item.name}</span>
               </Link>
             ))}
           </div>
         </div>
       </nav>
 
-      {/* Mobile bottom tabs */}
-      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border-pastel bg-surface md:hidden">
+      {/* Mobile bottom tabs -- safe area padding for notched phones */}
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border-pastel bg-surface pb-safe md:hidden">
         <div className="flex items-center justify-around">
           {navItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className={`flex flex-1 flex-col items-center gap-1 py-2 text-xs font-medium transition-colors ${
+              aria-label={item.name}
+              className={`flex flex-1 flex-col items-center gap-1 py-2 min-h-[44px] min-w-[44px] text-xs font-medium transition-colors ${
                 isActive(item.href) ? "text-tab-active" : "text-tab-inactive"
               }`}
             >
