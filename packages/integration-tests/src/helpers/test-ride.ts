@@ -1,4 +1,5 @@
 import { createAdminClient } from "./supabase-client.js";
+import { registry } from "./cleanup.js";
 import { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } from "./config.js";
 
 // Real Czech Republic coordinates for PostGIS testing
@@ -56,7 +57,9 @@ export async function createTestRide(opts: CreateRideOptions): Promise<string> {
   });
 
   if (!rpcError) {
-    return rpcData as string;
+    const rideId = rpcData as string;
+    registry.registerRide(rideId);
+    return rideId;
   }
 
   // Fallback: insert via PostgREST using EWKT format for geography columns
@@ -92,5 +95,6 @@ export async function createTestRide(opts: CreateRideOptions): Promise<string> {
     .single();
 
   if (error) throw new Error(`Failed to create test ride: ${error.message}`);
+  registry.registerRide(data.id as string);
   return data.id as string;
 }

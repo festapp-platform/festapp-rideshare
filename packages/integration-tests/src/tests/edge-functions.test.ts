@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { createTestUser, type TestUser } from "../helpers/test-user.js";
 import { createAdminClient } from "../helpers/supabase-client.js";
-import { cleanupUsers } from "../helpers/cleanup.js";
+import { cleanupUsers, registry } from "../helpers/cleanup.js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../helpers/config.js";
 
 let user: TestUser;
@@ -59,14 +59,10 @@ describe("upload-image edge function", () => {
     expect(data.publicUrl).toBeDefined();
     expect(data.publicUrl).toContain("avatars");
 
-    // Cleanup uploaded file
-    try {
-      const filePath = data.publicUrl.split("/avatars/")[1];
-      if (filePath) {
-        await admin.storage.from("avatars").remove([filePath]);
-      }
-    } catch {
-      // Best-effort cleanup
+    // Register for cleanup
+    const filePath = data.publicUrl.split("/avatars/")[1];
+    if (filePath) {
+      registry.registerStorageFile("avatars", filePath);
     }
   });
 
@@ -86,14 +82,10 @@ describe("upload-image edge function", () => {
     expect(data.publicUrl).toBeDefined();
     expect(data.publicUrl).toContain("vehicles");
 
-    // Cleanup
-    try {
-      const filePath = data.publicUrl.split("/vehicles/")[1];
-      if (filePath) {
-        await admin.storage.from("vehicles").remove([filePath]);
-      }
-    } catch {
-      // Best-effort cleanup
+    // Register for cleanup
+    const filePath = data.publicUrl.split("/vehicles/")[1];
+    if (filePath) {
+      registry.registerStorageFile("vehicles", filePath);
     }
   });
 
