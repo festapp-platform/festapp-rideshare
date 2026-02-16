@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 
 ## Current Position
 
-Phase: 15 - i18n Coverage (COMPLETE)
-Plan: 03 of 3
-Status: Phase Complete
-Last activity: 2026-02-17 -- Completed 15-03-PLAN.md (secondary & minor components i18n)
+Phase: 16 - UI Polish & Route Features (IN PROGRESS)
+Plan: 03 of 4
+Status: Executing Wave 1 (plans 01, 02, 03)
+Last activity: 2026-02-17 -- Completed 16-03-PLAN.md (waypoint proximity search)
 
 Progress: [████████████████████████████████████████] 100%
 
@@ -91,6 +91,7 @@ Progress: [███████████████████████
 | Phase 15 P01 | 7min | 2 tasks | 8 files |
 | Phase 15 P02 | 5min | 2 tasks | 8 files |
 | Phase 15 P03 | 6min | 2 tasks | 10 files |
+| Phase 16 P03 | 1min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -269,6 +270,7 @@ Recent decisions affecting current work:
 - [15-01]: t() interpolation uses regex {var} replace with global flag; preference labels moved inside component render for locale reactivity (input currency label, not price display); formatPrice() is single source for all user-facing price strings
 - [15-02]: ride-status-badge converted to client component for useI18n; public ride page split into server (metadata) + PublicRideContent client sub-component for translated UI; SEO metadata stays English server-side
 - [15-03]: not-found.tsx converted to client component for useI18n (no server data needs); brand names (Google, Apple) kept untranslated in social login buttons
+- [16-03]: EXISTS subquery (not JOIN) for waypoint proximity to avoid row multiplication; extensions. prefix on all PostGIS functions
 
 ### Pending Todos
 
@@ -287,5 +289,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 15-03-PLAN.md (secondary & minor components i18n) -- Phase 15 complete
+Stopped at: Completed 16-03-PLAN.md (waypoint proximity search)
 Resume file: N/A
