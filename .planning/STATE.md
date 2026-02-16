@@ -92,6 +92,7 @@ Progress: [███████████████████████
 | Phase 15 P02 | 5min | 2 tasks | 8 files |
 | Phase 15 P03 | 6min | 2 tasks | 10 files |
 | Phase 16 P03 | 1min | 1 tasks | 1 files |
+| Phase 16 P02 | 3min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -271,6 +272,7 @@ Recent decisions affecting current work:
 - [15-02]: ride-status-badge converted to client component for useI18n; public ride page split into server (metadata) + PublicRideContent client sub-component for translated UI; SEO metadata stays English server-side
 - [15-03]: not-found.tsx converted to client component for useI18n (no server data needs); brand names (Google, Apple) kept untranslated in social login buttons
 - [16-03]: EXISTS subquery (not JOIN) for waypoint proximity to avoid row multiplication; extensions. prefix on all PostGIS functions
+- [Phase 16]: Mixed notification group state shows as ON (at least one sub-value true)
 
 ### Pending Todos
 
