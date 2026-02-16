@@ -1,268 +1,345 @@
-# Stack Research
+# Technology Stack: v1.1 UX Improvements & Bug Fixes
 
-**Domain:** Ride-sharing / carpooling platform
-**Researched:** 2026-02-15
-**Confidence:** HIGH
+**Project:** festapp-rideshare (spolujizda.online)
+**Researched:** 2026-02-16
+**Scope:** Stack additions/changes for v1.1 features only
 
-## Core Stack (Pre-decided)
+## Executive Summary
 
-These decisions are already made. Documenting for reference and version pinning only.
+v1.1 requires **zero new dependencies**. Every feature can be implemented with the existing stack plus built-in browser APIs. The key technical work involves using Google Maps JavaScript API capabilities already loaded via `@vis.gl/react-google-maps`, leveraging `Intl.NumberFormat` (built into all browsers), and improving the existing Supabase Realtime deduplication pattern.
 
-| Technology | Version | Purpose | Notes |
-|------------|---------|---------|-------|
-| Supabase | latest | Backend (PostgreSQL, Auth, Realtime, Edge Functions, Storage) | Hosted BaaS -- no server to manage |
-| @supabase/supabase-js | ^2.95 | JavaScript client for Supabase | Dropped Node 18 support in 2.79; use Node 20+ |
-| @supabase/ssr | ^0.8.0 | Next.js server-side auth (cookies) | Replaces deprecated @supabase/auth-helpers-* |
-| Next.js | ^16.1 | Web frontend | App Router, Turbopack default, React 19 |
-| Expo (React Native) | SDK 54 (~54.0) | Mobile app (iOS + Android) | React Native 0.81, React 19.1, New Architecture only |
-| TypeScript | ^5.7 | Language across all packages | Strict mode enabled |
-| Turborepo | ^2.8 | Monorepo build orchestration | Rust-based, composable config since 2.7 |
+---
 
-## Recommended Stack
+## Feature-by-Stack Mapping
 
-### Monorepo Structure
+### 1. Route Alternatives Display
 
-| Package | Purpose | Why |
-|---------|---------|-----|
-| `apps/web` | Next.js 16 web app | App Router with SSR/SSG for SEO (ride listings) |
-| `apps/mobile` | Expo SDK 54 mobile app | Primary interface for drivers/passengers on the go |
-| `packages/shared` | Zod schemas, TypeScript types, constants | Single source of truth for data contracts -- validated identically on web, mobile, and Edge Functions |
-| `packages/supabase` | Supabase client factory, typed queries, RLS helpers | Centralized DB access; generate types from Supabase CLI |
-| `packages/ui` | Shared React Native + Web components (via NativeWind) | Code reuse for common UI patterns across platforms |
-| `packages/config-ts` | Shared tsconfig | Consistent compiler settings |
-| `packages/config-eslint` | Shared ESLint config | Consistent linting |
+**Stack:** Google Routes API v2 (backend) + `@vis.gl/react-google-maps` ^1.7.1 (frontend)
+**New dependencies:** None
 
-**Package manager:** Use **pnpm** because Turborepo works best with pnpm workspaces, and pnpm's strict dependency resolution prevents phantom dependency issues that plague monorepos.
+**Backend change (Edge Function `compute-route`):**
 
-### Shared Validation and Types
+The existing `computeRouteGoogle()` function calls `routes.googleapis.com/directions/v2:computeRoutes`. To get alternatives, add two fields:
 
-| Library | Version | Purpose | Why Recommended |
-|---------|---------|---------|-----------------|
-| zod | ^4.3 | Schema validation + type inference | Single schema definition produces both runtime validation and TypeScript types via `z.infer<>`. Works identically on web, mobile, and Edge Functions. Zod 4 has major perf improvements over v3. |
-| @supabase/supabase-js | ^2.95 | Generated database types | Run `supabase gen types typescript` to generate types from your database schema, then wrap with Zod schemas in `packages/shared` |
-
-### Data Fetching and State Management
-
-| Library | Version | Purpose | Why Recommended |
-|---------|---------|---------|-----------------|
-| @tanstack/react-query | ^5.90 | Server state management | Industry standard. Handles caching, background refetching, optimistic updates. Works on both React (web) and React Native (mobile). |
-| @supabase-cache-helpers/postgrest-react-query | ^1.3 | Supabase + TanStack Query bridge | Automatically generates unique query keys from Supabase queries, populates cache on mutations. Eliminates manual cache key management. |
-
-**Pattern for Realtime:** Use Supabase Realtime subscriptions to **invalidate** TanStack Query caches rather than replacing TanStack Query with raw subscriptions. Supabase Realtime sends change events (not full state), so TanStack Query refetches the current data on invalidation. This keeps your data layer consistent and gives you offline support, retry logic, and devtools for free.
-
-### Maps and Location
-
-| Library | Version | Purpose | Why Recommended |
-|---------|---------|---------|-----------------|
-| react-native-maps | ^1.27 | Maps on mobile (iOS + Android) | Mature, well-maintained, Expo-compatible. Uses Google Maps on Android, Apple Maps or Google Maps on iOS. New Architecture supported. |
-| @vis.gl/react-google-maps | latest | Maps on web (Next.js) | Official Google Maps React wrapper for web. Separate from mobile maps -- web and mobile map implementations will differ. |
-| expo-location | ~18.0 (SDK 54 compatible) | Foreground + background location | Built into Expo, handles permissions, GPS tracking. Combine with expo-task-manager for background location updates. |
-| expo-task-manager | ~12.0 (SDK 54 compatible) | Background tasks (location tracking) | Required for tracking driver location when app is backgrounded. |
-
-**Maps decision: Use Google Maps, not MapLibre.** Rationale:
-- Google Maps has the best geocoding, routing, and place search APIs -- critical for a ride-sharing app that needs address autocomplete, route display, and ETA calculation
-- react-native-maps with Google Maps provider is battle-tested in production ride-sharing apps
-- MapLibre requires separate web (react-map-gl) and native (maplibre-react-native) implementations with different APIs -- more complexity for no clear benefit
-- Google Maps free tier (200 USD/month credit) is sufficient for a donation-based community app
-- Downside: vendor lock-in to Google. Acceptable tradeoff for a community project.
-
-### Styling
-
-| Library | Version | Purpose | Why Recommended |
-|---------|---------|---------|-----------------|
-| NativeWind | ^4.1 (stable) | Tailwind CSS for React Native | Write Tailwind classes that work on both web and mobile. Enables shared UI components in `packages/ui`. v4.1 is stable; v5 is pre-release -- do NOT use v5 yet. |
-| Tailwind CSS | ^3.4 | CSS utility framework | Required by NativeWind v4. Do NOT upgrade to Tailwind v4 yet -- NativeWind v4 requires Tailwind v3. |
-| tailwindcss (web only) | ^4.1 | Tailwind for Next.js web app | The web app can use Tailwind v4 independently since Next.js does not go through NativeWind. |
-
-**Important version constraint:** NativeWind v4.1 requires Tailwind CSS v3.x. NativeWind v5 (pre-release) requires Tailwind v4.1+. Stick with v4.1 + Tailwind v3 for mobile/shared packages. The web app (`apps/web`) can independently use Tailwind v4 since it does not use NativeWind.
-
-### Forms
-
-| Library | Version | Purpose | Why Recommended |
-|---------|---------|---------|-----------------|
-| react-hook-form | ^7.54 | Form state management | Smallest re-render footprint of any form library. Works on both React and React Native. Critical for mobile where re-renders cost more. |
-| @hookform/resolvers | ^3.9 | Zod resolver for react-hook-form | Connects Zod schemas (from `packages/shared`) to form validation. One schema validates on both web and mobile. |
-
-### Chat / Messaging
-
-| Library | Version | Purpose | Why Recommended |
-|---------|---------|---------|-----------------|
-| react-native-gifted-chat | ^3.3 | Chat UI components (mobile) | Most complete chat UI for React Native. Typing indicators, quick replies, swipe-to-reply. Still actively maintained (latest: 14 days ago). |
-
-**Chat backend:** Use Supabase Realtime + PostgreSQL tables. No need for a separate chat service. Store messages in a `messages` table with RLS policies, subscribe to inserts via Supabase Realtime channels. This keeps the stack simple and avoids third-party chat SDK costs.
-
-### Push Notifications
-
-| Library | Version | Purpose | Why Recommended |
-|---------|---------|---------|-----------------|
-| expo-notifications | ~0.30 (SDK 54 compatible) | Push notification handling (mobile) | Handles FCM (Android) and APNs (iOS) behind a unified API. Works with Expo Push Service for simplified token management. |
-| expo-task-manager | ~12.0 | Background notification processing | Required for handling notifications when app is backgrounded/closed. |
-
-**Notification trigger:** Use Supabase Database Webhooks or Edge Functions. When a ride is booked, a database trigger calls an Edge Function that sends push notifications via Expo Push API. No separate notification service needed.
-
-### Navigation
-
-| Library | Version | Purpose | Why Recommended |
-|---------|---------|---------|-----------------|
-| expo-router | ^4.0 (SDK 54) | File-based routing for mobile | Built into Expo SDK 54. File-system routing mirrors Next.js patterns, reducing cognitive overhead when working across web and mobile. |
-
-### Animation and Gestures
-
-| Library | Version | Purpose | Why Recommended |
-|---------|---------|---------|-----------------|
-| react-native-reanimated | ^4.2 | Performant animations (mobile) | Required by NativeWind for transitions. Runs animations on UI thread for 60fps. New Architecture only (which SDK 54 enforces). |
-| react-native-gesture-handler | ^2.24 | Touch gesture handling (mobile) | Swipe-to-reply in chat, pull-to-refresh on ride lists, map gesture handling. |
-
-### Date/Time
-
-| Library | Version | Purpose | Why Recommended |
-|---------|---------|---------|-----------------|
-| date-fns | ^4.1 | Date formatting and manipulation | Tree-shakeable (only import what you use), functional API, works on web + mobile + Edge Functions. Avoid dayjs -- its chainable API causes issues with tree-shaking in monorepo setups. |
-
-### Image Handling
-
-| Library | Version | Purpose | Why Recommended |
-|---------|---------|---------|-----------------|
-| expo-image | ~2.0 (SDK 54) | Optimized image loading (mobile) | Built on native image libraries, supports blurhash placeholders, caching. Far better than React Native's built-in Image component. |
-
-### Secure Storage
-
-| Library | Version | Purpose | Why Recommended |
-|---------|---------|---------|-----------------|
-| expo-secure-store | ~14.0 (SDK 54) | Encrypted key-value storage | Stores Supabase auth tokens securely on device. Required for production auth -- AsyncStorage is not encrypted. |
-| @react-native-async-storage/async-storage | ^2.1 | General-purpose async storage | For non-sensitive data (user preferences, cached ride data). |
-
-### Development Tools
-
-| Tool | Purpose | Notes |
-|------|---------|-------|
-| Supabase CLI | Local development, DB migrations, type generation | `supabase start` for local Postgres + Auth + Realtime. `supabase gen types typescript` for type generation. |
-| Turborepo | Build orchestration, caching | `turbo run build` caches across packages. `turbo run dev` starts all apps. |
-| pnpm | Package manager | Strict dependency resolution, fast installs, workspace protocol. |
-| Biome | Linter + formatter | Faster than ESLint + Prettier combined. Turborepo 2.7+ has a Biome rule for unsafe env vars. Consider as ESLint alternative. |
-| ESLint + Prettier | Linting + formatting (alternative) | More ecosystem support than Biome, but slower. Use if team prefers established tooling. |
-| TypeScript strict mode | Type safety | `"strict": true` in shared tsconfig. Non-negotiable for a monorepo. |
-
-## Installation
-
-```bash
-# Initialize monorepo
-pnpm init
-npx create-turbo@latest
-
-# Apps
-cd apps/web && npx create-next-app@latest --typescript
-cd apps/mobile && npx create-expo-app@latest --template expo-template-blank-typescript
-
-# Core shared dependencies (in packages/shared)
-pnpm add zod @supabase/supabase-js
-
-# Web-specific (in apps/web)
-pnpm add @supabase/ssr @tanstack/react-query @vis.gl/react-google-maps
-pnpm add -D tailwindcss
-
-# Mobile-specific (in apps/mobile)
-pnpm add @tanstack/react-query react-native-maps expo-location expo-task-manager
-pnpm add expo-notifications expo-secure-store expo-image
-pnpm add react-native-gifted-chat react-native-reanimated react-native-gesture-handler
-pnpm add nativewind
-pnpm add -D tailwindcss@3
-
-# Shared data layer (in packages/supabase)
-pnpm add @supabase/supabase-js @supabase-cache-helpers/postgrest-react-query @tanstack/react-query
-
-# Forms (shared between web and mobile)
-pnpm add react-hook-form @hookform/resolvers
-
-# Date utilities (shared)
-pnpm add date-fns
-
-# Dev tools (root)
-pnpm add -D turbo supabase typescript
+```typescript
+// In compute-route/index.ts — computeRouteGoogle()
+body: JSON.stringify({
+  origin: { location: { latLng: { latitude: originLat, longitude: originLng } } },
+  destination: { location: { latLng: { latitude: destLat, longitude: destLng } } },
+  travelMode: "DRIVE",
+  routingPreference: "TRAFFIC_AWARE",
+  computeAlternativeRoutes: true,  // NEW: request up to 3 alternatives
+}),
+headers: {
+  "X-Goog-FieldMask":
+    "routes.distanceMeters,routes.duration,routes.polyline.encodedPolyline,routes.routeLabels",  // ADD: routeLabels
+},
 ```
 
-## Alternatives Considered
+**Key constraints (HIGH confidence, official docs):**
+- Returns up to 3 alternative routes plus the default (4 total max)
+- Each route has a `routeLabels` array: `"DEFAULT_ROUTE"` or `"DEFAULT_ROUTE_ALTERNATE"`
+- **Alternative routes CANNOT have intermediate waypoints** — this means route alternatives and waypoints are mutually exclusive features
+- Increases response time slightly
+- Mapy.cz provider does NOT support alternatives — Google-only feature
 
-| Recommended | Alternative | When to Use Alternative |
-|-------------|-------------|-------------------------|
-| Google Maps | MapLibre | If Google Maps costs become prohibitive (unlikely for community app with free tier). MapLibre requires more setup and has weaker geocoding/routing. |
-| TanStack Query | SWR | Never for this project. TanStack Query has better React Native support, devtools, and mutation handling. |
-| NativeWind v4 | Tamagui | If you need a full design system with built-in components. NativeWind is lighter and more flexible for custom designs. |
-| NativeWind v4 | StyleSheet.create | If you want zero dependencies. But loses code sharing with web Tailwind classes. |
-| react-hook-form | Formik | If team is already familiar with Formik. But Formik has more re-renders and larger bundle. |
-| date-fns | dayjs | If you prefer Moment.js-like chainable API. But dayjs tree-shakes worse in monorepos. |
-| Supabase Realtime (chat) | Stream Chat SDK | If you need advanced chat features (threads, reactions, read receipts) out of the box. But adds $99+/month cost and external dependency. |
-| Biome | ESLint + Prettier | If team needs ESLint plugins (accessibility, React-specific rules). Biome is faster but has smaller plugin ecosystem. |
-| pnpm | yarn | If team prefers yarn. But pnpm has better monorepo support and stricter dependency resolution. |
-| Expo Push Service | Firebase Cloud Messaging directly | If you need topic-based messaging or advanced analytics. Expo Push wraps FCM/APNs with a simpler API. |
+**Frontend change:**
+The existing `RideMap` component draws a single polyline. Extend to accept an array of encoded polylines and render alternatives as semi-transparent lines behind the selected route. Use the existing `google.maps.Polyline` class (already in use) with different `strokeOpacity` and `strokeColor` for alternatives.
 
-## What NOT to Use
+**Source:** [Google Routes API - Alternative Routes](https://developers.google.com/maps/documentation/routes/alternative-routes)
 
-| Avoid | Why | Use Instead |
-|-------|-----|-------------|
-| @supabase/auth-helpers-nextjs | Deprecated. No longer receiving bug fixes. | @supabase/ssr |
-| Moment.js | Enormous bundle (330KB), mutable API, officially in maintenance mode | date-fns |
-| NativeWind v5 | Pre-release, requires Tailwind v4, not stable for production | NativeWind v4.1 |
-| Expo SDK 52/53 | SDK 54 is current stable with RN 0.81 + React 19.1 | Expo SDK 54 |
-| Redux / Zustand for server state | Unnecessary complexity when TanStack Query handles server state | @tanstack/react-query |
-| Socket.io for realtime | Adds another server dependency when Supabase Realtime is built-in | Supabase Realtime channels |
-| Firebase (as backend) | Conflicts with Supabase. Don't split backend across two BaaS platforms. | Supabase for everything |
-| react-native-background-geolocation (transistorsoft) | Commercial license required for production. Expensive for a free/donation-based app. | expo-location + expo-task-manager |
-| Tailwind CSS v4 for mobile | NativeWind v4.1 requires Tailwind v3. Using v4 will break NativeWind. | Tailwind CSS v3.x for packages using NativeWind |
-| Next.js Pages Router | Legacy pattern. App Router is the future with RSC, streaming, and better data fetching. | Next.js App Router |
-| AsyncStorage for auth tokens | Not encrypted. Security risk for storing sensitive authentication data. | expo-secure-store |
+---
 
-## Version Compatibility Matrix
+### 2. Draggable/Editable Routes with Waypoints
 
-| Package | Compatible With | Critical Notes |
-|---------|-----------------|----------------|
-| Expo SDK 54 | React Native 0.81, React 19.1 | New Architecture only (legacy dropped in SDK 55) |
-| NativeWind 4.1 | Tailwind CSS 3.x, RN 0.81 | Do NOT use Tailwind v4 with NativeWind v4 |
-| react-native-reanimated 4.x | RN 0.81+, New Architecture only | Required by NativeWind for animations |
-| @supabase/supabase-js 2.95 | Node 20+, Deno (Edge Functions) | Node 18 support dropped in 2.79 |
-| @supabase/ssr 0.8 | Next.js 14+, 15, 16 | Works with App Router and Pages Router |
-| @tanstack/react-query 5.x | React 18+, React 19 | Same version works on web and mobile |
-| Zod 4.x | TypeScript 5.5+ | Major API changes from Zod 3 -- do not mix versions |
-| react-native-maps 1.27 | Expo SDK 54, New Architecture | Use `npx expo install` for correct version |
-| Turborepo 2.8 | pnpm 9+, Node 20+ | Composable config available since 2.7 |
+**Stack:** Google Maps JavaScript API `DirectionsService` + `DirectionsRenderer` via `@vis.gl/react-google-maps` hooks
+**New dependencies:** None
 
-## Stack Patterns
+**Implementation approach — use `DirectionsService`, NOT Routes API v2:**
 
-**If adding a new shared package:**
-- Create it under `packages/` with its own `package.json` and `tsconfig.json`
-- Reference it via pnpm workspace protocol: `"@festapp/shared": "workspace:*"`
-- Add it to `turbo.json` pipeline if it has build steps
+The Google Maps JavaScript API `DirectionsService` (client-side) supports draggable route rendering natively via `DirectionsRenderer({ draggable: true })`. This is the correct approach for interactive route editing because:
 
-**If sharing code between web and mobile:**
-- Put it in `packages/shared` (logic) or `packages/ui` (components)
-- Use NativeWind classes so styles work on both platforms
-- Test on both platforms -- React Native does not support all web APIs
+1. `DirectionsRenderer` handles drag UX, waypoint insertion, and re-routing automatically
+2. The Routes API v2 (used in the Edge Function) is a server-side REST API with no drag support
+3. `@vis.gl/react-google-maps` already provides the hooks needed: `useMap()` and `useMapsLibrary('routes')`
 
-**If adding a Supabase Edge Function:**
-- Write in TypeScript (Deno runtime)
-- Import Zod schemas from `packages/shared` for request validation
-- Deploy with `supabase functions deploy`
+```typescript
+// Pattern from @vis.gl/react-google-maps examples
+const map = useMap();
+const routesLibrary = useMapsLibrary('routes');
+
+// Initialize when library loads
+const directionsService = new routesLibrary.DirectionsService();
+const directionsRenderer = new routesLibrary.DirectionsRenderer({
+  draggable: true,
+  map,
+});
+
+// Listen for drag changes
+directionsRenderer.addListener('directions_changed', () => {
+  const directions = directionsRenderer.getDirections();
+  // Extract waypoints, recalculate distance/price
+});
+```
+
+**Key constraints (HIGH confidence, official docs):**
+- Max 23 intermediate waypoints (plus origin + destination = 25 total)
+- 11+ intermediate waypoints = higher billing tier
+- `DirectionsService` is the Legacy Directions API — different billing from Routes API v2
+- Must load `routes` library in `GoogleMapsProvider` (currently only loads `places`)
+
+**GoogleMapsProvider update needed:**
+```typescript
+// Current:  libraries={["places"]}
+// Updated:  libraries={["places", "routes"]}
+```
+
+**Important: routes library is NOT the same as geometry library.** The `routes` library provides `DirectionsService` and `DirectionsRenderer`. The `geometry` library (not currently loaded) provides `encoding.decodePath()` — but the project already uses `@googlemaps/polyline-codec` for decoding, so geometry library is not needed.
+
+**Waypoints data model:** The Edge Function should accept an optional `intermediates` array and pass it to Routes API v2 for server-side route computation (non-interactive). For the interactive drag experience, use client-side `DirectionsService`.
+
+**Source:** [Google Maps Draggable Directions](https://developers.google.com/maps/documentation/javascript/examples/directions-draggable), [@vis.gl/react-google-maps Directions Example](https://github.com/visgl/react-google-maps/blob/main/examples/directions/src/app.tsx)
+
+---
+
+### 3. Chat Message Deduplication
+
+**Stack:** Supabase Realtime `postgres_changes` (existing) + client-side ID-based dedup (existing, needs hardening)
+**New dependencies:** None
+
+**Current state analysis:**
+
+The existing `ChatView` already implements optimistic updates with UUID deduplication:
+- `handleSendMessage` generates `crypto.randomUUID()` for optimistic message
+- `postgres_changes` INSERT handler checks `prev.some(m => m.id === newMsg.id)` to deduplicate
+- If found, replaces optimistic message with server version; if not found, appends
+
+**The problem:** The optimistic message ID (`crypto.randomUUID()`) will NEVER match the server-generated ID (from `send_chat_message` RPC). This means:
+1. Optimistic message is added with client UUID
+2. Server INSERT triggers Realtime event with server-generated UUID
+3. Dedup check fails (`prev.some(m => m.id === newMsg.id)` — different IDs)
+4. Duplicate message appears
+
+**Fix approach — no new dependencies needed:**
+
+Option A (recommended): Have `send_chat_message` RPC accept a client-provided UUID as the message ID (use `crypto.randomUUID()` which generates valid UUIDv4). Then optimistic and server IDs match.
+
+Option B: Track a `pending` flag on optimistic messages and match by `(conversation_id, sender_id, content, ~timestamp)` to replace pending messages when the server version arrives.
+
+**Supabase Realtime guarantees (MEDIUM confidence):**
+- Supabase Realtime does NOT guarantee exactly-once delivery
+- Messages can arrive duplicated due to reconnection, WAL replay
+- Client-side deduplication by message ID is the recommended pattern
+- The current ID-based check is correct in principle but broken by ID mismatch
+
+**Source:** [Supabase Realtime Postgres Changes](https://supabase.com/docs/guides/realtime/postgres-changes), [Supabase Realtime Architecture](https://supabase.com/docs/guides/realtime/architecture)
+
+---
+
+### 4. Map Picker Improvements (Zoom, Click Handling)
+
+**Stack:** Leaflet ^1.9.4 + react-leaflet ^5.0.0 (existing)
+**New dependencies:** None
+
+**Current state:** `MapLocationPicker` uses Leaflet with Mapy.cz tiles. Works but has reported UX issues with zoom and click handling.
+
+**Improvements possible with existing Leaflet API:**
+- **Zoom control position:** `L.map(el, { zoomControl: false })` then `L.control.zoom({ position: 'topright' }).addTo(map)` for mobile-friendly placement
+- **Double-click zoom vs selection:** Use `map.doubleClickZoom.disable()` to prevent accidental zoom when tapping to select, or add a debounce to distinguish clicks from double-clicks
+- **Touch handling:** Leaflet supports `tap: true` and `touchZoom: true` by default. If touch selection is problematic, consider using `map.on('contextmenu')` for long-press on mobile
+- **Initial zoom:** Current default zoom 7 (whole Czech Republic) — could use geolocation to center on user's location with `map.locate({ setView: true, maxZoom: 13 })`
+
+No library changes needed. All improvements are configuration/event handling within existing Leaflet API.
+
+---
+
+### 5. Price Formatting (Intl.NumberFormat)
+
+**Stack:** Built-in `Intl.NumberFormat` API (no dependency)
+**New dependencies:** None
+
+**Current state:** Price is displayed as string interpolation: `` `${ride.price_czk} CZK` `` across 10+ files (ride-card, ride-detail, search, etc.).
+
+**Recommended utility:**
+
+```typescript
+// lib/format-price.ts
+export function formatPrice(
+  priceCzk: number | null,
+  locale: string = 'cs',
+): string {
+  if (priceCzk == null) return 'Zdarma'; // or localized "Free"
+
+  return new Intl.NumberFormat(locale === 'en' ? 'en-CZ' : `${locale}-CZ`, {
+    style: 'currency',
+    currency: 'CZK',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(priceCzk);
+}
+```
+
+**Behavior by locale (HIGH confidence, built-in API):**
+- `cs-CZ`: `150 Kc` (displays with proper Czech formatting and hacek)
+- `sk-SK`: `150 CZK` (Slovak uses ISO code for foreign currencies)
+- `en-CZ`: `CZK 150` (English convention, symbol first)
+
+**Note:** `Intl.NumberFormat` with `currency: 'CZK'` renders "Kc" (with hacek) in Czech locale, which is the standard symbol. The current "CZK" string is the ISO code, less natural for Czech users.
+
+**Browser support:** Universal (all modern browsers, Node.js 18+). No polyfill needed.
+
+---
+
+### 6. Time Picker with Min Date Constraint
+
+**Stack:** Existing `DateTimePicker` component + date-fns ^4.1.0
+**New dependencies:** None
+
+**Current state:** The `DateTimePicker` already prevents past date selection in the calendar (`isBefore(day, today)` disables past days). However, it does NOT constrain the time portion — a user can select today's date but a time that has already passed.
+
+**Fix:** Add time validation logic:
+- When selected date is today, filter `HOURS` to show only hours >= current hour
+- When selected date is today AND selected hour is current hour, filter `MINUTES` to show only minutes >= current minute
+- When selected date is in the future, show all hours/minutes
+
+This is pure logic within the existing component, no new dependencies.
+
+The `confirm-date.tsx` and `events/new/page.tsx` use native `datetime-local` inputs with `min={new Date().toISOString().slice(0, 16)}` — this already works correctly for the min constraint via the HTML spec. No changes needed there.
+
+---
+
+### 7. Global Location Sharing Indicator (Persistent Banner)
+
+**Stack:** React Context (existing pattern) + existing `useLiveLocation` hook
+**New dependencies:** None
+
+**Current state:** `useLiveLocation` manages GPS sharing state per-ride. The `isSharing` state is local to the component using the hook.
+
+**Implementation:** Create a React Context (following the existing `useI18n` pattern) that wraps the app layout and tracks whether location sharing is active globally. When active, render a fixed-position banner at the top of the viewport.
+
+```typescript
+// Pattern matching existing architecture:
+// lib/location-sharing-context.tsx (new file, following lib/i18n/provider.tsx pattern)
+```
+
+The banner UI is pure Tailwind CSS. No animation library needed — use `translate-y` transition for slide-in/out.
+
+---
+
+### 8. Cookie Consent i18n
+
+**Stack:** Existing i18n system (`useI18n` + `translations.ts`)
+**New dependencies:** None
+
+**Current state:** `CookieConsent` component has hardcoded English strings: "We use cookies for analytics...", "Decline", "Accept".
+
+**Fix:** Replace hardcoded strings with `t()` calls using the existing i18n provider. Add translation keys to `translations.ts` for cs/sk/en.
+
+---
+
+### 9. Terms of Service Checkbox
+
+**Stack:** react-hook-form ^7.71.1 (existing) + Zod (existing via @hookform/resolvers)
+**New dependencies:** None
+
+**Current state:** Registration/booking flows use react-hook-form with Zod validation. A ToS page exists at `/terms`.
+
+**Implementation:** Add a `termsAccepted: z.literal(true)` field to the relevant Zod schema. Render a checkbox with a link to `/terms`. The form won't submit unless checked. Store acceptance timestamp in the user's profile for GDPR compliance.
+
+---
+
+## Stack Changes Summary
+
+### New Dependencies Required
+
+**None.** All features use existing dependencies or built-in browser APIs.
+
+### Existing Dependencies — No Version Changes Needed
+
+| Dependency | Current Version | Status |
+|------------|----------------|--------|
+| `@vis.gl/react-google-maps` | ^1.7.1 | Sufficient. Has `useMap()`, `useMapsLibrary()`, `Polyline` component |
+| `@googlemaps/polyline-codec` | ^1.0.28 | Sufficient for decoding route polylines |
+| `@supabase/supabase-js` | ^2.95.3 | Sufficient. Realtime with postgres_changes works |
+| `date-fns` | ^4.1.0 | Sufficient for time comparison logic |
+| `react-hook-form` | ^7.71.1 | Sufficient for ToS checkbox validation |
+| `leaflet` | ^1.9.4 | Sufficient for map picker improvements |
+| `react-leaflet` | ^5.0.0 | Sufficient |
+
+### Configuration Changes Required
+
+| Change | File | What |
+|--------|------|------|
+| Load `routes` library | `apps/web/lib/google-maps-provider.tsx` | Add `"routes"` to `libraries` array |
+| Return multiple routes | `supabase/functions/compute-route/index.ts` | Add `computeAlternativeRoutes: true` and `routes.routeLabels` to field mask |
+
+### New Files Expected
+
+| File | Purpose |
+|------|---------|
+| `apps/web/lib/format-price.ts` | `formatPrice()` utility using `Intl.NumberFormat` |
+| `apps/web/lib/location-sharing-context.tsx` | Global location sharing state context |
+
+### Files Modified (Key Changes)
+
+| File | Change |
+|------|--------|
+| `apps/web/lib/google-maps-provider.tsx` | Add `routes` to libraries array |
+| `supabase/functions/compute-route/index.ts` | Support alternatives + intermediates |
+| `apps/web/app/(app)/components/ride-map.tsx` | Display multiple route polylines |
+| `apps/web/app/(app)/messages/components/chat-view.tsx` | Fix dedup (client UUID passed to server RPC) |
+| `apps/web/app/(app)/components/map-location-picker.tsx` | Zoom/click UX improvements |
+| `apps/web/app/(app)/components/date-time-picker.tsx` | Time min constraint for today |
+| `apps/web/components/cookie-consent.tsx` | Replace hardcoded strings with `t()` |
+| `apps/web/lib/i18n/translations.ts` | Add cookie consent + ToS translation keys |
+| 10+ files with price display | Replace `${price} CZK` with `formatPrice()` |
+
+---
+
+## What NOT to Add
+
+| Temptation | Why Not |
+|------------|---------|
+| `@react-google-maps/api` | Legacy library. `@vis.gl/react-google-maps` is the official successor and already installed |
+| `react-datepicker` or similar | Custom `DateTimePicker` already exists, matches design system, just needs time constraint logic |
+| `js-cookie` | Cookie consent uses `localStorage`, not cookies. No change needed |
+| Google Maps `geometry` library | Already using `@googlemaps/polyline-codec` for encoding/decoding. Don't load extra library |
+| `uuid` package | `crypto.randomUUID()` is built into all modern browsers and already used |
+| Separate directions API billing | `DirectionsService` (JS API) costs more per request than Routes API v2. Use it ONLY for interactive draggable routes in the ride creation form, NOT for display-only route rendering |
+| `socket.io` or custom WebSocket | Supabase Realtime handles all real-time needs. Dedup is a logic fix, not an infrastructure change |
+
+---
+
+## Billing Considerations
+
+### Google Maps API Cost Impact
+
+| Feature | API | Cost Change |
+|---------|-----|-------------|
+| Route alternatives | Routes API v2 `computeRoutes` | No extra cost (same request, more data returned) |
+| Draggable routes | Directions API (JS client) | NEW cost center. ~$0.005-0.01 per route request. Only triggered during ride creation when user drags |
+| Waypoints (11+) | Routes API v2 | Higher tier pricing. Unlikely for ride-sharing (most rides have 0-2 stops) |
+
+**Recommendation:** Use Routes API v2 for all server-side route computation (display, pricing). Use client-side `DirectionsService` ONLY for the interactive drag-to-edit experience during ride creation. This minimizes billing impact.
+
+### Mapy.cz Considerations
+
+The current `compute-route` Edge Function prefers Mapy.cz as the routing provider. Mapy.cz does NOT support:
+- Alternative routes
+- Intermediate waypoints
+
+For v1.1 features, when alternatives or waypoints are requested, the Edge Function must fall through to Google Routes API regardless of the `ROUTE_PROVIDER` setting.
+
+---
 
 ## Sources
 
-- [Expo SDK 54 changelog](https://expo.dev/changelog/sdk-54) -- SDK features, RN 0.81, React 19.1 (HIGH confidence)
-- [Expo documentation: monorepos](https://docs.expo.dev/guides/monorepos/) -- Monorepo setup guidance (HIGH confidence)
-- [NativeWind installation docs](https://www.nativewind.dev/docs/getting-started/installation) -- v4.1 stable, v5 pre-release (HIGH confidence)
-- [Supabase SSR docs](https://supabase.com/docs/guides/auth/server-side/nextjs) -- @supabase/ssr setup for Next.js (HIGH confidence)
-- [Supabase Edge Functions docs](https://supabase.com/docs/guides/functions) -- Deno runtime, push notification patterns (HIGH confidence)
-- [Supabase React Native quickstart](https://supabase.com/docs/guides/getting-started/quickstarts/expo-react-native) -- expo-secure-store setup (HIGH confidence)
-- [TanStack Query npm](https://www.npmjs.com/package/@tanstack/react-query) -- v5.90, latest version (HIGH confidence)
-- [Zod npm](https://www.npmjs.com/package/zod) -- v4.3, latest version (HIGH confidence)
-- [react-native-maps npm](https://www.npmjs.com/package/react-native-maps) -- v1.27, Expo compatibility (HIGH confidence)
-- [Supabase cache helpers docs](https://supabase-cache-helpers.vercel.app/) -- TanStack Query integration (MEDIUM confidence)
-- [Next.js 16 blog post](https://nextjs.org/blog/next-16) -- App Router, Turbopack default (HIGH confidence)
-- [Turborepo 2.7 blog](https://turborepo.dev/blog/turbo-2-7) -- Devtools, composable config (HIGH confidence)
-- [react-native-reanimated npm](https://www.npmjs.com/package/react-native-reanimated) -- v4.2, New Architecture only (HIGH confidence)
-- [expo-location docs](https://docs.expo.dev/versions/latest/sdk/location/) -- Background location with task manager (HIGH confidence)
-- [Supabase push notifications guide](https://supabase.com/docs/guides/functions/examples/push-notifications) -- Edge Function + Expo Push pattern (HIGH confidence)
-- [MapLibre React Native GitHub](https://github.com/maplibre/maplibre-react-native) -- v10, New Architecture compatible (MEDIUM confidence)
-- [react-native-gifted-chat npm](https://www.npmjs.com/package/react-native-gifted-chat) -- v3.3, actively maintained (HIGH confidence)
-
----
-*Stack research for: Festapp Rideshare*
-*Researched: 2026-02-15*
+- [Google Routes API - Alternative Routes](https://developers.google.com/maps/documentation/routes/alternative-routes) (HIGH confidence)
+- [Google Routes API - computeRoutes Reference](https://developers.google.com/maps/documentation/routes/reference/rest/v2/TopLevel/computeRoutes) (HIGH confidence)
+- [Google Routes API - Intermediate Waypoints](https://developers.google.com/maps/documentation/routes/intermed_waypoints) (HIGH confidence)
+- [Google Maps JS API - Draggable Directions](https://developers.google.com/maps/documentation/javascript/examples/directions-draggable) (HIGH confidence)
+- [@vis.gl/react-google-maps Directions Example](https://github.com/visgl/react-google-maps/blob/main/examples/directions/src/app.tsx) (HIGH confidence)
+- [@vis.gl/react-google-maps Polyline Example](https://github.com/visgl/react-google-maps/blob/main/examples/geometry/src/components/polyline.tsx) (HIGH confidence)
+- [Supabase Realtime - Postgres Changes](https://supabase.com/docs/guides/realtime/postgres-changes) (HIGH confidence)
+- [Supabase Realtime Architecture](https://supabase.com/docs/guides/realtime/architecture) (MEDIUM confidence)
+- [MDN Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) (HIGH confidence)

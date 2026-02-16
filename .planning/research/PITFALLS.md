@@ -1,300 +1,431 @@
-# Pitfalls Research
+# Domain Pitfalls: v1.1 UX Improvements & Bug Fixes
 
-**Domain:** Community ride-sharing / carpooling platform
-**Researched:** 2026-02-15
-**Confidence:** MEDIUM-HIGH (verified against official docs where possible)
+**Domain:** Adding features to existing Czech ride-sharing platform (11 phases shipped)
+**Researched:** 2026-02-16
+**Scope:** Integration pitfalls specific to adding these features to the existing codebase
+**Confidence:** MEDIUM-HIGH
+
+---
 
 ## Critical Pitfalls
 
-### Pitfall 1: Supabase Realtime Postgres Changes Single-Thread Bottleneck
+Mistakes that cause visible bugs, data loss, or require significant rework.
+
+### Pitfall 1: Chat Duplicate Messages -- Optimistic ID vs Server ID Mismatch
 
 **What goes wrong:**
-Developers use Postgres Changes (the simplest Supabase Realtime method) for chat messages and location updates. It works perfectly in development. At scale, messages arrive late, out of order, or are dropped entirely. Postgres Changes processes all changes on a single thread to maintain ordering, and compute upgrades do not improve this. This is an architectural constraint, not a bug.
+The current `chat-view.tsx` (line 143) generates a `crypto.randomUUID()` for the optimistic message, but the server RPC `send_chat_message` generates its own UUID via `uuid_generate_v4()` in Postgres (line 176 of the migration). The optimistic message has ID `abc-123`, the server-inserted message has ID `def-456`. When the Postgres Changes INSERT event arrives, the dedup check on line 79 (`prev.some((m) => m.id === newMsg.id)`) fails because the IDs are different. Result: the user sees their message twice -- once from the optimistic insert, once from the Realtime event.
 
 **Why it happens:**
-Postgres Changes is the easiest Realtime pattern -- subscribe to a table, get INSERT/UPDATE/DELETE events. Tutorials default to it. Developers don't discover the bottleneck until they have real concurrent users.
+The current code deduplicates by message ID, but the client-generated UUID and the server-generated UUID are never the same. The dedup on line 79 only catches duplicate Realtime events (same server event arriving twice), not the optimistic-vs-server duplicate.
 
-**How to avoid:**
-Use Supabase Broadcast (not Postgres Changes) for chat and location sharing from the start. The architecture should be:
-1. Client sends message via REST/RPC to insert into database
-2. Database trigger or Edge Function publishes to Broadcast channel
-3. Other clients receive via Broadcast subscription (no single-thread bottleneck)
+**Existing code that is broken:**
+```typescript
+// chat-view.tsx line 77-83
+setMessages((prev) => {
+  // This check ONLY catches duplicate Realtime events, NOT optimistic duplicates
+  if (prev.some((m) => m.id === newMsg.id)) {
+    return prev.map((m) => (m.id === newMsg.id ? newMsg : m));
+  }
+  return [...prev, newMsg];
+});
+```
 
-This is explicitly recommended by Supabase's own documentation for scale: "use Realtime server-side only and then re-stream the changes to your clients using a Realtime Broadcast."
+**Consequences:**
+- Every sent message appears twice in the chat
+- Users see their own message duplicated immediately after sending
+- Scrolling becomes erratic as message count jumps
 
-**Warning signs:**
-- Chat messages arriving 2-5 seconds late under moderate load
-- Location updates becoming "choppy" with 10+ concurrent tracked rides
-- Realtime Reports dashboard showing high latency on Postgres Changes
+**Prevention:**
+Option A (recommended): Pass the client UUID to the server RPC so the server uses it as the message ID. Change `send_chat_message` to accept an optional `p_message_id UUID` parameter:
+```sql
+INSERT INTO public.chat_messages (id, conversation_id, sender_id, content, message_type)
+VALUES (COALESCE(p_message_id, uuid_generate_v4()), ...);
+```
+Then the client optimistic ID matches the server ID, and the existing dedup logic works.
 
-**Phase to address:** Phase 1 (Foundation) -- bake Broadcast into the architecture from day one. Retrofitting from Postgres Changes to Broadcast requires rewriting all real-time subscription logic.
+Option B: Use a secondary dedup key. Add a `client_ref` column to `chat_messages`, or dedup by `(sender_id, content, created_at within 2 seconds)`. Less clean, more fragile.
 
-**Confidence:** HIGH -- verified via [Supabase Realtime Docs](https://supabase.com/docs/guides/realtime/limits) and [Benchmarks](https://supabase.com/docs/guides/realtime/benchmarks)
+Option C: Filter out own messages from Realtime. In the Postgres Changes handler, ignore messages where `sender_id === currentUserId` since we already have the optimistic version. Replace with server version only on a slight delay to update `read_at` and `created_at`.
+
+**Detection:** Send any message in the chat and check if it appears twice.
+
+**Confidence:** HIGH -- verified by reading the actual codebase. The `send_chat_message` RPC does not accept a client-provided ID, and the optimistic update uses `crypto.randomUUID()`.
 
 ---
 
-### Pitfall 2: Supabase Realtime Connection Limits Surprise
+### Pitfall 2: Realtime Channel Reconnection Loses Messages
 
 **What goes wrong:**
-The Free plan allows only 200 concurrent Realtime connections. The Pro plan allows only 500 (or 10,000 with spend cap disabled). Each browser tab or app instance is one connection. A ride-sharing app with chat + location sharing can easily consume 2-3 subscriptions per active user. At 100 concurrent users on Pro plan, you hit the limit and new connections silently fail.
+When a Supabase Realtime WebSocket disconnects silently (common on mobile browsers, tab backgrounding, network switches), messages sent during the disconnect window are permanently lost for that client. Supabase Realtime has no message queue -- there is no replay of missed events. The user returns to the chat tab and sees no new messages, even though the other person sent several.
 
 **Why it happens:**
-Developers count "users" not "connections." Each Supabase channel subscription is a connection. A user viewing a ride with chat + location + presence = 3 channels. Background location sharing adds another. Connection counts multiply fast.
+Browser tabs throttle JavaScript timers when backgrounded, preventing heartbeat signals from reaching the server. The server assumes the client disconnected and closes the WebSocket. When the client reconnects, it only receives new events from that point forward. Supabase explicitly states: "the server does not guarantee that every message will be delivered to your clients."
 
-**How to avoid:**
-- Multiplex subscriptions: use one channel per ride (not separate channels for chat, location, presence)
-- Implement connection pooling: disconnect channels when user navigates away from a ride
-- Use Broadcast for ephemeral data (location) to reduce Postgres Changes subscriptions
-- Budget connections early: Free plan = ~60-100 concurrent active users max; Pro plan = ~150-300; Pro no-spend-cap = ~3,000-5,000
-- Monitor via Supabase Realtime Reports dashboard
+**Consequences:**
+- Silent message loss in chat
+- Location sharing state becomes stale without any error indication
+- Users think chat is broken when they return to a backgrounded tab
 
-**Warning signs:**
-- Users reporting "chat not updating" or "location frozen" intermittently
-- Realtime Peak Connections metric approaching plan limit
-- Overage charges appearing on Supabase bill ($10 per 1,000 peak connections)
+**Prevention:**
+1. Use `heartbeatCallback` on the Realtime client to detect disconnections:
+```typescript
+const supabase = createClient(url, key, {
+  realtime: {
+    heartbeatCallback: (status) => {
+      if (status === 'disconnected') {
+        // Re-fetch recent messages from DB
+        refetchRecentMessages();
+      }
+    },
+    worker: true, // Offload heartbeat to Web Worker
+  },
+});
+```
+2. On reconnection, re-fetch the last N messages from the database to fill gaps.
+3. For location sharing: store a `last_seen_at` timestamp and show "last updated X minutes ago" instead of pretending the location is live.
 
-**Phase to address:** Phase 1 (Foundation) -- design subscription architecture with multiplexing from the start. Phase 2+ monitor and optimize.
+**Detection:** Background the chat tab for 60+ seconds, send a message from the other user, then return to the tab. If the message is missing, this pitfall is present.
 
-**Confidence:** HIGH -- verified via [Supabase Realtime Limits](https://supabase.com/docs/guides/realtime/limits) and [Pricing](https://supabase.com/docs/guides/realtime/pricing)
+**Confidence:** HIGH -- verified via [Supabase Realtime Troubleshooting Docs](https://supabase.com/docs/guides/troubleshooting/realtime-handling-silent-disconnections-in-backgrounded-applications-592794) and [GitHub issue #1088](https://github.com/supabase/realtime/issues/1088).
 
 ---
 
-### Pitfall 3: Background Location Tracking App Store Rejection
+### Pitfall 3: i18n Bulk Migration -- Type System Becomes Useless if Keys Diverge
 
 **What goes wrong:**
-Both Apple and Google reject apps that request background location without sufficient justification. Google Play specifically rejects apps with ACCESS_BACKGROUND_LOCATION in the manifest unless the developer can demonstrate a core feature requiring it. Apple requires NSLocationAlwaysUsageDescription and "Always" location permission, which triggers extra review scrutiny.
+The current i18n system uses a TypeScript `TranslationKeys` type with 171+ literal key definitions (counted from `translations.ts`). Adding 171 new keys means adding them to: (1) the `TranslationKeys` type, (2) the `cs` object, (3) the `sk` object, and (4) the `en` object. If any key is missing from any locale, TypeScript catches it. But if you add a key to the type but misspell it in one locale object, TypeScript will report an error on the ENTIRE object, not the specific key. With 171+ new keys, finding the one misspelled key in a 340-key object is painful.
 
 **Why it happens:**
-Live location sharing during rides requires background location access -- the feature literally cannot work without it. But app store reviewers see background location as a red flag (privacy abuse vector). Developers submit their app and get rejected, losing days or weeks in the review cycle.
+TypeScript's structural typing reports "Object literal may only specify known properties" at the object level, not per-key. Adding 171 keys in one PR means 171 potential points of divergence across 3 locales (513 total strings to get right).
 
-**How to avoid:**
-1. Only request background location when the user starts sharing their ride (not at app launch)
-2. Provide clear, specific usage descriptions: "Location is shared with your ride companions only during active rides so they can find you at the pickup point"
-3. On Android: explicitly add ACCESS_BACKGROUND_LOCATION only via expo-location config plugin, not in the manifest directly
-4. On iOS: use `NSLocationWhenInUseUsageDescription` first, escalate to `NSLocationAlwaysAndWhenInUseUsageDescription` only when user activates location sharing
-5. Prepare a video demonstrating the feature for app store review teams
-6. Implement a foreground service notification on Android showing "Sharing location with ride companions"
+**Consequences:**
+- If you add a key to `TranslationKeys` but miss it in `sk`, the entire `sk` object has a type error with no clear pointer to which key is missing
+- If you add a key to `cs` but typo it (e.g., `"rides.postRides"` instead of `"rides.postRide"`), TypeScript shows an error on the whole object, not the typo
+- If you miss an interpolation variable (e.g., `{price}` in cs but not in sk), there is zero type safety -- the `t()` function returns `string` with no interpolation checking
 
-**Warning signs:**
-- App store rejection email citing "background location" or "unnecessary permissions"
-- Users denying "Always" location permission (iOS gives "When in Use" by default)
-- Android 12+ users not seeing location updates when app is backgrounded
+**Prevention:**
+1. Add keys in small batches (10-20 per PR), not all 171 at once. Each batch should be a self-contained feature area (e.g., "route alternatives keys", "waypoint keys", "ToS keys").
+2. Write a build-time validation script that checks:
+   - All keys in `TranslationKeys` exist in all 3 locale objects
+   - All keys in locale objects exist in `TranslationKeys` (no orphans)
+   - Interpolation variables (`{variable}`) match across all locales
+3. Consider splitting `translations.ts` into per-feature files that are merged:
+```typescript
+// translations/rides.ts -- just ride-related keys
+// translations/chat.ts -- just chat-related keys
+// translations/index.ts -- merges all
+```
+4. Add a CI check: `Object.keys(cs).length === Object.keys(sk).length === Object.keys(en).length`
 
-**Phase to address:** Phase dealing with location sharing -- must be addressed before first app store submission. Requires a pre-submission compliance review.
+**Detection:** Run `tsc --noEmit` after adding keys. If it passes, also run a custom script to verify interpolation variable parity.
 
-**Confidence:** MEDIUM-HIGH -- verified via [Expo Location Docs](https://docs.expo.dev/versions/latest/sdk/location/) and multiple [Expo GitHub issues](https://github.com/expo/expo/issues/11918)
+**Confidence:** HIGH -- verified by examining the existing `translations.ts` structure. The file is already 1107 lines with ~170 keys per locale. Adding 171 more doubles it.
 
 ---
 
-### Pitfall 4: The Cold Start / Chicken-and-Egg Problem
+### Pitfall 4: Waypoints Schema Migration Breaks Existing Ride Queries
 
 **What goes wrong:**
-The platform launches with zero rides. New users open the app, see no rides, and never return. Drivers don't post rides because there are no passengers. Passengers don't sign up because there are no rides. This is the #1 killer of carpooling apps -- not technical failures, but empty marketplaces.
+The `ride_waypoints` table already exists (migration `00000000000002_rides.sql` lines 127-139). But the ride form, ride detail, and search results currently do not query or display waypoints. Adding waypoint support to the UI means changing how rides are fetched. If you add `.select('*, ride_waypoints(*)')` to existing ride queries, it changes the response shape for ALL rides, including the thousands of existing rides that have zero waypoints. Components that destructure the ride response will break if they do not handle the new nested `ride_waypoints` array.
 
 **Why it happens:**
-Network effects require critical mass. Ride-sharing is especially brutal because matches require geographic AND temporal overlap. Even 1,000 users won't produce matches if they're spread across a country. A Hacker News discussion on "Why do carpool apps always fail?" identified insufficient user density as the primary cause: "Outside of some very high traffic routes, I don't think there's enough people going from close enough to close enough."
+Developers add the join to the query and update the new ride detail page to render waypoints, but forget to update the ride card component, the search results, the "my rides" page, the ride share page, and the booking confirmation page -- all of which also fetch rides.
 
-**How to avoid:**
-1. Launch hyper-locally: target a single festival/community/university, not "Czech Republic"
-2. Seed the marketplace: get organizers/communities to pre-post rides before launch
-3. Show "near-miss" rides: "3 people are going to Brno this weekend" even without exact matches
-4. Allow ride requests (not just offers) so both sides populate the marketplace
-5. Build community features first (profiles, social links) to give value even without ride matches
-6. Partner with specific events/festivals where concentrated demand exists (aligned with "festapp" branding)
+**Consequences:**
+- Existing ride displays break or show undefined values
+- TypeScript types diverge from actual API response shape
+- Mobile app (if using same queries) breaks on different release cycle
 
-**Warning signs:**
-- Search results consistently returning 0 rides
-- High signup-to-churn ratio (people sign up, search, find nothing, leave)
-- Rides being posted but never booked
+**Prevention:**
+1. Do NOT add `.select('*, ride_waypoints(*)')` to all ride queries. Only add the join on the ride detail page where waypoints are displayed.
+2. Create a separate query function for "ride with waypoints" vs "ride summary":
+```typescript
+// Existing (unchanged)
+export const getRideSummary = (supabase, id) =>
+  supabase.from('rides').select('id, origin_address, destination_address, ...');
 
-**Phase to address:** Phase 1 must include ride requesting (not just offering). Launch strategy should target a specific community/event, not general public.
+// New (for detail page only)
+export const getRideWithWaypoints = (supabase, id) =>
+  supabase.from('rides').select('*, ride_waypoints(*)').eq('id', id);
+```
+3. Update the shared TypeScript types to have `Ride` (without waypoints) and `RideDetail` (with waypoints).
+4. Add waypoints to the ride creation flow ONLY -- do not change how existing rides are read until the UI is ready.
 
-**Confidence:** HIGH -- well-documented pattern across [HN discussion](https://news.ycombinator.com/item?id=31329476) and ride-sharing industry
+**Detection:** After adding waypoint support, visit the search page, my-rides page, and ride share page. All should still work identically to before.
+
+**Confidence:** HIGH -- verified that `ride_waypoints` table exists but is not referenced in any current UI component.
 
 ---
 
-### Pitfall 5: Naive Geospatial Route Matching
+### Pitfall 5: Google Routes API Alternatives -- Zero Alternatives with Waypoints
 
 **What goes wrong:**
-Developers implement ride search as simple origin-destination point matching: "find rides within X km of my start point AND within X km of my end point." This misses rides where the driver passes through or near the passenger's route without having matching start/end points. A driver going Praha-Brno should match a passenger going Praha-Jihlava, but point-matching won't find it.
+The Google Routes API `computeAlternativeRoutes: true` parameter cannot be used together with intermediate waypoints. If you add waypoint/stops support to the route computation AND request alternatives in the same API call, the API will either return an error or silently ignore the alternatives parameter. Additionally, even without waypoints, the API may return zero alternatives for some routes (e.g., when there is only one viable road between two points).
 
 **Why it happens:**
-Point-to-point matching is straightforward with PostGIS `ST_DWithin`. Route corridor matching requires storing the actual route geometry (a LINESTRING, not two POINTs) and doing `ST_DWithin` against a line, which is more complex and requires the route to be computed at ride creation time.
+The current `compute-route` Edge Function (line 108-123) sends a simple origin-destination request. Adding `computeAlternativeRoutes: true` works for simple A-to-B routes. But when waypoints are added to the same request, the alternatives feature is explicitly unsupported by the API. Developers often discover this after implementing both features independently.
 
-**How to avoid:**
-1. Enable PostGIS extension in Supabase (it's available but not enabled by default)
-2. Store rides with a route geometry (LINESTRING), not just origin/destination points
-3. Use `ST_DWithin(route_geometry, passenger_point, radius)` for matching
-4. Use Google/Mapbox Directions API to compute route geometry when driver posts a ride
-5. Create spatial indexes (GiST) on route geometry columns
-6. Start simple (point matching for MVP) but design the schema to support route matching from day one -- store both points AND route geometry
+**Consequences:**
+- If waypoints and alternatives are requested together: API error or silent fallback to single route
+- If no alternatives exist for a route: UI shows "select a route" with only one option, confusing users
+- If the alternative routes response is not properly handled: the code crashes trying to access `routes[1]` on a single-element array
 
-**Warning signs:**
-- Users complaining "I know someone is driving my route but the app doesn't show it"
-- Low match rates despite decent user base
-- Only exact city-to-city matches working
+**Prevention:**
+1. When the ride has waypoints, disable the "show alternative routes" UI entirely. Show a message: "Alternative routes are not available for rides with stops."
+2. Always check `data.routes.length` before accessing alternatives:
+```typescript
+const routes = data.routes ?? [];
+if (routes.length === 0) {
+  // No route found at all
+  throw new Error("No route found");
+}
+// routes[0] is always the default route
+// routes[1..N] are alternatives, may not exist
+const alternatives = routes.slice(1);
+```
+3. The FieldMask must include `routes.routeLabels` to distinguish default from alternatives.
+4. Budget for doubled API costs: requesting alternatives doubles the computational cost and response time per the Google docs.
 
-**Phase to address:** Schema must support route geometry from Phase 1 (even if matching logic starts simple). Route corridor matching should be Phase 2-3.
+**Detection:** Test with a route that has waypoints. Test with a very short route (e.g., within the same city district) where alternatives are unlikely.
 
-**Confidence:** MEDIUM-HIGH -- verified PostGIS availability in Supabase via [official docs](https://supabase.com/docs/guides/database/extensions/postgis); route matching patterns from [PostGIS ride matching guide](https://medium.com/@deepdeepak2222/how-to-implement-a-ride-matching-system-using-postgres-postgis-and-python-93cdcc5d0d55)
+**Confidence:** HIGH -- verified via [Google Routes API Alternative Routes docs](https://developers.google.com/maps/documentation/routes/alternative-routes): "Alternative routes cannot be requested when your route includes intermediate stops."
 
 ---
 
-### Pitfall 6: Battery Drain Killing User Retention
+## Moderate Pitfalls
+
+### Pitfall 6: Map Picker Reverse Geocode Race Condition
 
 **What goes wrong:**
-Live location sharing continuously polls GPS at high accuracy, draining the phone battery 3-5x faster than normal usage. Users share their location for one ride, notice their battery dropping rapidly, and disable location sharing (or uninstall the app entirely). One real-world case study showed a 70% battery reduction was possible but only with careful adaptive tracking.
+The current `MapLocationPicker` (line 31-51) has a bug: `setIsGeocoding(false)` is only called in the `catch` fallback path, not in the success path. After a successful reverse geocode, `isGeocoding` stays `true` forever, keeping the "Confirm location" button disabled (`disabled={!selectedPoint || isGeocoding}` on line 118).
 
-**Why it happens:**
-The default `Accuracy.Highest` setting with frequent polling (every 1-2 seconds) is what developers test with because it produces smooth map updates. But it's catastrophic for battery life on real rides lasting 1-4 hours.
+Additionally, rapid clicking on the map fires multiple `reverseGeocode` calls. The responses may arrive out of order, showing the address from an earlier click rather than the latest one.
 
-**How to avoid:**
-1. Use adaptive tracking: `Accuracy.Balanced` (not `Highest`) as default
-2. Increase update intervals: 10-15 seconds between updates for ride sharing (not 1 second)
-3. Use `deferredUpdatesDistance` to batch updates -- only send when user moves >100m
-4. Reduce accuracy when stationary (detect via accelerometer or lack of position change)
-5. Show battery impact warning before enabling location sharing
-6. Auto-stop location sharing when ride ends (obvious but often forgotten)
-7. Use `distanceFilter` to skip updates when user hasn't moved significantly
+**Prevention:**
+1. Fix the missing `setIsGeocoding(false)` in the success path (add it after `setAddress(...)` on line 42).
+2. Use an AbortController or a request counter to discard stale geocode responses:
+```typescript
+const requestIdRef = useRef(0);
 
-**Warning signs:**
-- User reviews mentioning battery drain
-- Background location task consuming >5% battery per hour
-- Users opting out of location sharing feature
+const reverseGeocode = useCallback(async (lat: number, lng: number) => {
+  const thisRequest = ++requestIdRef.current;
+  setIsGeocoding(true);
+  try {
+    const res = await fetch(...);
+    if (thisRequest !== requestIdRef.current) return; // Stale, discard
+    // process response...
+  } finally {
+    if (thisRequest === requestIdRef.current) {
+      setIsGeocoding(false);
+    }
+  }
+}, []);
+```
 
-**Phase to address:** Must be addressed in the same phase as location sharing. Do not ship location sharing without adaptive tracking -- first impressions matter.
-
-**Confidence:** MEDIUM -- based on [Callstack battery optimization guide](https://www.callstack.com/blog/optimize-battery-drain-in-react-native-apps), [Software Mansion case study](https://blog.swmansion.com/optimizing-battery-usage-improving-crash-free-rate-in-a-react-native-app-9e80ba1f240a), and multiple React Native location articles
+**Confidence:** HIGH -- verified by reading `map-location-picker.tsx`. The `setIsGeocoding(false)` is definitively missing from the success path.
 
 ---
 
-## Technical Debt Patterns
+### Pitfall 7: AI Form Pre-fill Calls setValue on Unmounted/Non-Visible Fields
 
-Shortcuts that seem reasonable but create long-term problems.
+**What goes wrong:**
+The current `ride-form.tsx` AI handler (line 252-283) calls `form.setValue("seatsTotal", ...)`, `form.setValue("priceCzk", ...)`, and `form.setValue("notes", ...)` after AI parsing. But the form is a 3-step wizard. If the user is on step 0 (route), the fields for `seatsTotal` (step 1) and `priceCzk`/`notes` (step 2) are not rendered. React Hook Form registers fields when their inputs mount. `setValue` on unregistered fields silently does nothing -- the values are lost.
 
-| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
-|----------|-------------------|----------------|-----------------|
-| Using Postgres Changes for all Realtime | Faster initial dev, simpler code | Rewrites when scaling; single-thread bottleneck | Never for chat/location; OK for admin dashboards |
-| Storing only origin/destination points (no route geometry) | Simpler schema, no Directions API needed | Poor matching, users can't find relevant rides | MVP only if schema has geometry column ready |
-| Putting all business logic in RLS policies | No API layer needed | Impossible to debug, test, or migrate; performance issues | Simple read policies only; complex logic goes in Edge Functions |
-| Skipping migration files (manual DB changes in Studio) | Fast iteration | Cannot replicate environment, no version control on schema | Never -- always use Supabase CLI migrations |
-| Single channel per feature (chat channel, location channel, presence channel) | Clearer code separation | Connection count explosion, hits Realtime limits fast | Never -- multiplex into one channel per ride |
-| Shared Expo/Next.js components without platform checks | Faster UI development | Runtime crashes from platform-specific APIs (e.g., `Linking`, `Alert`) | Only for truly cross-platform primitives (Text, View, etc.) |
+**Why it happens:**
+React Hook Form only tracks fields that are currently mounted (unless using `shouldUnregister: false`). In a wizard form, fields from future steps are not mounted yet. The AI response arrives and tries to set them, but they have not been registered. The react-hook-form docs explicitly warn: "register the input's name before invoking setValue."
 
-## Integration Gotchas
+**Consequences:**
+- AI successfully parses "4 seats, 150 CZK" but when user advances to step 1, seats shows the default (4 by coincidence), and step 2 shows the route-computed price, not the AI-parsed price
+- Users think AI did nothing, reducing trust in the feature
+- Intermittently works when AI is slow (user already advanced to later steps)
 
-Common mistakes when connecting to external services.
+**Prevention:**
+1. Set `shouldUnregister: false` on the form to keep field registrations across wizard steps:
+```typescript
+const form = useForm<CreateRide>({
+  resolver: zodResolver(CreateRideSchema),
+  defaultValues: { seatsTotal: 4, bookingMode: "request", notes: "" },
+  shouldUnregister: false, // Keeps values even when fields unmount
+});
+```
+2. Alternatively, store AI-parsed values in component state and apply them via `useEffect` when each step mounts.
+3. Use `form.reset({ ...form.getValues(), ...aiValues })` instead of multiple `setValue` calls, as `reset()` works on all fields regardless of mount state.
 
-| Integration | Common Mistake | Correct Approach |
-|-------------|----------------|------------------|
-| Supabase Auth | Not configuring deep links for OAuth/magic links on mobile | Configure `expo-linking` scheme and Supabase redirect URLs for both web and native; test on physical devices early |
-| Google Maps / Mapbox | Exposing API keys in client bundle | Use Supabase Edge Functions as proxy for geocoding/directions; embed map display keys (restricted by bundle ID) in native config only |
-| Expo Push Notifications | Assuming ExpoPushToken works in development builds | Test push notifications on physical devices with EAS Build; Expo Go has limited push support |
-| PostGIS | Calling PostGIS functions via Supabase client without RPC | Create PostgreSQL functions that wrap PostGIS queries, expose via `supabase.rpc()` -- direct PostGIS SQL isn't available through the REST API |
-| Expo Location (background) | Requesting background permission at app launch | Request only when user activates location sharing; provide clear explanation screen first; handle denial gracefully |
-| Supabase Storage (profile photos) | Not setting up storage policies | Storage requires separate RLS-like policies; without them, uploads silently fail or become public |
+**Confidence:** HIGH -- verified via [react-hook-form setValue docs](https://react-hook-form.com/docs/useform/setvalue) and the wizard step pattern in `ride-form.tsx`.
 
-## Performance Traps
+---
 
-Patterns that work at small scale but fail as usage grows.
+### Pitfall 8: CZK Price Rounding -- Display vs Storage Mismatch
 
-| Trap | Symptoms | Prevention | When It Breaks |
-|------|----------|------------|----------------|
-| Unbounded ride search queries | Slow search, DB timeouts | Always use spatial indexes + limit results + paginate; use bounding box pre-filter before distance sort | >10,000 rides in database |
-| Loading all chat messages on room open | Slow room load, high bandwidth | Paginate messages (load last 50, scroll to load more); use cursor-based pagination | >500 messages in a conversation |
-| Storing location history in main rides table | Table bloats, all queries slow down | Separate `ride_locations` table with time-series design; consider TTL/cleanup for old location data | >100 active rides with location sharing |
-| Re-rendering map on every location update | UI jank, dropped frames | Throttle map updates to 1-2 per second; use `React.memo` on marker components; batch updates | >5 markers updating simultaneously |
-| Fetching user profiles inline with ride listings | N+1 query pattern | Use Supabase foreign table joins or create a denormalized ride listing view | >50 rides in search results |
-| No connection cleanup on navigation | Connection leak, hits Realtime limits | Unsubscribe from channels in `useEffect` cleanup; use a global subscription manager | >20 concurrent active users |
+**What goes wrong:**
+The rides table stores `price_czk` as `NUMERIC(10,2)` (line 28 of rides migration), meaning it supports decimal values like `147.50`. But the UI rounds to nearest 10 CZK for the slider (`roundTo10` on line 223 of ride-form.tsx, and `Math.round(route.suggestedPriceCzk / 10) * 10` on line 187). If `Intl.NumberFormat` is later used to display prices with `style: 'currency', currency: 'CZK'`, the Czech locale format adds decimal places by default (`147,00 Kc`), creating visual inconsistency with the slider that shows clean `150 Kc`.
 
-## Security Mistakes
+Additionally, CZK is a zero-subunit currency in practice (Czech Republic eliminated hellers in 2008). Displaying `150,00 Kc` looks wrong to Czech users -- they expect `150 Kc`.
 
-Domain-specific security issues beyond general web security.
+**Prevention:**
+1. When formatting CZK for display, always use `maximumFractionDigits: 0`:
+```typescript
+new Intl.NumberFormat('cs-CZ', {
+  style: 'currency',
+  currency: 'CZK',
+  maximumFractionDigits: 0,
+}).format(150); // "150 Kc" not "150,00 Kc"
+```
+2. Store prices as integers in the database (change `NUMERIC(10,2)` to `INTEGER`). Since CZK has no subunits in practice, decimal storage wastes precision and creates rounding confusion.
+3. Ensure the price slider step stays at 10 (matching Czech cash conventions where 10 CZK is the smallest commonly-used coin for ride pricing).
 
-| Mistake | Risk | Prevention |
-|---------|------|------------|
-| Broadcasting exact GPS coordinates to all ride participants | Stalking risk; location data persists in database | Share approximate location until pickup; share precise location only for active pickups; delete location data after ride ends |
-| No rate limiting on ride search | Scraping all ride data (origins, destinations, schedules) | Rate limit search API; require authentication; don't expose exact addresses in search results |
-| Trusting client-side ride status updates | Users can fake ride completion, manipulate booking state | All status transitions via Supabase Edge Functions with server-side validation |
-| Storing chat messages without sender verification | Message spoofing -- sending messages as another user | RLS policy: `auth.uid() = sender_id` on insert; never trust client-provided sender_id |
-| No phone/email verification before ride booking | Fake accounts, spam rides, no accountability | Require verified email (Supabase Auth handles this) + phone verification for booking |
-| Exposing user home/work addresses in ride data | Privacy violation; safety risk | Store only pickup points (not home addresses); allow users to set pickup points offset from actual location |
+**Detection:** Display any price using `Intl.NumberFormat` with default CZK settings. If it shows `.00`, this pitfall is present.
 
-## UX Pitfalls
+**Confidence:** MEDIUM -- based on Czech currency conventions and MDN `Intl.NumberFormat` documentation. The specific `NUMERIC(10,2)` vs `INTEGER` schema choice is a design decision, not a bug.
 
-Common user experience mistakes in this domain.
+---
 
-| Pitfall | User Impact | Better Approach |
-|---------|-------------|-----------------|
-| Requiring full registration before browsing rides | Users bounce before seeing value | Allow browsing without account; require auth only for booking/posting |
-| Showing "no rides found" with no next steps | Dead end; user leaves | Show nearby rides, suggest posting a ride request, show ride trends ("12 people traveled to Brno last week") |
-| Complex ride posting form (20+ fields) | Drivers don't bother posting | Minimal form: origin, destination, date/time, seats. Everything else optional or auto-detected |
-| No cancellation communication | Passengers stranded, angry | Auto-notify all passengers immediately on cancellation; suggest alternative rides |
-| Map-only location input | Frustrating on mobile; imprecise | Text search with autocomplete (Google Places or Mapbox Search) with map confirmation |
-| Notification spam for every chat message | Users mute notifications, miss important ones | Batch chat notifications; prioritize ride-status notifications (booking confirmed, driver departed, cancellation) |
+### Pitfall 9: Terms of Service -- Missing Legal Timestamp Persistence
 
-## "Looks Done But Isn't" Checklist
+**What goes wrong:**
+If ToS acceptance is implemented as a boolean flag (`tos_accepted: true`) without a timestamp and version identifier, the app cannot prove WHEN the user accepted or WHICH version they accepted. When the ToS is updated, there is no way to know which users need to re-accept. GDPR requires proof of consent with timestamps.
 
-Things that appear complete but are missing critical pieces.
+**Why it happens:**
+Developers implement the simplest possible solution: a boolean column on the profiles table. This blocks signup (the immediate requirement) but fails the legal requirement.
 
-- [ ] **Chat:** Often missing read receipts and typing indicators -- without them, users don't know if their message was seen, leading to duplicate messages and frustration
-- [ ] **Ride search:** Often missing time-window matching -- a ride departing at 8:00 should appear for someone searching 7:30-8:30, not just exact matches
-- [ ] **Location sharing:** Often missing permission denial handling -- what happens when a user denies location permission mid-ride? The UI freezes or crashes
-- [ ] **Push notifications:** Often missing channel configuration on Android -- notifications work in dev but appear in "Miscellaneous" category in production, getting suppressed by OS
-- [ ] **Booking flow:** Often missing concurrent booking handling -- two passengers can book the last seat simultaneously without optimistic locking
-- [ ] **User profiles:** Often missing profile photo upload error handling -- large images, wrong formats, or storage policy issues cause silent failures
-- [ ] **Ride completion:** Often missing the "ride didn't happen" flow -- what if driver never shows up? There's no status for abandoned rides
-- [ ] **Deep links:** Often missing universal link / app link configuration -- sharing a ride link opens the website, not the app, even when installed
+**Consequences:**
+- Cannot comply with GDPR audit requests ("show me when user X consented")
+- Cannot force re-acceptance when ToS changes
+- Legal exposure if disputes arise about what terms a user agreed to
 
-## Recovery Strategies
+**Prevention:**
+1. Create a `tos_acceptances` table, not a boolean flag:
+```sql
+CREATE TABLE public.tos_acceptances (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id),
+  tos_version TEXT NOT NULL, -- e.g., "2026-02-16-v1"
+  accepted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  ip_address INET, -- optional but recommended
+  user_agent TEXT  -- optional but recommended
+);
+```
+2. On signup, insert a row with the current ToS version.
+3. On app load, check if the user's latest acceptance matches the current ToS version. If not, show a re-acceptance screen.
+4. Never delete acceptance records -- they are legal audit logs.
 
-When pitfalls occur despite prevention, how to recover.
+**Confidence:** HIGH -- GDPR consent requirements are well-documented. This is a legal compliance issue, not a technical one.
 
-| Pitfall | Recovery Cost | Recovery Steps |
-|---------|---------------|----------------|
-| Postgres Changes bottleneck (rewrite to Broadcast) | HIGH | Create Broadcast channel abstraction layer; migrate one feature at a time; keep Postgres Changes as fallback during transition |
-| Point-only ride matching (need route matching) | MEDIUM | Add route geometry column; backfill existing rides via Directions API batch job; update search queries incrementally |
-| App store rejection for background location | LOW-MEDIUM | Update permission descriptions; add pre-permission explanation screens; record demo video; resubmit (1-2 week delay) |
-| Connection limit exceeded | MEDIUM | Implement subscription manager to multiplex channels; add connection pooling; upgrade Supabase plan as immediate band-aid |
-| Battery drain complaints | MEDIUM | Ship adaptive tracking update; reduce polling frequency; add user-facing battery mode toggle; communicate fix in app update notes |
-| Cold start / empty marketplace | HIGH | Pivot to community/event-specific launch; seed rides manually; add ride requests feature; partner with event organizers |
+---
 
-## Pitfall-to-Phase Mapping
+### Pitfall 10: Location Sharing Global State -- Stale After Broadcast Channel Disconnect
 
-How roadmap phases should address these pitfalls.
+**What goes wrong:**
+If location sharing uses Supabase Broadcast and the WebSocket disconnects (see Pitfall 2), other users' location markers freeze on the map at their last known position. There is no indication that the location is stale. Users may drive to a "live" location that is actually 10 minutes old.
 
-| Pitfall | Prevention Phase | Verification |
-|---------|------------------|--------------|
-| Realtime architecture (Broadcast vs Postgres Changes) | Phase 1: Foundation | Load test with 50+ concurrent connections; measure message latency |
-| Connection limit management | Phase 1: Foundation | Monitor Realtime Reports; verify subscription cleanup in React DevTools |
-| Schema supports route geometry | Phase 1: Foundation (schema) | PostGIS extension enabled; rides table has geometry column; spatial index exists |
-| Background location app store compliance | Pre-submission (location sharing phase) | Submit test build to TestFlight/Internal Testing; verify permission flow on physical devices |
-| Battery-efficient location tracking | Same phase as location sharing | Test 2-hour ride simulation; measure battery consumption; target <3% per hour |
-| Cold start mitigation | Phase 1: Launch strategy | Ride request feature exists; target community identified; seed rides pre-launch |
-| Geospatial route matching | Phase 2-3 (after basic search works) | Search finds "along the route" rides; verified with test rides on known routes |
-| Chat message ordering and delivery | Chat implementation phase | Load test: 10 users sending simultaneously; verify message order consistency |
-| Push notification reliability | Notification implementation phase | Test on Android 12+ physical device; verify notifications arrive when app killed; test notification channels |
-| Concurrent booking race conditions | Booking implementation phase | Test: two users booking last seat simultaneously; verify only one succeeds |
-| Trust and safety (fake accounts) | Phase 1: Auth setup | Email verification required; phone verification for booking; report mechanism exists |
+**Why it happens:**
+Broadcast is fire-and-forget -- there is no persistence layer. When the channel disconnects, the last received position stays in React state. Without a staleness check, the UI treats a 10-minute-old position the same as a 5-second-old one.
+
+**Prevention:**
+1. Include a timestamp in every location broadcast payload:
+```typescript
+channel.send({
+  type: 'broadcast',
+  event: 'location',
+  payload: { lat, lng, timestamp: Date.now(), userId },
+});
+```
+2. On the receiving side, track `lastUpdatedAt` per user and show staleness:
+```typescript
+const isStale = Date.now() - lastUpdatedAt > 30_000; // 30 seconds
+// Show grayed-out marker or "Last seen 2 min ago" badge
+```
+3. When the channel reconnects (detected via `heartbeatCallback`), request a fresh position from all participants via a "ping" broadcast event.
+4. Auto-remove location markers after 60 seconds of no updates.
+
+**Confidence:** MEDIUM-HIGH -- based on Supabase Broadcast behavior (no persistence, no delivery guarantee) and common real-time mapping patterns.
+
+---
+
+## Minor Pitfalls
+
+### Pitfall 11: i18n Interpolation Variables Not Type-Checked
+
+**What goes wrong:**
+The current `t()` function (in `provider.tsx` line 39-44) returns a plain `string`. Interpolation like `{price}` in `"rideForm.recommended"` is handled by... nothing. The raw `{price}` text appears in the UI.
+
+**Prevention:**
+Add a simple interpolation function to the `t()` helper:
+```typescript
+const t = useCallback(
+  (key: string, vars?: Record<string, string | number>): string => {
+    let value = (translations[locale] as Record<string, string>)[key] ?? key;
+    if (vars) {
+      Object.entries(vars).forEach(([k, v]) => {
+        value = value.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
+      });
+    }
+    return value;
+  },
+  [locale],
+);
+```
+Then verify all existing usages of keys with `{variables}` pass the variables parameter.
+
+**Confidence:** HIGH -- verified that `auth.otpSent` uses `{length}` and `rideForm.recommended` uses `{price}` and `{currency}`, but the `t()` function does no interpolation.
+
+---
+
+### Pitfall 12: Supabase Client Re-created on Every Render
+
+**What goes wrong:**
+In `chat-view.tsx` line 43, `const supabase = createClient()` is called inside the component body (not in a ref, useMemo, or module scope). If `createClient()` returns a new instance on every call, the channel subscription in the useEffect will create new channels on every re-render because `supabase` is in the dependency array (line 138).
+
+**Prevention:**
+Verify that `createClient()` is memoized (returns a singleton). If not, wrap it:
+```typescript
+const supabase = useMemo(() => createClient(), []);
+```
+Or better, ensure the `@/lib/supabase/client` module exports a singleton.
+
+**Confidence:** MEDIUM -- depends on whether `createClient()` is already memoized. Most Supabase Next.js templates use a singleton pattern, but the eslint-disable comment on line 138 suggests the developers already noticed this dependency issue.
+
+---
+
+## Phase-Specific Warnings
+
+| Phase Topic | Likely Pitfall | Severity | Mitigation |
+|-------------|---------------|----------|------------|
+| Chat dedup fix | Pitfall 1: Optimistic ID mismatch | CRITICAL | Pass client UUID to server RPC |
+| Chat reconnection | Pitfall 2: Silent message loss | CRITICAL | Add heartbeat callback + gap-fill fetch |
+| Map picker bug | Pitfall 6: isGeocoding stuck true | MODERATE | Fix missing setIsGeocoding(false) |
+| AI form pre-fill | Pitfall 7: setValue on unmounted fields | MODERATE | Set shouldUnregister: false |
+| Route alternatives | Pitfall 5: Zero alternatives + waypoint conflict | CRITICAL | Check array length, disable with waypoints |
+| Waypoints/stops | Pitfall 4: Breaking existing ride queries | CRITICAL | Separate query functions for summary vs detail |
+| Price rounding | Pitfall 8: CZK decimal display | MINOR | Use maximumFractionDigits: 0 |
+| i18n bulk migration | Pitfall 3: Type system breaks with bulk adds | MODERATE | Add keys in batches of 10-20 per feature |
+| i18n interpolation | Pitfall 11: Variables not substituted | MODERATE | Add interpolation to t() function |
+| Location sharing state | Pitfall 10: Stale positions after disconnect | MODERATE | Timestamp + staleness indicator |
+| Terms of Service | Pitfall 9: Missing legal timestamps | CRITICAL (legal) | tos_acceptances table with version + timestamp |
+
+## Implementation Order Recommendation
+
+Based on pitfall severity and dependencies:
+
+1. **First:** Fix Pitfall 1 (chat dedup) and Pitfall 6 (map picker isGeocoding) -- these are existing bugs that affect current users now
+2. **Second:** Fix Pitfall 11 (i18n interpolation) -- foundation for all new translation keys
+3. **Third:** Implement Pitfall 9 (ToS with timestamps) -- legal blocker for any new user flow
+4. **Fourth:** Add new features (alternatives, waypoints, AI pre-fill) with their respective pitfall mitigations baked in
+5. **Throughout:** Add i18n keys in batches (Pitfall 3) alongside each feature, not as one bulk migration
 
 ## Sources
 
-- [Supabase Realtime Limits](https://supabase.com/docs/guides/realtime/limits) -- connection quotas and message rate limits (HIGH confidence)
-- [Supabase Realtime Pricing](https://supabase.com/docs/guides/realtime/pricing) -- plan-specific quotas and overage costs (HIGH confidence)
-- [Supabase Realtime Benchmarks](https://supabase.com/docs/guides/realtime/benchmarks) -- Postgres Changes single-thread constraint (HIGH confidence)
-- [Supabase Broadcast Docs](https://supabase.com/docs/guides/realtime/broadcast) -- recommended alternative to Postgres Changes (HIGH confidence)
-- [Supabase PostGIS Docs](https://supabase.com/docs/guides/database/extensions/postgis) -- geospatial extension availability and usage (HIGH confidence)
-- [Expo Location Docs](https://docs.expo.dev/versions/latest/sdk/location/) -- background location permissions and configuration (HIGH confidence)
-- [Expo Push Notifications FAQ](https://docs.expo.dev/push-notifications/faq/) -- known issues and rate limits (HIGH confidence)
-- [Expo GitHub #11918](https://github.com/expo/expo/issues/11918) -- Android background location Play Store rejection (MEDIUM confidence)
-- [HN: Why do carpool apps always fail?](https://news.ycombinator.com/item?id=31329476) -- marketplace dynamics and cold start (MEDIUM confidence)
-- [Callstack: Battery Optimization in React Native](https://www.callstack.com/blog/optimize-battery-drain-in-react-native-apps) -- battery drain prevention strategies (MEDIUM confidence)
-- [Software Mansion: Battery & Crash Rate Optimization](https://blog.swmansion.com/optimizing-battery-usage-improving-crash-free-rate-in-a-react-native-app-9e80ba1f240a) -- 70% battery reduction case study (MEDIUM confidence)
-- [PostGIS Ride Matching](https://medium.com/@deepdeepak2222/how-to-implement-a-ride-matching-system-using-postgres-postgis-and-python-93cdcc5d0d55) -- route matching implementation pattern (LOW confidence, single source)
-- [Supabase Common Mistakes](https://hrekov.com/blog/supabase-common-mistakes) -- RLS, migrations, vendor lock-in (MEDIUM confidence)
-- [Turborepo + Expo + Next.js Guide](https://medium.com/better-dev-nextjs-react/setting-up-turborepo-with-react-native-and-next-js-the-2025-production-guide-690478ad75af) -- monorepo pitfalls (LOW confidence, single source)
-- [SHIELD: Ride-Hailing Fraud](https://shield.com/blog/how-fraudsters-take-advantage-of-ride-hailing-app-how-to-protect-it) -- fake accounts and fraud patterns (MEDIUM confidence)
+- [Supabase Realtime Postgres Changes Docs](https://supabase.com/docs/guides/realtime/postgres-changes) -- event delivery behavior (HIGH confidence)
+- [Supabase Realtime Silent Disconnections Guide](https://supabase.com/docs/guides/troubleshooting/realtime-handling-silent-disconnections-in-backgrounded-applications-592794) -- heartbeatCallback pattern (HIGH confidence)
+- [Supabase Realtime GitHub Issue #1088](https://github.com/supabase/realtime/issues/1088) -- reconnection failures (HIGH confidence)
+- [Google Routes API Alternative Routes](https://developers.google.com/maps/documentation/routes/alternative-routes) -- waypoint constraint, max 3 alternatives (HIGH confidence)
+- [Google Routes API computeRoutes Reference](https://developers.google.com/maps/documentation/routes/reference/rest/v2/TopLevel/computeRoutes) -- field masks and response structure (HIGH confidence)
+- [react-hook-form setValue Docs](https://react-hook-form.com/docs/useform/setvalue) -- register before setValue requirement (HIGH confidence)
+- [react-hook-form Issue #2578](https://github.com/react-hook-form/react-hook-form/issues/2578) -- setValue in useEffect race condition (HIGH confidence)
+- [MDN Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) -- CZK currency formatting options (HIGH confidence)
+- Codebase verification: `chat-view.tsx`, `map-location-picker.tsx`, `ride-form.tsx`, `translations.ts`, `00000000000002_rides.sql`, `00000000000004_chat.sql`, `compute-route/index.ts` (HIGH confidence)
 
 ---
-*Pitfalls research for: Festapp Rideshare -- community ride-sharing platform*
-*Researched: 2026-02-15*
+*Pitfalls research for: Festapp Rideshare v1.1 UX Improvements & Bug Fixes*
+*Researched: 2026-02-16*
