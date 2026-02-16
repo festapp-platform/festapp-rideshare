@@ -9,6 +9,7 @@ import { OneSignalInit } from "./components/onesignal-init";
 import { PendingRatingBanner } from "./components/pending-rating-banner";
 import { PwaInstallBanner } from "./components/pwa-install-banner";
 import { OfflineBanner } from "@/components/offline-banner";
+import { ForceUpdateBanner } from "@/components/force-update-banner";
 
 /**
  * Authenticated app layout (NAV-01).
@@ -53,6 +54,8 @@ export default async function AppLayout({
 
         {/* Main content */}
         <main className="flex-1 pb-16 md:pb-0">
+          {/* Force-update banner (PLAT-14) */}
+          <ForceUpdateBanner />
           {/* Pending rating detection banner (RATE-03) */}
           <PendingRatingBanner />
           <div className="mx-auto max-w-4xl px-4 py-6">{children}</div>
