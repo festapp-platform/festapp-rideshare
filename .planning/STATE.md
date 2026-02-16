@@ -79,6 +79,7 @@ Progress: [██████████░░░░░░░░░░░░░
 | Phase 11 P02 | 3min | 2 tasks | 8 files |
 | Phase 11 P04 | 4min | 2 tasks | 6 files |
 | Phase 12 P02 | 2min | 2 tasks | 1 files |
+| Phase 12 P01 | 3min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -243,6 +244,7 @@ Recent decisions affecting current work:
 - [11-02]: Inline JSX test pattern reused for UI state component tests (pnpm dual-React workaround)
 - [Phase 12]: AI fix uses forwardGeocode bridge (Mapy.cz /v1/geocode) at module level with parallel Promise.all for origin+destination
 - [Phase 12]: shouldUnregister:false on wizard useForm to preserve AI-set values across step navigation
+- [Phase 12]: try/finally for reverseGeocode loading flag; fresh Date() for time filtering; COALESCE for backward-compat UUID dedup
 
 ### Pending Todos
 
@@ -261,5 +263,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 12-02-PLAN.md
+Stopped at: Completed 12-01-PLAN.md and 12-02-PLAN.md
 Resume file: N/A
