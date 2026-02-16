@@ -10,6 +10,7 @@ import { PendingRatingBanner } from "./components/pending-rating-banner";
 import { PwaInstallBanner } from "./components/pwa-install-banner";
 import { OfflineBanner } from "@/components/offline-banner";
 import { ForceUpdateBanner } from "@/components/force-update-banner";
+import { SkipLink } from "@/components/skip-link";
 
 /**
  * Authenticated app layout (NAV-01).
@@ -47,13 +48,14 @@ export default async function AppLayout({
 
   return (
     <MapProvider>
+      <SkipLink />
       <OfflineBanner />
       <div className="flex min-h-screen flex-col bg-background md:flex-row">
         {/* Desktop sidebar */}
         <AppNav />
 
         {/* Main content */}
-        <main className="flex-1 pb-16 md:pb-0">
+        <main id="main-content" className="flex-1 pb-16 md:pb-0">
           {/* Force-update banner (PLAT-14) */}
           <ForceUpdateBanner />
           {/* Pending rating detection banner (RATE-03) */}
