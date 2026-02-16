@@ -12,6 +12,8 @@ import { OfflineBanner } from "@/components/offline-banner";
 import { ForceUpdateBanner } from "@/components/force-update-banner";
 import { SkipLink } from "@/components/skip-link";
 import { EmailConfirmationBanner } from "./components/email-confirmation-banner";
+import { LocationSharingProvider } from "./contexts/location-sharing-context";
+import { LocationSharingBanner } from "./components/location-sharing-banner";
 
 /**
  * Authenticated app layout (NAV-01).
@@ -49,35 +51,39 @@ export default async function AppLayout({
 
   return (
     <MapProvider>
-      <SkipLink />
-      <OfflineBanner />
-      <div className="flex min-h-screen flex-col bg-background md:flex-row">
-        {/* Desktop sidebar */}
-        <AppNav />
+      <LocationSharingProvider>
+        <SkipLink />
+        <OfflineBanner />
+        <div className="flex min-h-screen flex-col bg-background md:flex-row">
+          {/* Desktop sidebar */}
+          <AppNav />
 
-        {/* Main content */}
-        <main id="main-content" className="flex-1 pb-16 md:pb-0">
-          {/* Email confirmation pending banner */}
-          <EmailConfirmationBanner />
-          {/* Force-update banner (PLAT-14) */}
-          <ForceUpdateBanner />
-          {/* Pending rating detection banner (RATE-03) */}
-          <PendingRatingBanner />
-          <div className="mx-auto max-w-4xl px-4 py-6">{children}</div>
-        </main>
+          {/* Main content */}
+          <main id="main-content" className="flex-1 pb-16 md:pb-0">
+            {/* Location sharing privacy banner (LEGAL-03) */}
+            <LocationSharingBanner />
+            {/* Email confirmation pending banner */}
+            <EmailConfirmationBanner />
+            {/* Force-update banner (PLAT-14) */}
+            <ForceUpdateBanner />
+            {/* Pending rating detection banner (RATE-03) */}
+            <PendingRatingBanner />
+            <div className="mx-auto max-w-4xl px-4 py-6">{children}</div>
+          </main>
 
-        {/* Post-a-Ride FAB on all authenticated pages (NAV-07) */}
-        <PostRideFab />
+          {/* Post-a-Ride FAB on all authenticated pages (NAV-07) */}
+          <PostRideFab />
 
-        {/* OneSignal push notification initialization (NOTF-05) */}
-        <OneSignalInit />
+          {/* OneSignal push notification initialization (NOTF-05) */}
+          <OneSignalInit />
 
-        {/* PWA install banner (WEB-01) */}
-        <PwaInstallBanner />
+          {/* PWA install banner (WEB-01) */}
+          <PwaInstallBanner />
 
-        {/* Toast notifications */}
-        <Toaster position="top-right" richColors closeButton />
-      </div>
+          {/* Toast notifications */}
+          <Toaster position="top-right" richColors closeButton />
+        </div>
+      </LocationSharingProvider>
     </MapProvider>
   );
 }

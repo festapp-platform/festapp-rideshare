@@ -9,12 +9,14 @@ import {
   GPS_CONFIG,
 } from "@festapp/shared";
 import type { LocationPayload } from "@festapp/shared";
+import { useLocationSharing } from "../contexts/location-sharing-context";
 
 interface UseLiveLocationParams {
   rideId: string;
   isDriver: boolean;
   enabled: boolean;
   pickupLocation?: { lat: number; lng: number } | null;
+  passengerNames?: string[];
 }
 
 interface UseLiveLocationReturn {
@@ -66,8 +68,17 @@ export function useLiveLocation({
   isDriver,
   enabled,
   pickupLocation,
+  passengerNames,
 }: UseLiveLocationParams): UseLiveLocationReturn {
   const supabase = createClient();
+
+  // Optional integration with global location sharing context (LEGAL-03)
+  let locationSharingCtx: ReturnType<typeof useLocationSharing> | null = null;
+  try {
+    locationSharingCtx = useLocationSharing();
+  } catch {
+    // Not inside LocationSharingProvider (e.g., tests)
+  }
   const [driverPosition, setDriverPosition] = useState<LocationPayload | null>(
     null,
   );
@@ -81,9 +92,11 @@ export function useLiveLocation({
   const lastBroadcastPositionRef = useRef<{ lat: number; lng: number } | null>(
     null,
   );
+  const contextNotifiedRef = useRef(false);
 
-  // Stop sharing: clear GPS watch and broadcast stop event
-  const stopSharing = useCallback(() => {
+  // Raw GPS cleanup: clears watch and broadcasts stop (no context clearing)
+  // This is registered with the context so the banner stop button can trigger it
+  const rawGpsStop = useCallback(() => {
     if (watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
@@ -101,6 +114,12 @@ export function useLiveLocation({
     lastBroadcastRef.current = 0;
     lastBroadcastPositionRef.current = null;
   }, []);
+
+  // Public stop: clears GPS + clears context state
+  const stopSharing = useCallback(() => {
+    rawGpsStop();
+    locationSharingCtx?.clearSharing();
+  }, [rawGpsStop, locationSharingCtx]);
 
   // Subscribe to Broadcast channel (both driver and passenger)
   useEffect(() => {
@@ -190,6 +209,13 @@ export function useLiveLocation({
           setIsSharing(true);
           setError(null);
 
+          // Notify global location sharing context on first position (LEGAL-03)
+          if (!contextNotifiedRef.current && locationSharingCtx) {
+            locationSharingCtx.startSharing(rideId, passengerNames ?? []);
+            locationSharingCtx.registerStopHandler(rawGpsStop);
+            contextNotifiedRef.current = true;
+          }
+
           // Broadcast to passengers
           channelRef.current?.send({
             type: "broadcast",
@@ -239,8 +265,13 @@ export function useLiveLocation({
         navigator.geolocation.clearWatch(watchIdRef.current);
         watchIdRef.current = null;
       }
+      // Clear global context on unmount so banner disappears
+      if (contextNotifiedRef.current) {
+        locationSharingCtx?.clearSharing();
+        contextNotifiedRef.current = false;
+      }
     };
-  }, [isDriver, enabled, pickupLocation]);
+  }, [isDriver, enabled, pickupLocation, locationSharingCtx, rawGpsStop, rideId, passengerNames]);
 
   return { driverPosition, isSharing, error, stopSharing };
 }
