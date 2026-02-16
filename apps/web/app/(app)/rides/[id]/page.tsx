@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { format, parseISO } from "date-fns";
-import { getRideById, getRideWaypoints, getBookingsForRide, getExistingReview, type BookingStatus } from "@festapp/shared";
+import { getRideById, getRideWaypoints, getBookingsForRide, getExistingReview, type BookingStatus, SITE_URL } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/server";
 import { RideDetail } from "../../components/ride-detail";
 
@@ -59,14 +59,21 @@ export async function generateMetadata({
   const title = `${ride.origin_address} -> ${ride.destination_address}`;
   const description = `${ride.price_czk != null ? `${ride.price_czk} CZK` : "Free"}, ${ride.seats_available} ${ride.seats_available === 1 ? "seat" : "seats"} available, ${formattedDate}`;
 
+  const publicUrl = ride.short_id
+    ? `${SITE_URL}/ride/${ride.short_id}`
+    : `/rides/${id}`;
+
   return {
     title,
     description,
     openGraph: {
       title,
       description,
-      url: `/rides/${id}`,
+      url: publicUrl,
       type: "website",
+    },
+    alternates: {
+      canonical: publicUrl,
     },
   };
 }
