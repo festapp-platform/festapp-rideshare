@@ -83,6 +83,7 @@ Progress: [███████████████████████
 | Phase 12 P01 | 3min | 2 tasks | 4 files |
 | Phase 13 P03 | 5min | 2 tasks | 5 files |
 | Phase 13 P01 | 3min | 2 tasks | 3 files |
+| Phase 13 P02 | 6min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -253,6 +254,7 @@ Recent decisions affecting current work:
 - [13-01]: Used public.is_admin() for audit RLS policy (consistent with safety migration pattern)
 - [13-01]: Auth email logging uses user?.id ?? null since user_id is now nullable for signup confirmations
 - [13-01]: Best-effort logging in auth hooks: never block auth flow for observability
+- [Phase 13-02]: Single acceptedTerms state above tab switcher gates all signup methods (not per-form Zod); social OAuth consent proven by UI checkbox flow
 
 ### Pending Todos
 
