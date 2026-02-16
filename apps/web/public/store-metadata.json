@@ -1,0 +1,27 @@
+{
+  "ios": {
+    "name": "Festapp Rideshare",
+    "subtitle": "Free community carpooling",
+    "description": "Find and share rides with people going your way. Festapp Rideshare connects drivers with empty seats to passengers heading the same direction. Post a ride as a driver or search for one as a passenger — it's completely free.\n\nFeatures:\n- Post and search rides with smart route matching\n- Real-time chat with your ride companions\n- Live location sharing for easy pickup\n- Events with dedicated ride listings\n- Impact dashboard showing your CO2 savings\n- Achievement badges and levels\n- AI assistant for hands-free ride booking\n\nSafe & Trustworthy:\n- Verified profiles with phone and ID checks\n- Ratings and reviews after every ride\n- Driver reliability scores\n- Report and block features\n\nAvailable in Czech, Slovak, and English.",
+    "keywords": "rideshare,carpooling,spolujizda,ridesharing,festapp,travel,rides,community",
+    "category": "Travel",
+    "screenshots": [
+      "screenshot-search.png",
+      "screenshot-ride-detail.png",
+      "screenshot-chat.png",
+      "screenshot-profile.png",
+      "screenshot-impact.png"
+    ],
+    "privacy_url": "https://rideshare.festapp.com/privacy",
+    "support_url": "https://rideshare.festapp.com/help"
+  },
+  "android": {
+    "name": "Festapp Rideshare",
+    "short_description": "Free community carpooling — find and share rides",
+    "full_description": "Find and share rides with people going your way. Festapp Rideshare connects drivers with empty seats to passengers heading the same direction.\n\nWhether you're commuting to work, heading to a festival, or traveling between cities, Festapp Rideshare makes it easy to find a ride or offer one.\n\nKey Features:\n★ Smart Search — Find rides near your route with geospatial matching\n★ Post a Ride — Share your journey and split fuel costs\n★ Real-time Chat — Coordinate with passengers and drivers\n★ Live Location — Share your position for easy pickup\n★ Events — Create events and find rides to them\n★ Impact Dashboard — Track your CO2 savings\n★ Badges & Levels — Earn achievements for sharing rides\n★ AI Assistant — Book rides with natural language\n\nSafety Features:\n✓ Phone and ID verification\n✓ Ratings and reviews\n✓ Report and block users\n✓ Driver reliability scores\n\nCompletely free. No commissions. No hidden fees.\n\nAvailable in Czech, Slovak, and English.",
+    "category": "Maps & Navigation",
+    "tags": ["rideshare", "carpooling", "travel", "community", "spolujizda"],
+    "privacy_policy": "https://rideshare.festapp.com/privacy",
+    "content_rating": "Everyone"
+  }
+}
