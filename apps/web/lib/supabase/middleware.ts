@@ -17,9 +17,18 @@ const PUBLIC_ROUTES = [
   "/auth/confirm",
   "/ride/",
   "/u/",
+  "/help",
+  "/terms",
+  "/privacy",
   "/robots.txt",
   "/sitemap.xml",
+  "/offline.html",
 ];
+
+/** The landing page (/) is public */
+function isLandingPage(pathname: string): boolean {
+  return pathname === "/";
+}
 
 function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
@@ -64,8 +73,8 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Redirect unauthenticated users to login (unless on a public route)
-  if (!user && !isPublicRoute(request.nextUrl.pathname)) {
+  // Redirect unauthenticated users to login (unless on a public route or landing page)
+  if (!user && !isPublicRoute(request.nextUrl.pathname) && !isLandingPage(request.nextUrl.pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
