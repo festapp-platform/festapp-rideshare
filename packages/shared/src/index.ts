@@ -271,6 +271,26 @@ export {
 } from './constants/location';
 export type { LocationPayload } from './constants/location';
 
+// Constants - AI
+export {
+  AI_ACTIONS,
+  AI_SUPPORTED_LANGUAGES,
+  MAX_AI_MESSAGE_LENGTH,
+} from './constants/ai';
+export type { AiAction, AiLanguage } from './constants/ai';
+
+// Validation schemas - AI
+export {
+  AiRequestSchema,
+  AiParsedIntentSchema,
+  AiResponseSchema,
+} from './validation/ai';
+export type {
+  AiRequest,
+  AiParsedIntent,
+  AiResponse,
+} from './validation/ai';
+
 // Types
 export type {
   Database,
