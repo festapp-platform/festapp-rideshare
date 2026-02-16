@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { DialogOverlay } from "@/components/dialog-overlay";
+import { useI18n } from "@/lib/i18n/provider";
 
 interface CancellationDialogProps {
   type: "booking" | "ride";
@@ -25,10 +26,11 @@ export function CancellationDialog({
   onCancelled,
 }: CancellationDialogProps) {
   const supabase = createClient();
+  const { t } = useI18n();
   const [reason, setReason] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const title = type === "booking" ? "Cancel Booking" : "Cancel Ride";
+  const title = type === "booking" ? t("cancellation.cancelBooking") : t("cancellation.cancelRide");
 
   async function handleConfirm() {
     setIsLoading(true);
@@ -47,7 +49,7 @@ export function CancellationDialog({
           p_reason: trimmedReason,
         });
         if (error) throw error;
-        toast.success("Booking cancelled");
+        toast.success(t("cancellation.bookingCancelled"));
       } else {
         const { error } = await supabase.rpc("cancel_ride", {
           p_ride_id: id,
@@ -55,14 +57,14 @@ export function CancellationDialog({
           p_reason: trimmedReason,
         });
         if (error) throw error;
-        toast.success("Ride cancelled");
+        toast.success(t("cancellation.rideCancelled"));
       }
 
       onCancelled();
       onClose();
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Cancellation failed";
+        err instanceof Error ? err.message : t("cancellation.failed");
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -76,19 +78,19 @@ export function CancellationDialog({
 
         {type === "ride" && (
           <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
-            This will cancel all bookings on this ride and notify passengers.
+            {t("cancellation.rideWarning")}
           </div>
         )}
 
         <label className="mb-1 block text-sm font-medium text-text-secondary">
-          Reason (optional)
+          {t("cancellation.reasonOptional")}
         </label>
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value.slice(0, 500))}
           maxLength={500}
           rows={3}
-          placeholder="Why are you cancelling?"
+          placeholder={t("cancellation.reasonPlaceholder")}
           className="mb-1 w-full resize-none rounded-xl border border-border-pastel bg-background px-4 py-3 text-sm text-text-main placeholder:text-text-secondary/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         <p className="mb-6 text-right text-xs text-text-secondary">
@@ -101,14 +103,14 @@ export function CancellationDialog({
             disabled={isLoading}
             className="flex-1 rounded-xl border border-border-pastel px-4 py-2.5 text-sm font-semibold text-text-main transition-colors hover:bg-background disabled:opacity-50"
           >
-            Keep
+            {t("cancellation.keep")}
           </button>
           <button
             onClick={handleConfirm}
             disabled={isLoading}
             className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50"
           >
-            {isLoading ? "Cancelling..." : "Confirm Cancellation"}
+            {isLoading ? t("cancellation.cancelling") : t("cancellation.confirm")}
           </button>
         </div>
       </div>

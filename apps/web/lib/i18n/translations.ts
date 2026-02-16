@@ -372,6 +372,65 @@ export type TranslationKeys = {
   "bookingButton.alreadyBooked": string;
   "bookingButton.cantBookOwn": string;
   "bookingButton.bookingFailed": string;
+
+  // Rating modal
+  "rating.title": string;
+  "rating.howWasExperience": string;
+  "rating.commentOptional": string;
+  "rating.commentPlaceholder": string;
+  "rating.submit": string;
+  "rating.submitting": string;
+  "rating.selectRating": string;
+  "rating.alreadyReviewed": string;
+  "rating.windowExpired": string;
+  "rating.submitFailed": string;
+  "rating.submitted": string;
+
+  // Cancellation dialog
+  "cancellation.cancelBooking": string;
+  "cancellation.cancelRide": string;
+  "cancellation.rideWarning": string;
+  "cancellation.reasonOptional": string;
+  "cancellation.reasonPlaceholder": string;
+  "cancellation.keep": string;
+  "cancellation.confirm": string;
+  "cancellation.cancelling": string;
+  "cancellation.bookingCancelled": string;
+  "cancellation.rideCancelled": string;
+  "cancellation.failed": string;
+
+  // Report dialog
+  "report.title": string;
+  "report.description": string;
+  "report.placeholder": string;
+  "report.minChars": string;
+  "report.charValidation": string;
+  "report.submit": string;
+  "report.submitting": string;
+  "report.submitted": string;
+  "report.submitFailed": string;
+
+  // Ride status
+  "rideStatus.upcoming": string;
+  "rideStatus.inProgress": string;
+  "rideStatus.completed": string;
+  "rideStatus.cancelled": string;
+
+  // Settings (language page)
+  "settings.languageChanged": string;
+
+  // Public ride page
+  "publicRide.perSeat": string;
+  "publicRide.ride": string;
+  "publicRide.seatLeft": string;
+  "publicRide.seatsLeft": string;
+  "publicRide.booking": string;
+  "publicRide.departureAt": string;
+  "publicRide.notes": string;
+  "publicRide.newDriver": string;
+  "publicRide.review": string;
+  "publicRide.reviews": string;
+  "publicRide.bookThisRide": string;
 };
 
 const cs: TranslationKeys = {
@@ -739,6 +798,65 @@ const cs: TranslationKeys = {
   "bookingButton.alreadyBooked": "Na této jízdě již máte rezervaci",
   "bookingButton.cantBookOwn": "Nemůžete si rezervovat vlastní jízdu",
   "bookingButton.bookingFailed": "Rezervace selhala. Zkuste to znovu.",
+
+  // Rating modal
+  "rating.title": "Ohodnoť jízdu s {name}",
+  "rating.howWasExperience": "Jaký byl tvůj zážitek?",
+  "rating.commentOptional": "Komentář (volitelné)",
+  "rating.commentPlaceholder": "Poděl se o svůj zážitek...",
+  "rating.submit": "Odeslat hodnocení",
+  "rating.submitting": "Odesílám...",
+  "rating.selectRating": "Vyber hodnocení",
+  "rating.alreadyReviewed": "Tuto jízdu jsi již ohodnotil/a",
+  "rating.windowExpired": "Doba pro hodnocení vypršela",
+  "rating.submitFailed": "Nepodařilo se odeslat hodnocení",
+  "rating.submitted": "Hodnocení odesláno!",
+
+  // Cancellation dialog
+  "cancellation.cancelBooking": "Zrušit rezervaci",
+  "cancellation.cancelRide": "Zrušit jízdu",
+  "cancellation.rideWarning": "Tímto zrušíš všechny rezervace na této jízdě a upozorníš cestující.",
+  "cancellation.reasonOptional": "Důvod (volitelné)",
+  "cancellation.reasonPlaceholder": "Proč rušíš?",
+  "cancellation.keep": "Ponechat",
+  "cancellation.confirm": "Potvrdit zrušení",
+  "cancellation.cancelling": "Ruším...",
+  "cancellation.bookingCancelled": "Rezervace zrušena",
+  "cancellation.rideCancelled": "Jízda zrušena",
+  "cancellation.failed": "Zrušení selhalo",
+
+  // Report dialog
+  "report.title": "Nahlásit {name}",
+  "report.description": "Popiš prosím problém svými slovy. Náš tým tvé hlášení prověří.",
+  "report.placeholder": "Popiš, co se stalo (minimálně 10 znaků)...",
+  "report.minChars": "(minimum 10)",
+  "report.charValidation": "Uveď popis o délce 10 až 2000 znaků.",
+  "report.submit": "Odeslat hlášení",
+  "report.submitting": "Odesílám...",
+  "report.submitted": "Hlášení odesláno. Náš tým ho prověří.",
+  "report.submitFailed": "Nepodařilo se odeslat hlášení",
+
+  // Ride status
+  "rideStatus.upcoming": "Nadcházející",
+  "rideStatus.inProgress": "Probíhá",
+  "rideStatus.completed": "Dokončená",
+  "rideStatus.cancelled": "Zrušená",
+
+  // Settings (language page)
+  "settings.languageChanged": "Jazyk byl změněn",
+
+  // Public ride page
+  "publicRide.perSeat": "za místo",
+  "publicRide.ride": "jízda",
+  "publicRide.seatLeft": "volné místo",
+  "publicRide.seatsLeft": "volná místa",
+  "publicRide.booking": "rezervace",
+  "publicRide.departureAt": "Odjezd v {time}",
+  "publicRide.notes": "Poznámky",
+  "publicRide.newDriver": "Nový řidič",
+  "publicRide.review": "hodnocení",
+  "publicRide.reviews": "hodnocení",
+  "publicRide.bookThisRide": "Rezervovat tuto jízdu",
 };
 
 const sk: TranslationKeys = {
@@ -1106,6 +1224,65 @@ const sk: TranslationKeys = {
   "bookingButton.alreadyBooked": "Na tejto jazde už máte rezerváciu",
   "bookingButton.cantBookOwn": "Nemôžete si rezervovať vlastnú jazdu",
   "bookingButton.bookingFailed": "Rezervácia zlyhala. Skúste to znova.",
+
+  // Rating modal
+  "rating.title": "Ohodnoť jazdu s {name}",
+  "rating.howWasExperience": "Aký bol tvoj zážitok?",
+  "rating.commentOptional": "Komentár (voliteľné)",
+  "rating.commentPlaceholder": "Podeľ sa o svoj zážitok...",
+  "rating.submit": "Odoslať hodnotenie",
+  "rating.submitting": "Odosielam...",
+  "rating.selectRating": "Vyber hodnotenie",
+  "rating.alreadyReviewed": "Túto jazdu si už ohodnotil/a",
+  "rating.windowExpired": "Doba pre hodnotenie vypršala",
+  "rating.submitFailed": "Nepodarilo sa odoslať hodnotenie",
+  "rating.submitted": "Hodnotenie odoslané!",
+
+  // Cancellation dialog
+  "cancellation.cancelBooking": "Zrušiť rezerváciu",
+  "cancellation.cancelRide": "Zrušiť jazdu",
+  "cancellation.rideWarning": "Týmto zrušíš všetky rezervácie na tejto jazde a upozorníš cestujúcich.",
+  "cancellation.reasonOptional": "Dôvod (voliteľné)",
+  "cancellation.reasonPlaceholder": "Prečo rušíš?",
+  "cancellation.keep": "Ponechať",
+  "cancellation.confirm": "Potvrdiť zrušenie",
+  "cancellation.cancelling": "Ruším...",
+  "cancellation.bookingCancelled": "Rezervácia zrušená",
+  "cancellation.rideCancelled": "Jazda zrušená",
+  "cancellation.failed": "Zrušenie zlyhalo",
+
+  // Report dialog
+  "report.title": "Nahlásiť {name}",
+  "report.description": "Popíš prosím problém svojimi slovami. Náš tím tvoje hlásenie preverí.",
+  "report.placeholder": "Popíš, čo sa stalo (minimálne 10 znakov)...",
+  "report.minChars": "(minimum 10)",
+  "report.charValidation": "Uveď popis o dĺžke 10 až 2000 znakov.",
+  "report.submit": "Odoslať hlásenie",
+  "report.submitting": "Odosielam...",
+  "report.submitted": "Hlásenie odoslané. Náš tím ho preverí.",
+  "report.submitFailed": "Nepodarilo sa odoslať hlásenie",
+
+  // Ride status
+  "rideStatus.upcoming": "Nadchádzajúca",
+  "rideStatus.inProgress": "Prebieha",
+  "rideStatus.completed": "Dokončená",
+  "rideStatus.cancelled": "Zrušená",
+
+  // Settings (language page)
+  "settings.languageChanged": "Jazyk bol zmenený",
+
+  // Public ride page
+  "publicRide.perSeat": "za miesto",
+  "publicRide.ride": "jazda",
+  "publicRide.seatLeft": "voľné miesto",
+  "publicRide.seatsLeft": "voľné miesta",
+  "publicRide.booking": "rezervácia",
+  "publicRide.departureAt": "Odchod o {time}",
+  "publicRide.notes": "Poznámky",
+  "publicRide.newDriver": "Nový vodič",
+  "publicRide.review": "hodnotenie",
+  "publicRide.reviews": "hodnotení",
+  "publicRide.bookThisRide": "Rezervovať túto jazdu",
 };
 
 const en: TranslationKeys = {
@@ -1473,6 +1650,65 @@ const en: TranslationKeys = {
   "bookingButton.alreadyBooked": "You already have a booking on this ride",
   "bookingButton.cantBookOwn": "You can't book your own ride",
   "bookingButton.bookingFailed": "Booking failed. Please try again.",
+
+  // Rating modal
+  "rating.title": "Rate your ride with {name}",
+  "rating.howWasExperience": "How was your experience?",
+  "rating.commentOptional": "Comment (optional)",
+  "rating.commentPlaceholder": "Share your experience...",
+  "rating.submit": "Submit Rating",
+  "rating.submitting": "Submitting...",
+  "rating.selectRating": "Please select a rating",
+  "rating.alreadyReviewed": "You have already reviewed this ride",
+  "rating.windowExpired": "The review window has expired",
+  "rating.submitFailed": "Failed to submit rating",
+  "rating.submitted": "Rating submitted!",
+
+  // Cancellation dialog
+  "cancellation.cancelBooking": "Cancel Booking",
+  "cancellation.cancelRide": "Cancel Ride",
+  "cancellation.rideWarning": "This will cancel all bookings on this ride and notify passengers.",
+  "cancellation.reasonOptional": "Reason (optional)",
+  "cancellation.reasonPlaceholder": "Why are you cancelling?",
+  "cancellation.keep": "Keep",
+  "cancellation.confirm": "Confirm Cancellation",
+  "cancellation.cancelling": "Cancelling...",
+  "cancellation.bookingCancelled": "Booking cancelled",
+  "cancellation.rideCancelled": "Ride cancelled",
+  "cancellation.failed": "Cancellation failed",
+
+  // Report dialog
+  "report.title": "Report {name}",
+  "report.description": "Please describe the issue in your own words. Our team will review your report.",
+  "report.placeholder": "Describe what happened (minimum 10 characters)...",
+  "report.minChars": "(minimum 10)",
+  "report.charValidation": "Please provide a description between 10 and 2000 characters.",
+  "report.submit": "Submit Report",
+  "report.submitting": "Submitting...",
+  "report.submitted": "Report submitted. Our team will review it.",
+  "report.submitFailed": "Failed to submit report",
+
+  // Ride status
+  "rideStatus.upcoming": "Upcoming",
+  "rideStatus.inProgress": "In Progress",
+  "rideStatus.completed": "Completed",
+  "rideStatus.cancelled": "Cancelled",
+
+  // Settings (language page)
+  "settings.languageChanged": "Language changed",
+
+  // Public ride page
+  "publicRide.perSeat": "per seat",
+  "publicRide.ride": "ride",
+  "publicRide.seatLeft": "seat left",
+  "publicRide.seatsLeft": "seats left",
+  "publicRide.booking": "booking",
+  "publicRide.departureAt": "Departure at {time}",
+  "publicRide.notes": "Notes",
+  "publicRide.newDriver": "New driver",
+  "publicRide.review": "review",
+  "publicRide.reviews": "reviews",
+  "publicRide.bookThisRide": "Book this ride",
 };
 
 export const translations: Record<SupportedLocale, TranslationKeys> = {

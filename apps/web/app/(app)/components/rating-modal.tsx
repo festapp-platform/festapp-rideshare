@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { REVIEW_MAX_COMMENT_LENGTH } from "@festapp/shared";
 import { DialogOverlay } from "@/components/dialog-overlay";
+import { useI18n } from "@/lib/i18n/provider";
 
 /**
  * Post-ride rating modal with 1-5 star picker and optional comment textarea.
@@ -35,6 +36,7 @@ export function RatingModal({
   onSubmitted,
 }: RatingModalProps) {
   const supabase = createClient();
+  const { t } = useI18n();
   const [rating, setRating] = useState(0);
   const [hoveredStar, setHoveredStar] = useState(0);
   const [comment, setComment] = useState("");
@@ -42,7 +44,7 @@ export function RatingModal({
 
   async function handleSubmit() {
     if (rating === 0) {
-      toast.error("Please select a rating");
+      toast.error(t("rating.selectRating"));
       return;
     }
 
@@ -56,19 +58,19 @@ export function RatingModal({
 
       if (error) {
         if (error.message.includes("already reviewed") || error.message.includes("already submitted")) {
-          toast.error("You have already reviewed this ride");
+          toast.error(t("rating.alreadyReviewed"));
         } else if (error.message.includes("expired") || error.message.includes("deadline")) {
-          toast.error("The review window has expired");
+          toast.error(t("rating.windowExpired"));
         } else {
-          toast.error("Failed to submit rating");
+          toast.error(t("rating.submitFailed"));
         }
         return;
       }
 
-      toast.success("Rating submitted!");
+      toast.success(t("rating.submitted"));
       onSubmitted();
     } catch {
-      toast.error("Failed to submit rating");
+      toast.error(t("rating.submitFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -111,10 +113,10 @@ export function RatingModal({
             </div>
           )}
           <h2 className="text-lg font-bold text-text-main">
-            Rate your ride with {otherUserName}
+            {t("rating.title", { name: otherUserName })}
           </h2>
           <p className="mt-1 text-sm text-text-secondary">
-            How was your experience?
+            {t("rating.howWasExperience")}
           </p>
         </div>
 
@@ -150,7 +152,7 @@ export function RatingModal({
             htmlFor="review-comment"
             className="mb-1.5 block text-sm font-medium text-text-main"
           >
-            Comment (optional)
+            {t("rating.commentOptional")}
           </label>
           <textarea
             id="review-comment"
@@ -158,7 +160,7 @@ export function RatingModal({
             onChange={(e) => setComment(e.target.value)}
             maxLength={REVIEW_MAX_COMMENT_LENGTH}
             rows={3}
-            placeholder="Share your experience..."
+            placeholder={t("rating.commentPlaceholder")}
             className="w-full resize-none rounded-xl border border-border-pastel bg-background px-4 py-3 text-sm text-text-main placeholder:text-text-secondary/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           />
           <p className="mt-1 text-right text-xs text-text-secondary">
@@ -172,7 +174,7 @@ export function RatingModal({
           disabled={isSubmitting || rating === 0}
           className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50"
         >
-          {isSubmitting ? "Submitting..." : "Submit Rating"}
+          {isSubmitting ? t("rating.submitting") : t("rating.submit")}
         </button>
       </div>
     </DialogOverlay>
