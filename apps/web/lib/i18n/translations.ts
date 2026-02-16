@@ -231,6 +231,53 @@ export type TranslationKeys = {
   // Onboarding
   "onboarding.tapToAddPhoto": string;
   "onboarding.avatarRequired": string;
+  "onboarding.saving": string;
+  "onboarding.displayName": string;
+  "onboarding.yourName": string;
+  "onboarding.roleRider": string;
+  "onboarding.roleRiderDesc": string;
+  "onboarding.roleDriver": string;
+  "onboarding.roleDriverDesc": string;
+  "onboarding.roleBoth": string;
+  "onboarding.roleBothDesc": string;
+  "onboarding.vehicleMake": string;
+  "onboarding.vehicleModel": string;
+  "onboarding.vehicleColor": string;
+  "onboarding.vehiclePlate": string;
+  "onboarding.vehiclePhotoOptional": string;
+  "onboarding.errorNameRequired": string;
+  "onboarding.errorPhotoRequired": string;
+  "onboarding.errorNotAuthenticated": string;
+  "onboarding.errorSaveProfile": string;
+  "onboarding.errorSelectRole": string;
+  "onboarding.errorSaveRole": string;
+  "onboarding.errorVehicleFields": string;
+  "onboarding.errorSaveVehicle": string;
+  // Onboarding steps
+  "onboarding.welcome.title": string;
+  "onboarding.welcome.description": string;
+  "onboarding.welcome.button": string;
+  "onboarding.profile.title": string;
+  "onboarding.profile.description": string;
+  "onboarding.profile.button": string;
+  "onboarding.role.title": string;
+  "onboarding.role.description": string;
+  "onboarding.role.button": string;
+  "onboarding.vehicle.title": string;
+  "onboarding.vehicle.description": string;
+  "onboarding.vehicle.button": string;
+  "onboarding.vehicle.skip": string;
+  "onboarding.location.title": string;
+  "onboarding.location.description": string;
+  "onboarding.location.button": string;
+  "onboarding.location.skip": string;
+  "onboarding.notifications.title": string;
+  "onboarding.notifications.description": string;
+  "onboarding.notifications.button": string;
+  "onboarding.notifications.skip": string;
+  "onboarding.ready.title": string;
+  "onboarding.ready.description": string;
+  "onboarding.ready.button": string;
 };
 
 const cs: TranslationKeys = {
@@ -457,6 +504,53 @@ const cs: TranslationKeys = {
   // Onboarding
   "onboarding.tapToAddPhoto": "Klepněte pro přidání fotky",
   "onboarding.avatarRequired": "Přidejte prosím profilovou fotku pro pokračování.",
+  "onboarding.saving": "Ukládám...",
+  "onboarding.displayName": "Zobrazované jméno",
+  "onboarding.yourName": "Vaše jméno",
+  "onboarding.roleRider": "Chci jezdit",
+  "onboarding.roleRiderDesc": "Najdu spolujízdu na festivaly a akce",
+  "onboarding.roleDriver": "Chci řídit",
+  "onboarding.roleDriverDesc": "Nabídnu místo ve svém autě",
+  "onboarding.roleBoth": "Obojí",
+  "onboarding.roleBothDesc": "Chci jezdit i nabízet jízdy",
+  "onboarding.vehicleMake": "Značka",
+  "onboarding.vehicleModel": "Model",
+  "onboarding.vehicleColor": "Barva",
+  "onboarding.vehiclePlate": "SPZ",
+  "onboarding.vehiclePhotoOptional": "Přidat fotku (volitelné)",
+  "onboarding.errorNameRequired": "Zadejte prosím jméno (1–50 znaků).",
+  "onboarding.errorPhotoRequired": "Přidejte prosím profilovou fotku pro pokračování.",
+  "onboarding.errorNotAuthenticated": "Nejste přihlášeni. Přihlaste se prosím znovu.",
+  "onboarding.errorSaveProfile": "Nepodařilo se uložit profil.",
+  "onboarding.errorSelectRole": "Vyberte prosím, jak chcete aplikaci používat.",
+  "onboarding.errorSaveRole": "Nepodařilo se uložit roli.",
+  "onboarding.errorVehicleFields": "Vyplňte prosím všechna pole vozidla.",
+  "onboarding.errorSaveVehicle": "Nepodařilo se přidat vozidlo.",
+  // Onboarding steps
+  "onboarding.welcome.title": "Vítejte na spolujizda.online",
+  "onboarding.welcome.description": "Sdílejte jízdy na festivaly, ušetřete a poznejte nové lidi. Najít nebo nabídnout spolujízdu nebylo nikdy snazší.",
+  "onboarding.welcome.button": "Další",
+  "onboarding.profile.title": "Nastavte si profil",
+  "onboarding.profile.description": "Přidejte jméno a fotku, aby ostatní věděli, s kým jedou.",
+  "onboarding.profile.button": "Pokračovat",
+  "onboarding.role.title": "Jak chcete spolujízdu využívat?",
+  "onboarding.role.description": "Řekněte nám, jestli chcete nabízet jízdy, hledat jízdy, nebo obojí. Můžete to kdykoli změnit.",
+  "onboarding.role.button": "Pokračovat",
+  "onboarding.vehicle.title": "Přidejte své vozidlo",
+  "onboarding.vehicle.description": "Zadejte údaje o vozidle, aby cestující věděli, co hledat. Můžete to přeskočit a přidat později.",
+  "onboarding.vehicle.button": "Přidat vozidlo",
+  "onboarding.vehicle.skip": "Přeskočit",
+  "onboarding.location.title": "Najděte jízdy ve vašem okolí",
+  "onboarding.location.description": "Povolte přístup k poloze, abychom vám mohli zobrazit jízdy a místa vyzvednutí poblíž. Můžete to kdykoli změnit v Nastavení.",
+  "onboarding.location.button": "Povolit polohu",
+  "onboarding.location.skip": "Přeskočit",
+  "onboarding.notifications.title": "Nepropásněte žádnou jízdu",
+  "onboarding.notifications.description": "Dostávejte upozornění na potvrzení rezervací, připomínky jízd a zprávy od řidiče nebo spolucestujících.",
+  "onboarding.notifications.button": "Povolit oznámení",
+  "onboarding.notifications.skip": "Přeskočit",
+  "onboarding.ready.title": "Vše je připraveno!",
+  "onboarding.ready.description": "Začněte hledáním spolujízdy na váš další festival, nebo nabídněte svou jízdu ostatním.",
+  "onboarding.ready.button": "Začít",
 };
 
 const sk: TranslationKeys = {
@@ -683,6 +777,53 @@ const sk: TranslationKeys = {
   // Onboarding
   "onboarding.tapToAddPhoto": "Klepnite pre pridanie fotky",
   "onboarding.avatarRequired": "Pridajte prosím profilovú fotku pre pokračovanie.",
+  "onboarding.saving": "Ukladám...",
+  "onboarding.displayName": "Zobrazované meno",
+  "onboarding.yourName": "Vaše meno",
+  "onboarding.roleRider": "Chcem jazdiť",
+  "onboarding.roleRiderDesc": "Nájdem spolujazdu na festivaly a akcie",
+  "onboarding.roleDriver": "Chcem šoférovať",
+  "onboarding.roleDriverDesc": "Ponúknem miesto vo svojom aute",
+  "onboarding.roleBoth": "Oboje",
+  "onboarding.roleBothDesc": "Chcem jazdiť aj ponúkať jazdy",
+  "onboarding.vehicleMake": "Značka",
+  "onboarding.vehicleModel": "Model",
+  "onboarding.vehicleColor": "Farba",
+  "onboarding.vehiclePlate": "ŠPZ",
+  "onboarding.vehiclePhotoOptional": "Pridať fotku (voliteľné)",
+  "onboarding.errorNameRequired": "Zadajte prosím meno (1–50 znakov).",
+  "onboarding.errorPhotoRequired": "Pridajte prosím profilovú fotku pre pokračovanie.",
+  "onboarding.errorNotAuthenticated": "Nie ste prihlásení. Prihláste sa prosím znova.",
+  "onboarding.errorSaveProfile": "Nepodarilo sa uložiť profil.",
+  "onboarding.errorSelectRole": "Vyberte prosím, ako chcete aplikáciu používať.",
+  "onboarding.errorSaveRole": "Nepodarilo sa uložiť rolu.",
+  "onboarding.errorVehicleFields": "Vyplňte prosím všetky polia vozidla.",
+  "onboarding.errorSaveVehicle": "Nepodarilo sa pridať vozidlo.",
+  // Onboarding steps
+  "onboarding.welcome.title": "Vitajte na spolujizda.online",
+  "onboarding.welcome.description": "Zdieľajte jazdy na festivaly, ušetrite a spoznajte nových ľudí. Nájsť alebo ponúknuť spolujazdu nebolo nikdy jednoduchšie.",
+  "onboarding.welcome.button": "Ďalej",
+  "onboarding.profile.title": "Nastavte si profil",
+  "onboarding.profile.description": "Pridajte meno a fotku, aby ostatní vedeli, s kým idú.",
+  "onboarding.profile.button": "Pokračovať",
+  "onboarding.role.title": "Ako chcete spolujazdu využívať?",
+  "onboarding.role.description": "Povedzte nám, či chcete ponúkať jazdy, hľadať jazdy, alebo oboje. Môžete to kedykoľvek zmeniť.",
+  "onboarding.role.button": "Pokračovať",
+  "onboarding.vehicle.title": "Pridajte svoje vozidlo",
+  "onboarding.vehicle.description": "Zadajte údaje o vozidle, aby cestujúci vedeli, čo hľadať. Môžete to preskočiť a pridať neskôr.",
+  "onboarding.vehicle.button": "Pridať vozidlo",
+  "onboarding.vehicle.skip": "Preskočiť",
+  "onboarding.location.title": "Nájdite jazdy vo vašom okolí",
+  "onboarding.location.description": "Povoľte prístup k polohe, aby sme vám mohli zobraziť jazdy a miesta vyzdvihnutia v blízkosti. Môžete to kedykoľvek zmeniť v Nastaveniach.",
+  "onboarding.location.button": "Povoliť polohu",
+  "onboarding.location.skip": "Preskočiť",
+  "onboarding.notifications.title": "Nepropásnite žiadnu jazdu",
+  "onboarding.notifications.description": "Dostávajte upozornenia na potvrdenie rezervácií, pripomienky jázd a správy od vodiča alebo spolucestujúcich.",
+  "onboarding.notifications.button": "Povoliť oznámenia",
+  "onboarding.notifications.skip": "Preskočiť",
+  "onboarding.ready.title": "Všetko je pripravené!",
+  "onboarding.ready.description": "Začnite hľadaním spolujazdy na váš ďalší festival, alebo ponúknite svoju jazdu ostatným.",
+  "onboarding.ready.button": "Začať",
 };
 
 const en: TranslationKeys = {
@@ -909,6 +1050,53 @@ const en: TranslationKeys = {
   // Onboarding
   "onboarding.tapToAddPhoto": "Tap to add a photo",
   "onboarding.avatarRequired": "Please add a profile photo to continue.",
+  "onboarding.saving": "Saving...",
+  "onboarding.displayName": "Display name",
+  "onboarding.yourName": "Your name",
+  "onboarding.roleRider": "I want to ride",
+  "onboarding.roleRiderDesc": "Find rides to festivals and events",
+  "onboarding.roleDriver": "I want to drive",
+  "onboarding.roleDriverDesc": "Offer rides and share your journey",
+  "onboarding.roleBoth": "Both",
+  "onboarding.roleBothDesc": "Find and offer rides",
+  "onboarding.vehicleMake": "Make",
+  "onboarding.vehicleModel": "Model",
+  "onboarding.vehicleColor": "Color",
+  "onboarding.vehiclePlate": "License plate",
+  "onboarding.vehiclePhotoOptional": "Add a photo (optional)",
+  "onboarding.errorNameRequired": "Please enter your name (1-50 characters).",
+  "onboarding.errorPhotoRequired": "Please add a profile photo to continue.",
+  "onboarding.errorNotAuthenticated": "Not authenticated. Please sign in again.",
+  "onboarding.errorSaveProfile": "Failed to save profile.",
+  "onboarding.errorSelectRole": "Please select how you want to use Rideshare.",
+  "onboarding.errorSaveRole": "Failed to save role.",
+  "onboarding.errorVehicleFields": "Please fill in all vehicle fields.",
+  "onboarding.errorSaveVehicle": "Failed to add vehicle.",
+  // Onboarding steps
+  "onboarding.welcome.title": "Welcome to spolujizda.online",
+  "onboarding.welcome.description": "Share rides to festivals, save money, and meet fellow music lovers. Finding and offering rides has never been easier.",
+  "onboarding.welcome.button": "Next",
+  "onboarding.profile.title": "Set up your profile",
+  "onboarding.profile.description": "Add your name and photo so others know who they are riding with.",
+  "onboarding.profile.button": "Continue",
+  "onboarding.role.title": "How will you use Rideshare?",
+  "onboarding.role.description": "Let us know if you want to offer rides, find rides, or both. You can change this anytime.",
+  "onboarding.role.button": "Continue",
+  "onboarding.vehicle.title": "Add your vehicle",
+  "onboarding.vehicle.description": "Add your car details so passengers know what to look for. You can skip this and add later from your profile.",
+  "onboarding.vehicle.button": "Add Vehicle",
+  "onboarding.vehicle.skip": "Skip for now",
+  "onboarding.location.title": "Find rides near you",
+  "onboarding.location.description": "Enable location access so we can show you rides and pickup points nearby. You can always change this in Settings later.",
+  "onboarding.location.button": "Enable Location",
+  "onboarding.location.skip": "Skip",
+  "onboarding.notifications.title": "Never miss a ride",
+  "onboarding.notifications.description": "Get notified about booking confirmations, ride reminders, and messages from your driver or passengers.",
+  "onboarding.notifications.button": "Enable Notifications",
+  "onboarding.notifications.skip": "Skip",
+  "onboarding.ready.title": "You're all set!",
+  "onboarding.ready.description": "Start by searching for a ride to your next festival, or post your own ride to share with others.",
+  "onboarding.ready.button": "Get Started",
 };
 
 export const translations: Record<SupportedLocale, TranslationKeys> = {

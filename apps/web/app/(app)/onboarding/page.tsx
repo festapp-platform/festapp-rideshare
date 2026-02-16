@@ -12,6 +12,7 @@ import {
 import type { OnboardingStep, OnboardingStepType } from '@festapp/shared';
 import { createClient } from '@/lib/supabase/client';
 import { uploadAvatar } from '@/lib/supabase/storage';
+import { useI18n } from '@/lib/i18n/provider';
 
 type UserRole = 'rider' | 'driver' | 'both';
 
@@ -27,6 +28,7 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { t } = useI18n();
 
   // Profile step state
   const [displayName, setDisplayName] = useState('');
@@ -112,15 +114,15 @@ export default function OnboardingPage() {
     setError(null);
     const result = DisplayNameSchema.safeParse(displayName.trim());
     if (!result.success) {
-      setError('Please enter your name (1-50 characters).');
+      setError(t('onboarding.errorNameRequired'));
       return;
     }
     if (!avatarFile) {
-      setError('Please add a profile photo to continue.');
+      setError(t('onboarding.errorPhotoRequired'));
       return;
     }
     if (!userId) {
-      setError('Not authenticated. Please sign in again.');
+      setError(t('onboarding.errorNotAuthenticated'));
       return;
     }
 
@@ -142,16 +144,16 @@ export default function OnboardingPage() {
       if (updateError) throw new Error(updateError.message);
       goToNext();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save profile.');
+      setError(err instanceof Error ? err.message : t('onboarding.errorSaveProfile'));
     } finally {
       setLoading(false);
     }
-  }, [displayName, avatarFile, userId, goToNext]);
+  }, [displayName, avatarFile, userId, goToNext, t]);
 
   const handleRoleContinue = useCallback(async () => {
     setError(null);
     if (!selectedRole) {
-      setError('Please select how you want to use Rideshare.');
+      setError(t('onboarding.errorSelectRole'));
       return;
     }
     if (!userId) return;
@@ -167,11 +169,11 @@ export default function OnboardingPage() {
       if (updateError) throw new Error(updateError.message);
       goToNext();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save role.');
+      setError(err instanceof Error ? err.message : t('onboarding.errorSaveRole'));
     } finally {
       setLoading(false);
     }
-  }, [selectedRole, userId, goToNext]);
+  }, [selectedRole, userId, goToNext, t]);
 
   const handleVehicleAdd = useCallback(async () => {
     setError(null);
@@ -183,7 +185,7 @@ export default function OnboardingPage() {
     };
     const result = VehicleSchema.safeParse(vehicleData);
     if (!result.success) {
-      setError('Please fill in all vehicle fields.');
+      setError(t('onboarding.errorVehicleFields'));
       return;
     }
     if (!userId) return;
@@ -211,11 +213,11 @@ export default function OnboardingPage() {
 
       goToNext();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add vehicle.');
+      setError(err instanceof Error ? err.message : t('onboarding.errorSaveVehicle'));
     } finally {
       setLoading(false);
     }
-  }, [vehicleMake, vehicleModel, vehicleColor, vehiclePlate, vehiclePhotoFile, userId, goToNext]);
+  }, [vehicleMake, vehicleModel, vehicleColor, vehiclePlate, vehiclePhotoFile, userId, goToNext, t]);
 
   const handleNotificationPermission = useCallback(async () => {
     try {
@@ -260,16 +262,20 @@ export default function OnboardingPage() {
   );
 
   const handleSkip = useCallback(
-    (step: OnboardingStep) => {
+    (_step: OnboardingStep) => {
       setError(null);
-      // Vehicle skip: advance without saving
-      // Permission skip: advance without requesting
       goToNext();
     },
     [goToNext],
   );
 
   if (!initialized || !currentStep) return null;
+
+  // Translated step content
+  const stepTitle = t(`onboarding.${currentStep.id}.title`);
+  const stepDescription = t(`onboarding.${currentStep.id}.description`);
+  const stepButton = t(`onboarding.${currentStep.id}.button`);
+  const stepSkip = currentStep.skipText ? t(`onboarding.${currentStep.id}.skip`) : null;
 
   // --- Step-specific content renderers ---
 
@@ -302,20 +308,20 @@ export default function OnboardingPage() {
         />
       </div>
       <p className="text-center text-xs text-muted-foreground">
-        Tap to add a photo <span className="text-red-500">*</span>
+        {t('onboarding.tapToAddPhoto')} <span className="text-red-500">*</span>
       </p>
 
       {/* Display name input */}
       <div>
         <label htmlFor="displayName" className="mb-1 block text-sm font-medium text-foreground">
-          Display name
+          {t('onboarding.displayName')}
         </label>
         <input
           id="displayName"
           type="text"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
-          placeholder="Your name"
+          placeholder={t('onboarding.yourName')}
           maxLength={50}
           className="w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
@@ -323,10 +329,10 @@ export default function OnboardingPage() {
     </div>
   );
 
-  const roleOptions: { value: UserRole; label: string; desc: string }[] = [
-    { value: 'rider', label: 'I want to ride', desc: 'Find rides to festivals and events' },
-    { value: 'driver', label: 'I want to drive', desc: 'Offer rides and share your journey' },
-    { value: 'both', label: 'Both', desc: 'Find and offer rides' },
+  const roleOptions: { value: UserRole; labelKey: string; descKey: string }[] = [
+    { value: 'rider', labelKey: 'onboarding.roleRider', descKey: 'onboarding.roleRiderDesc' },
+    { value: 'driver', labelKey: 'onboarding.roleDriver', descKey: 'onboarding.roleDriverDesc' },
+    { value: 'both', labelKey: 'onboarding.roleBoth', descKey: 'onboarding.roleBothDesc' },
   ];
 
   const renderRoleStep = () => (
@@ -342,8 +348,8 @@ export default function OnboardingPage() {
               : 'border-border hover:border-primary/40'
           }`}
         >
-          <div className="font-semibold text-foreground">{option.label}</div>
-          <div className="text-sm text-muted-foreground">{option.desc}</div>
+          <div className="font-semibold text-foreground">{t(option.labelKey)}</div>
+          <div className="text-sm text-muted-foreground">{t(option.descKey)}</div>
         </button>
       ))}
     </div>
@@ -353,13 +359,13 @@ export default function OnboardingPage() {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label htmlFor="vMake" className="mb-1 block text-xs font-medium text-foreground">Make</label>
+          <label htmlFor="vMake" className="mb-1 block text-xs font-medium text-foreground">{t('onboarding.vehicleMake')}</label>
           <input id="vMake" type="text" value={vehicleMake} onChange={(e) => setVehicleMake(e.target.value)}
             placeholder="Toyota" maxLength={50}
             className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" />
         </div>
         <div>
-          <label htmlFor="vModel" className="mb-1 block text-xs font-medium text-foreground">Model</label>
+          <label htmlFor="vModel" className="mb-1 block text-xs font-medium text-foreground">{t('onboarding.vehicleModel')}</label>
           <input id="vModel" type="text" value={vehicleModel} onChange={(e) => setVehicleModel(e.target.value)}
             placeholder="Corolla" maxLength={50}
             className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" />
@@ -367,13 +373,13 @@ export default function OnboardingPage() {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label htmlFor="vColor" className="mb-1 block text-xs font-medium text-foreground">Color</label>
+          <label htmlFor="vColor" className="mb-1 block text-xs font-medium text-foreground">{t('onboarding.vehicleColor')}</label>
           <input id="vColor" type="text" value={vehicleColor} onChange={(e) => setVehicleColor(e.target.value)}
             placeholder="Silver" maxLength={30}
             className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" />
         </div>
         <div>
-          <label htmlFor="vPlate" className="mb-1 block text-xs font-medium text-foreground">License plate</label>
+          <label htmlFor="vPlate" className="mb-1 block text-xs font-medium text-foreground">{t('onboarding.vehiclePlate')}</label>
           <input id="vPlate" type="text" value={vehiclePlate} onChange={(e) => setVehiclePlate(e.target.value)}
             placeholder="ABC-123" maxLength={20}
             className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" />
@@ -390,7 +396,7 @@ export default function OnboardingPage() {
           <circle cx="9" cy="9" r="2" />
           <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
         </svg>
-        {vehiclePhotoFile ? vehiclePhotoFile.name : 'Add a photo (optional)'}
+        {vehiclePhotoFile ? vehiclePhotoFile.name : t('onboarding.vehiclePhotoOptional')}
       </button>
       <input
         ref={vehicleFileInputRef}
@@ -412,11 +418,11 @@ export default function OnboardingPage() {
         />
 
         <h1 className="mb-3 text-3xl font-bold text-foreground">
-          {currentStep.title}
+          {stepTitle}
         </h1>
 
         <p className="mb-8 text-base leading-relaxed text-muted-foreground">
-          {currentStep.description}
+          {stepDescription}
         </p>
 
         {/* Step-specific content */}
@@ -435,17 +441,17 @@ export default function OnboardingPage() {
           disabled={loading}
           className="mt-8 inline-block min-w-48 rounded-xl bg-primary px-12 py-4 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
         >
-          {loading ? 'Saving...' : currentStep.buttonText}
+          {loading ? t('onboarding.saving') : stepButton}
         </button>
 
         {/* Skip option */}
-        {currentStep.skipText && (
+        {stepSkip && (
           <button
             onClick={() => handleSkip(currentStep)}
             disabled={loading}
             className="mt-4 block w-full p-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            {currentStep.skipText}
+            {stepSkip}
           </button>
         )}
 
