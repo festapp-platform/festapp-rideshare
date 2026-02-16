@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import {
   format,
   addMonths,
@@ -132,6 +132,39 @@ export function DateTimePicker({
 
   const canGoPrev = !isBefore(endOfMonth(subMonths(viewMonth, 1)), today);
 
+  // Check if selected date is today (use fresh Date() for current hour/minute)
+  const isSelectedToday = selectedDate === format(new Date(), "yyyy-MM-dd");
+
+  // Auto-advance past hour/minute when today is selected
+  useEffect(() => {
+    if (!isSelectedToday) return;
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const selH = parseInt(selectedHour, 10);
+    const selM = parseInt(selectedMinute, 10);
+
+    if (selH < currentHour) {
+      // Selected hour is past — advance to current hour and next valid minute
+      const nextMinute = MINUTES.find((m) => parseInt(m, 10) > currentMinute);
+      onHourChange(String(currentHour).padStart(2, "0"));
+      onMinuteChange(nextMinute ?? MINUTES[MINUTES.length - 1]);
+    } else if (selH === currentHour && selM <= currentMinute) {
+      // Same hour but past minute — advance to next valid minute
+      const nextMinute = MINUTES.find((m) => parseInt(m, 10) > currentMinute);
+      if (nextMinute) {
+        onMinuteChange(nextMinute);
+      } else {
+        // No valid minutes left in this hour — advance to next hour
+        const nextHour = currentHour + 1;
+        if (nextHour <= 23) {
+          onHourChange(String(nextHour).padStart(2, "0"));
+          onMinuteChange("00");
+        }
+      }
+    }
+  }, [selectedDate, selectedHour, selectedMinute, isSelectedToday, onHourChange, onMinuteChange]);
+
   return (
     <div className="space-y-4">
       {/* Calendar */}
@@ -230,11 +263,14 @@ export function DateTimePicker({
               onChange={(e) => onHourChange(e.target.value)}
               className="flex-1 rounded-xl border border-border-pastel bg-background px-4 py-3 text-center text-lg font-semibold text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
             >
-              {HOURS.map((h) => (
-                <option key={h} value={h}>
-                  {h}
-                </option>
-              ))}
+              {HOURS.map((h) => {
+                const isPastHour = isSelectedToday && parseInt(h, 10) < new Date().getHours();
+                return (
+                  <option key={h} value={h} disabled={isPastHour}>
+                    {h}
+                  </option>
+                );
+              })}
             </select>
             <span className="text-2xl font-bold text-text-secondary">:</span>
             <select
@@ -242,11 +278,17 @@ export function DateTimePicker({
               onChange={(e) => onMinuteChange(e.target.value)}
               className="flex-1 rounded-xl border border-border-pastel bg-background px-4 py-3 text-center text-lg font-semibold text-text-main focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
             >
-              {MINUTES.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
+              {MINUTES.map((m) => {
+                const now = new Date();
+                const isPastMinute = isSelectedToday
+                  && parseInt(selectedHour, 10) === now.getHours()
+                  && parseInt(m, 10) <= now.getMinutes();
+                return (
+                  <option key={m} value={m} disabled={isPastMinute}>
+                    {m}
+                  </option>
+                );
+              })}
             </select>
           </div>
         </div>

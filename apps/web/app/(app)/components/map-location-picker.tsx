@@ -43,11 +43,14 @@ export function MapLocationPicker({ onConfirm, onCancel }: MapLocationPickerProp
           return;
         }
       }
+      // No valid result — fallback to coordinate display
+      setAddress(`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
     } catch {
-      // Fallback to coordinate display
+      // Geocode failed — fallback to coordinate display
+      setAddress(`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+    } finally {
+      setIsGeocoding(false);
     }
-    setAddress(`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
-    setIsGeocoding(false);
   }, []);
 
   useEffect(() => {
