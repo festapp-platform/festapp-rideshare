@@ -227,7 +227,7 @@ Plans:
 **Plans:** 5 plans
 
 Plans:
-- [ ] 11-01-PLAN.md — Internationalization (Czech, Slovak, English) with i18n provider and translations
+- [x] 11-01-PLAN.md — Internationalization (Czech, Slovak, English) with i18n provider and translations
 - [ ] 11-02-PLAN.md — Offline handling, skeleton loading states, empty states, and error pages
 - [ ] 11-03-PLAN.md — Crash reporting (Sentry), analytics, GDPR (cookie consent + data export), force-update
 - [ ] 11-04-PLAN.md — Accessibility audit: ARIA labels, skip navigation, focus indicators, color contrast, touch targets
