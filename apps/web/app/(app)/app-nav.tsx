@@ -4,6 +4,27 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UnreadBadge } from "./components/unread-badge";
 
+const secondaryItems = [
+  {
+    name: "Community",
+    href: "/community",
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
+  {
+    name: "My Impact",
+    href: "/impact",
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      </svg>
+    ),
+  },
+];
+
 const navItems = [
   {
     name: "Search",
@@ -82,6 +103,23 @@ export function AppNav() {
               {item.name}
             </Link>
           ))}
+          {/* Secondary links */}
+          <div className="mt-auto border-t border-border-pastel pt-2">
+            {secondaryItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+                  isActive(item.href)
+                    ? "bg-primary/10 text-primary"
+                    : "text-text-secondary hover:bg-primary/5 hover:text-text-main"
+                }`}
+              >
+                {item.icon}
+                {item.name}
+              </Link>
+            ))}
+          </div>
         </div>
       </nav>
 

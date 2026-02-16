@@ -236,6 +236,7 @@ export {
   getUserBadges,
   getRouteStreaks,
   getAllBadges,
+  getCommunityImpact,
 } from './queries/gamification';
 
 // Constants - flexible rides
@@ -292,4 +293,5 @@ export type {
   RouteStreakResult,
   RouteIntent,
   RouteIntentSubscription,
+  CommunityImpact,
 } from './types/database';

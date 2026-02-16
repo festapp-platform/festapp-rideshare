@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import {
   Calendar,
   MapPin,
-  Share2,
   Car,
   Clock,
   CheckCircle,
@@ -14,6 +12,7 @@ import {
 } from "lucide-react";
 import { EVENT_STATUS } from "@festapp/shared";
 import type { EventRide } from "@festapp/shared";
+import { ShareButton } from "../../components/share-button";
 
 interface EventCreator {
   id: string;
@@ -43,23 +42,11 @@ interface EventDetailProps {
 }
 
 export function EventDetail({ event, rides, currentUserId }: EventDetailProps) {
-  const [copied, setCopied] = useState(false);
   const date = parseISO(event.event_date);
   const isCreator = currentUserId === event.creator_id;
   const isPending = event.status === EVENT_STATUS.PENDING;
   const isRejected = event.status === EVENT_STATUS.REJECTED;
   const isApproved = event.status === EVENT_STATUS.APPROVED;
-
-  async function handleShare() {
-    const url = `${window.location.origin}/events/${event.id}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback: do nothing
-    }
-  }
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -87,13 +74,12 @@ export function EventDetail({ event, rides, currentUserId }: EventDetailProps) {
       <div className="rounded-2xl border border-border-pastel bg-surface p-6">
         <div className="mb-4 flex items-start justify-between">
           <h1 className="text-2xl font-bold text-text-main">{event.name}</h1>
-          <button
-            onClick={handleShare}
+          <ShareButton
+            title={event.name}
+            text={`${event.name} on ${format(date, "MMMM d, yyyy")} - Find rides to this event!`}
+            url={`/events/${event.id}`}
             className="flex items-center gap-1.5 rounded-lg border border-border-pastel px-3 py-1.5 text-sm text-text-secondary transition-colors hover:bg-primary/5"
-          >
-            <Share2 className="h-4 w-4" />
-            {copied ? "Copied!" : "Share"}
-          </button>
+          />
         </div>
 
         {event.description && (

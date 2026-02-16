@@ -1457,6 +1457,17 @@ export interface Database {
         };
         Returns: undefined;
       };
+      get_community_impact: {
+        Args: Record<string, never>;
+        Returns: {
+          total_rides: number;
+          total_users: number;
+          total_co2_saved_kg: number;
+          total_distance_km: number;
+          total_money_shared_czk: number;
+          active_drivers: number;
+        }[];
+      };
     };
     Enums: Record<string, never>;
   };
@@ -1501,3 +1512,7 @@ export type UserBadgeResult =
   Database['public']['Functions']['get_user_badges']['Returns'][number];
 export type RouteStreakResult =
   Database['public']['Functions']['get_route_streaks']['Returns'][number];
+
+// Community impact derived type
+export type CommunityImpact =
+  Database['public']['Functions']['get_community_impact']['Returns'][number];

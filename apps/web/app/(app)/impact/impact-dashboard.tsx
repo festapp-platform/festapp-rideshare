@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { getUserLevel, USER_LEVELS } from "@festapp/shared";
 import type { UserLevelKey } from "@festapp/shared";
-import { Leaf, Wallet, Car, Route, Users, Share2, Flame } from "lucide-react";
+import { Leaf, Wallet, Car, Route, Users, Flame } from "lucide-react";
+import { ShareButton } from "../components/share-button";
 
 interface ImpactStats {
   total_rides_completed: number;
@@ -67,7 +67,6 @@ export function ImpactDashboard({
   completedRides,
   ratingAvg,
 }: ImpactDashboardProps) {
-  const [copied, setCopied] = useState(false);
   const level = getUserLevel(completedRides, ratingAvg);
 
   // Find next level
@@ -93,17 +92,6 @@ export function ImpactDashboard({
 
   const earnedBadgeIds = new Set(badges.map((b) => b.badge_id));
 
-  const handleShare = async () => {
-    const text = `I've saved ${impact?.total_co2_saved_kg?.toFixed(1) ?? 0} kg CO2 by sharing rides on Festapp! Join me at ${typeof window !== "undefined" ? window.location.origin : ""}`;
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // fallback -- ignore
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* User Level */}
@@ -119,13 +107,12 @@ export function ImpactDashboard({
               {level.name}
             </p>
           </div>
-          <button
-            onClick={handleShare}
-            className="flex items-center gap-1.5 rounded-lg border border-border-pastel px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-primary/5 hover:text-primary"
-          >
-            <Share2 className="h-3.5 w-3.5" />
-            {copied ? "Copied!" : "Share Impact"}
-          </button>
+          <ShareButton
+            title="My Rideshare Impact"
+            text={`I've saved ${impact?.total_co2_saved_kg?.toFixed(1) ?? 0} kg CO2 and completed ${impact?.total_rides_completed ?? 0} shared rides on Festapp!`}
+            url="/impact"
+            label="Share Impact"
+          />
         </div>
         {nextLevel && (
           <div className="mt-3">

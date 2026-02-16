@@ -37,3 +37,8 @@ export function getAllBadges(client: SupabaseClient<Database>) {
     .order('category')
     .order('threshold', { ascending: true });
 }
+
+/** Get platform-wide community impact stats. */
+export function getCommunityImpact(client: SupabaseClient<Database>) {
+  return client.rpc('get_community_impact');
+}
