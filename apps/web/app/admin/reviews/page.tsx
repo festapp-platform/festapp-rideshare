@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getReviewsForAdmin } from "@festapp/shared";
 import { Star } from "lucide-react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "@/app/(app)/components/confirm-dialog";
 
 type AdminReview = {
   id: string;
@@ -31,6 +32,7 @@ export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<AdminReview[]>([]);
   const [filter, setFilter] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const fetchReviews = useCallback(async () => {
     setLoading(true);
@@ -71,10 +73,7 @@ export default function AdminReviewsPage() {
     fetchReviews();
   }
 
-  async function handleDelete(reviewId: string) {
-    if (!confirm("Permanently delete this review? This cannot be undone.")) {
-      return;
-    }
+  async function performDelete(reviewId: string) {
     const supabase = createClient();
     const { error } = await supabase.rpc("admin_delete_review", {
       p_review_id: reviewId,
@@ -205,7 +204,7 @@ export default function AdminReviewsPage() {
                         </button>
                       )}
                       <button
-                        onClick={() => handleDelete(review.id)}
+                        onClick={() => setDeleteTarget(review.id)}
                         className="rounded-md px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
                       >
                         Delete
@@ -218,6 +217,22 @@ export default function AdminReviewsPage() {
           </table>
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) {
+            performDelete(deleteTarget);
+            setDeleteTarget(null);
+          }
+        }}
+        title="Delete Review"
+        message="Permanently delete this review? This cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+      />
     </div>
   );
 }

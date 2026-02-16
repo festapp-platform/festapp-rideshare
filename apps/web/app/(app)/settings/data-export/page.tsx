@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 /**
  * GDPR data export page (PLAT-06).
@@ -22,7 +23,7 @@ export default function DataExportPage() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        alert("You must be logged in to export data.");
+        toast.error("You must be logged in to export data.");
         setIsExporting(false);
         return;
       }
@@ -78,7 +79,7 @@ export default function DataExportPage() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch {
-      alert("Failed to export data. Please try again.");
+      toast.error("Failed to export data. Please try again.");
     } finally {
       setIsExporting(false);
     }

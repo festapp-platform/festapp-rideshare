@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslations } from "@/lib/i18n/use-translations";
 import { SITE_URL } from "@festapp/shared";
+import { toast } from "sonner";
+import { ConfirmDialog } from "../components/confirm-dialog";
 
 /**
  * Settings page (NAV-06).
@@ -73,6 +75,7 @@ export default function SettingsPage() {
   const { t } = useTranslations();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleInviteFriends = async () => {
     const shareData = {
@@ -90,7 +93,7 @@ export default function SettingsPage() {
     }
     try {
       await navigator.clipboard.writeText(SITE_URL);
-      alert("Link copied to clipboard!");
+      toast.success("Link copied to clipboard!");
     } catch {
       // Clipboard not available
     }
@@ -102,13 +105,13 @@ export default function SettingsPage() {
       const supabase = createClient();
       const { error } = await supabase.auth.signOut();
       if (error) {
-        alert("Failed to log out. Please try again.");
+        toast.error("Failed to log out. Please try again.");
         setIsLoggingOut(false);
         return;
       }
       router.replace("/login");
     } catch {
-      alert("An unexpected error occurred.");
+      toast.error("An unexpected error occurred.");
       setIsLoggingOut(false);
     }
   };
@@ -119,7 +122,7 @@ export default function SettingsPage() {
       const supabase = createClient();
       const { error } = await supabase.functions.invoke("delete-account");
       if (error) {
-        alert("Failed to delete account. Please try again.");
+        toast.error("Failed to delete account. Please try again.");
         setIsDeleting(false);
         return;
       }
@@ -127,19 +130,13 @@ export default function SettingsPage() {
       await supabase.auth.signOut();
       router.replace("/login");
     } catch {
-      alert("An unexpected error occurred.");
+      toast.error("An unexpected error occurred.");
       setIsDeleting(false);
     }
   };
 
   const handleDeleteAccount = () => {
-    if (
-      confirm(
-        "Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently removed.",
-      )
-    ) {
-      deleteAccount();
-    }
+    setShowDeleteDialog(true);
   };
 
   return (
@@ -213,6 +210,21 @@ export default function SettingsPage() {
             onClick: () => router.push("/donate"),
           },
         ]}
+      />
+
+      <ConfirmDialog
+        open={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={() => {
+          setShowDeleteDialog(false);
+          deleteAccount();
+        }}
+        title="Delete Account"
+        message="Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently removed."
+        confirmLabel="Delete Account"
+        cancelLabel="Cancel"
+        variant="danger"
+        loading={isDeleting}
       />
     </div>
   );

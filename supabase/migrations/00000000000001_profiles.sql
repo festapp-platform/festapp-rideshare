@@ -202,7 +202,7 @@ VALUES (
   'avatars', 'avatars', true,
   2097152,  -- 2 MB
   ARRAY['image/jpeg', 'image/png', 'image/webp']
-);
+) ON CONFLICT (id) DO NOTHING;
 
 -- Vehicles bucket (5 MB limit, images only)
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -210,7 +210,7 @@ VALUES (
   'vehicles', 'vehicles', true,
   5242880,  -- 5 MB
   ARRAY['image/jpeg', 'image/png', 'image/webp']
-);
+) ON CONFLICT (id) DO NOTHING;
 
 -- Avatars bucket RLS: users upload/update/delete within their own folder
 CREATE POLICY "Users can upload their own avatar"
