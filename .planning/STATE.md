@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 10 of 11 (Web Platform & SEO)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In Progress
-Last activity: 2026-02-16 -- Completed 10-02 (SSR public pages & SEO)
+Last activity: 2026-02-16 -- Completed 10-03 (Responsive design & API rate limiting)
 
-Progress: [█████████████████████] 84%
+Progress: [██████████████████████] 86%
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Progress: [█████████████████████] 84%
 | Phase 09 P02 | 3min | 2 tasks | 5 files |
 | Phase 09 P03 | 5min | 2 tasks | 7 files |
 | Phase 09 P04 | 7min | 2 tasks | 7 files |
+| Phase 10 P03 | 5min | 2 tasks | 9 files |
 | Phase 10 P01 | 3min | 2 tasks | 7 files |
 | Phase 10 P02 | 3min | 2 tasks | 13 files |
 | Phase 10 P01 | 3min | 2 tasks | 8 files |
@@ -213,6 +214,9 @@ Recent decisions affecting current work:
 - [09-04]: Inline JSX test pattern (no hooks) for VoiceInput/IntentConfirmation due to pnpm dual-React issue with useState
 - [09-04]: Mock McpServer captures registerTool calls to verify tool definitions without real MCP transport
 - [09-04]: Extended web vitest include to app/**/__tests__/ for component-colocated tests
+- [10-03]: Sidebar w-16 on tablet (icons only), w-64 on desktop (with labels) via lg: breakpoint
+- [10-03]: Rate limiting fails open on DB errors to avoid blocking legitimate requests
+- [10-03]: Rate limit identifier: x-forwarded-for > auth header hash > "anonymous"
 - [10-01]: SW uses cache-first for statics, network-first for navigation, network-only for API/Supabase
 - [10-01]: SW explicitly excludes OneSignal URLs to avoid interference with push notification worker
 - [10-01]: Install banner dismissal persisted to localStorage; standalone mode check prevents re-showing
@@ -238,5 +242,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 10-02-PLAN.md (SSR public pages & SEO)
-Resume file: .planning/phases/10-web-platform-seo/10-02-SUMMARY.md
+Stopped at: Completed 10-03-PLAN.md (Responsive design & API rate limiting)
+Resume file: .planning/phases/10-web-platform-seo/10-03-SUMMARY.md
