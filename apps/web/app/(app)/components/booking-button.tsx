@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { useI18n } from "@/lib/i18n/provider";
 import { BOOKING_STATUS, type BookingStatus } from "@festapp/shared";
 
 interface BookingButtonProps {
@@ -24,8 +25,12 @@ export function BookingButton({
   existingBooking,
 }: BookingButtonProps) {
   const router = useRouter();
+  const { t } = useI18n();
   const [seats, setSeats] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+
+  const seatWord = (count: number) =>
+    count === 1 ? t("rideDetail.seatSingular") : t("rideDetail.seatPlural");
 
   // Driver can't book their own ride
   if (!currentUserId || currentUserId === driverId) {
@@ -38,7 +43,7 @@ export function BookingButton({
       return (
         <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-warning/10 px-6 py-3">
           <span className="text-sm font-semibold text-warning">
-            Request pending
+            {t("bookingButton.requestPending")}
           </span>
         </div>
       );
@@ -47,8 +52,10 @@ export function BookingButton({
       return (
         <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-success/10 px-6 py-3">
           <span className="text-sm font-semibold text-success">
-            Booked ({existingBooking.seats_booked}{" "}
-            {existingBooking.seats_booked === 1 ? "seat" : "seats"})
+            {t("bookingButton.booked", {
+              seats: existingBooking.seats_booked,
+              seatWord: seatWord(existingBooking.seats_booked),
+            })}
           </span>
         </div>
       );
@@ -62,7 +69,7 @@ export function BookingButton({
         disabled
         className="mt-4 w-full rounded-xl bg-gray-200 px-6 py-3 text-base font-semibold text-gray-500"
       >
-        Fully booked
+        {t("bookingButton.fullyBooked")}
       </button>
     );
   }
@@ -82,23 +89,23 @@ export function BookingButton({
       if (error) {
         const msg = error.message.toLowerCase();
         if (msg.includes("not enough seats")) {
-          toast.error("Not enough seats available");
+          toast.error(t("bookingButton.notEnoughSeats"));
         } else if (msg.includes("already booked") || msg.includes("already requested")) {
-          toast.error("You already have a booking on this ride");
+          toast.error(t("bookingButton.alreadyBooked"));
         } else if (msg.includes("driver cannot book") || msg.includes("own ride")) {
-          toast.error("You can't book your own ride");
+          toast.error(t("bookingButton.cantBookOwn"));
         } else {
-          toast.error("Booking failed. Please try again.");
+          toast.error(t("bookingButton.bookingFailed"));
         }
         return;
       }
 
       toast.success(
-        bookingMode === "instant" ? "Seat booked!" : "Request sent!"
+        bookingMode === "instant" ? t("bookingButton.seatBooked") : t("bookingButton.requestSent")
       );
       router.refresh();
     } catch {
-      toast.error("Booking failed. Please try again.");
+      toast.error(t("bookingButton.bookingFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -111,7 +118,7 @@ export function BookingButton({
       {/* Seat selector */}
       <div className="flex items-center gap-2">
         <label htmlFor="seat-count" className="text-sm text-text-secondary">
-          Seats:
+          {t("bookingButton.seats")}:
         </label>
         <input
           id="seat-count"
@@ -138,10 +145,10 @@ export function BookingButton({
         }`}
       >
         {isLoading
-          ? "Processing..."
+          ? t("bookingButton.processing")
           : isInstant
-            ? `Book ${seats} seat${seats !== 1 ? "s" : ""}`
-            : `Request ${seats} seat${seats !== 1 ? "s" : ""}`}
+            ? t("bookingButton.bookSeats", { count: seats, seatWord: seatWord(seats) })
+            : t("bookingButton.requestSeats", { count: seats, seatWord: seatWord(seats) })}
       </button>
     </div>
   );

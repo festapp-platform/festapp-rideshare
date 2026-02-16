@@ -11,6 +11,7 @@ import {
   formatPrice,
 } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/client";
+import { useI18n } from "@/lib/i18n/provider";
 import { RideStatusBadge } from "../components/ride-status-badge";
 import { CancellationDialog } from "../components/cancellation-dialog";
 import { Car, ClipboardList, Backpack } from "lucide-react";
@@ -52,14 +53,14 @@ type PassengerBookingRow = {
 type TopTab = "driver" | "passenger";
 type SubTab = "upcoming" | "past";
 
-const bookingStatusConfig: Record<string, { label: string; className: string }> = {
-  [BOOKING_STATUS.pending]: { label: "Pending", className: "bg-amber-100 text-amber-700" },
-  [BOOKING_STATUS.confirmed]: { label: "Confirmed", className: "bg-green-100 text-green-700" },
-  [BOOKING_STATUS.cancelled]: { label: "Cancelled", className: "bg-red-100 text-red-700" },
-  [BOOKING_STATUS.completed]: { label: "Completed", className: "bg-blue-100 text-blue-700" },
-};
-
 function BookingStatusBadge({ status }: { status: string }) {
+  const { t } = useI18n();
+  const bookingStatusConfig: Record<string, { label: string; className: string }> = {
+    [BOOKING_STATUS.pending]: { label: t("booking.pending"), className: "bg-amber-100 text-amber-700" },
+    [BOOKING_STATUS.confirmed]: { label: t("booking.confirmed"), className: "bg-green-100 text-green-700" },
+    [BOOKING_STATUS.cancelled]: { label: t("booking.cancelled"), className: "bg-red-100 text-red-700" },
+    [BOOKING_STATUS.completed]: { label: t("rides.complete"), className: "bg-blue-100 text-blue-700" },
+  };
   const config = bookingStatusConfig[status] ?? {
     label: status,
     className: "bg-gray-100 text-gray-600",
@@ -79,6 +80,7 @@ function BookingStatusBadge({ status }: { status: string }) {
  */
 export default function MyRidesPage() {
   const supabase = createClient();
+  const { t } = useI18n();
   const [rides, setRides] = useState<RideRow[]>([]);
   const [bookings, setBookings] = useState<PassengerBookingRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -165,7 +167,7 @@ export default function MyRidesPage() {
   if (isLoading) {
     return (
       <div>
-        <h1 className="mb-6 text-2xl font-bold text-text-main">My Rides</h1>
+        <h1 className="mb-6 text-2xl font-bold text-text-main">{t("myRides.title")}</h1>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div
@@ -178,16 +180,9 @@ export default function MyRidesPage() {
     );
   }
 
-  const driverCount =
-    subTab === "upcoming" ? upcomingDriverRides.length : pastDriverRides.length;
-  const passengerCount =
-    subTab === "upcoming"
-      ? upcomingPassengerBookings.length
-      : pastPassengerBookings.length;
-
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-text-main">My Rides</h1>
+      <h1 className="mb-6 text-2xl font-bold text-text-main">{t("myRides.title")}</h1>
 
       {/* Top-level tabs: As Driver / As Passenger */}
       <div className="mb-4 flex gap-1 rounded-xl bg-background p-1">
@@ -199,7 +194,7 @@ export default function MyRidesPage() {
               : "text-text-secondary hover:text-text-main"
           }`}
         >
-          As Driver
+          {t("myRides.asDriver")}
         </button>
         <button
           onClick={() => setTopTab("passenger")}
@@ -209,7 +204,7 @@ export default function MyRidesPage() {
               : "text-text-secondary hover:text-text-main"
           }`}
         >
-          As Passenger
+          {t("myRides.asPassenger")}
         </button>
       </div>
 
@@ -223,7 +218,7 @@ export default function MyRidesPage() {
               : "text-text-secondary hover:text-text-main"
           }`}
         >
-          Upcoming (
+          {t("myRides.upcoming")} (
           {topTab === "driver"
             ? upcomingDriverRides.length
             : upcomingPassengerBookings.length}
@@ -237,7 +232,7 @@ export default function MyRidesPage() {
               : "text-text-secondary hover:text-text-main"
           }`}
         >
-          Past (
+          {t("myRides.past")} (
           {topTab === "driver"
             ? pastDriverRides.length
             : pastPassengerBookings.length}
@@ -291,7 +286,7 @@ export default function MyRidesPage() {
   );
 }
 
-/* ─── Driver Rides List ─── */
+/* --- Driver Rides List --- */
 
 function DriverRidesList({
   rides,
@@ -300,6 +295,11 @@ function DriverRidesList({
   rides: RideRow[];
   subTab: SubTab;
 }) {
+  const { t } = useI18n();
+
+  const seatWord = (count: number) =>
+    count === 1 ? t("myRides.seatSingular") : t("myRides.seatPlural");
+
   if (rides.length === 0) {
     return (
       <div className="flex flex-col items-center rounded-2xl border border-border-pastel bg-surface p-12">
@@ -311,19 +311,19 @@ function DriverRidesList({
           )}
         </div>
         <h2 className="mb-2 text-xl font-bold text-text-main">
-          {subTab === "upcoming" ? "No upcoming rides" : "No past rides"}
+          {subTab === "upcoming" ? t("myRides.noUpcomingRides") : t("myRides.noPastRides")}
         </h2>
         <p className="mb-4 text-sm text-text-secondary">
           {subTab === "upcoming"
-            ? "Post a ride to get started!"
-            : "Your completed and cancelled rides will appear here."}
+            ? t("myRides.postRideHint")
+            : t("myRides.pastRidesHint")}
         </p>
         {subTab === "upcoming" && (
           <Link
             href="/rides/new"
             className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-surface transition-colors hover:bg-primary/90"
           >
-            Post a Ride
+            {t("myRides.postARide")}
           </Link>
         )}
       </div>
@@ -364,7 +364,7 @@ function DriverRidesList({
                 <p className="text-xs text-text-secondary">{formattedTime}</p>
                 <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-text-secondary">
                   <span>
-                    {ride.seats_available}/{ride.seats_total} seats
+                    {ride.seats_available}/{ride.seats_total} {t("myRides.seats")}
                   </span>
                   <span className="font-medium text-primary">
                     {formatPrice(ride.price_czk)}
@@ -380,7 +380,7 @@ function DriverRidesList({
   );
 }
 
-/* ─── Passenger Bookings List ─── */
+/* --- Passenger Bookings List --- */
 
 function PassengerBookingsList({
   bookings,
@@ -391,6 +391,11 @@ function PassengerBookingsList({
   subTab: SubTab;
   onCancelBooking: (bookingId: string) => void;
 }) {
+  const { t } = useI18n();
+
+  const seatWord = (count: number) =>
+    count === 1 ? t("myRides.seatSingular") : t("myRides.seatPlural");
+
   if (bookings.length === 0) {
     return (
       <div className="flex flex-col items-center rounded-2xl border border-border-pastel bg-surface p-12">
@@ -403,20 +408,20 @@ function PassengerBookingsList({
         </div>
         <h2 className="mb-2 text-xl font-bold text-text-main">
           {subTab === "upcoming"
-            ? "No upcoming rides"
-            : "No ride history yet"}
+            ? t("myRides.noUpcomingRidesPassenger")
+            : t("myRides.noRideHistory")}
         </h2>
         <p className="mb-4 text-sm text-text-secondary">
           {subTab === "upcoming"
-            ? "Search for a ride to get started!"
-            : "Your past rides as a passenger will appear here."}
+            ? t("myRides.searchHint")
+            : t("myRides.pastRidesPassengerHint")}
         </p>
         {subTab === "upcoming" && (
           <Link
             href="/search"
             className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-surface transition-colors hover:bg-primary/90"
           >
-            Search for a Ride
+            {t("myRides.searchForARide")}
           </Link>
         )}
       </div>
@@ -492,7 +497,7 @@ function PassengerBookingsList({
                   <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-text-secondary">
                     <span>
                       {booking.seats_booked}{" "}
-                      {booking.seats_booked === 1 ? "seat" : "seats"}
+                      {seatWord(booking.seats_booked)}
                     </span>
                     <span className="font-medium text-primary">
                       {formatPrice(ride.price_czk)}
@@ -508,7 +513,7 @@ function PassengerBookingsList({
                 onClick={() => onCancelBooking(booking.id)}
                 className="mt-3 w-full rounded-xl border border-red-300 px-4 py-2 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50"
               >
-                Cancel Booking
+                {t("myRides.cancelBooking")}
               </button>
             )}
           </div>

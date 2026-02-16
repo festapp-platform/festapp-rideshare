@@ -290,6 +290,88 @@ export type TranslationKeys = {
   "auth.privacyPolicy": string;
   "auth.mustAcceptTerms": string;
   "common.and": string;
+
+  // Ride detail
+  "rideDetail.tripDetails": string;
+  "rideDetail.distance": string;
+  "rideDetail.duration": string;
+  "rideDetail.price": string;
+  "rideDetail.driver": string;
+  "rideDetail.vehicle": string;
+  "rideDetail.preferences": string;
+  "rideDetail.prefSmoking": string;
+  "rideDetail.prefPets": string;
+  "rideDetail.prefMusic": string;
+  "rideDetail.prefChat": string;
+  "rideDetail.notes": string;
+  "rideDetail.booking": string;
+  "rideDetail.seatsAvailable": string;
+  "rideDetail.instant": string;
+  "rideDetail.request": string;
+  "rideDetail.cancelBooking": string;
+  "rideDetail.manageBookings": string;
+  "rideDetail.pendingRequest": string;
+  "rideDetail.pendingRequests": string;
+  "rideDetail.liveLocation": string;
+  "rideDetail.shareMyLocation": string;
+  "rideDetail.starting": string;
+  "rideDetail.stopSharing": string;
+  "rideDetail.waitingForDriver": string;
+  "rideDetail.completeRide": string;
+  "rideDetail.completing": string;
+  "rideDetail.confirmComplete": string;
+  "rideDetail.cannotCompleteBefore": string;
+  "rideDetail.editRide": string;
+  "rideDetail.cancelRide": string;
+  "rideDetail.rateThisRide": string;
+  "rideDetail.rideCompleted": string;
+  "rideDetail.opening": string;
+  "rideDetail.message": string;
+  "rideDetail.couldNotOpenConversation": string;
+  "rideDetail.failedToStartRide": string;
+  "rideDetail.failedToCompleteRide": string;
+  "rideDetail.onlyDriverCanComplete": string;
+  "rideDetail.cannotCompleteStatus": string;
+  "rideDetail.rideCompletedToast": string;
+  "rideDetail.locationSharingStarted": string;
+  "rideDetail.seatSingular": string;
+  "rideDetail.seatPlural": string;
+
+  // My Rides
+  "myRides.title": string;
+  "myRides.asDriver": string;
+  "myRides.asPassenger": string;
+  "myRides.upcoming": string;
+  "myRides.past": string;
+  "myRides.noUpcomingRides": string;
+  "myRides.noPastRides": string;
+  "myRides.postRideHint": string;
+  "myRides.pastRidesHint": string;
+  "myRides.postARide": string;
+  "myRides.noUpcomingRidesPassenger": string;
+  "myRides.noRideHistory": string;
+  "myRides.searchHint": string;
+  "myRides.pastRidesPassengerHint": string;
+  "myRides.searchForARide": string;
+  "myRides.cancelBooking": string;
+  "myRides.seats": string;
+  "myRides.seatSingular": string;
+  "myRides.seatPlural": string;
+
+  // Booking button
+  "bookingButton.requestPending": string;
+  "bookingButton.booked": string;
+  "bookingButton.fullyBooked": string;
+  "bookingButton.seats": string;
+  "bookingButton.bookSeats": string;
+  "bookingButton.requestSeats": string;
+  "bookingButton.processing": string;
+  "bookingButton.seatBooked": string;
+  "bookingButton.requestSent": string;
+  "bookingButton.notEnoughSeats": string;
+  "bookingButton.alreadyBooked": string;
+  "bookingButton.cantBookOwn": string;
+  "bookingButton.bookingFailed": string;
 };
 
 const cs: TranslationKeys = {
@@ -575,6 +657,88 @@ const cs: TranslationKeys = {
   "auth.privacyPolicy": "Zásadami ochrany osobních údajů",
   "auth.mustAcceptTerms": "Musíte souhlasit s obchodními podmínkami a zásadami ochrany osobních údajů",
   "common.and": "a",
+
+  // Ride detail
+  "rideDetail.tripDetails": "Detaily cesty",
+  "rideDetail.distance": "Vzdálenost",
+  "rideDetail.duration": "Doba jízdy",
+  "rideDetail.price": "Cena",
+  "rideDetail.driver": "Řidič",
+  "rideDetail.vehicle": "Vozidlo",
+  "rideDetail.preferences": "Preference",
+  "rideDetail.prefSmoking": "Kouření povoleno",
+  "rideDetail.prefPets": "Zvířata vítána",
+  "rideDetail.prefMusic": "Hudba zapnutá",
+  "rideDetail.prefChat": "Povídání",
+  "rideDetail.notes": "Poznámky",
+  "rideDetail.booking": "Rezervace",
+  "rideDetail.seatsAvailable": "{available} z {total} {seats} volných",
+  "rideDetail.instant": "Okamžitá",
+  "rideDetail.request": "Na žádost",
+  "rideDetail.cancelBooking": "Zrušit rezervaci",
+  "rideDetail.manageBookings": "Spravovat rezervace",
+  "rideDetail.pendingRequest": "čekající žádost",
+  "rideDetail.pendingRequests": "čekající žádosti",
+  "rideDetail.liveLocation": "Živá poloha",
+  "rideDetail.shareMyLocation": "Sdílet moji polohu",
+  "rideDetail.starting": "Spouštím...",
+  "rideDetail.stopSharing": "Zastavit sdílení",
+  "rideDetail.waitingForDriver": "Jízda probíhá — čekám na polohu řidiče...",
+  "rideDetail.completeRide": "Dokončit jízdu",
+  "rideDetail.completing": "Dokončuji...",
+  "rideDetail.confirmComplete": "Potvrdit dokončení?",
+  "rideDetail.cannotCompleteBefore": "Nelze dokončit před odjezdem ({date} v {time})",
+  "rideDetail.editRide": "Upravit jízdu",
+  "rideDetail.cancelRide": "Zrušit jízdu",
+  "rideDetail.rateThisRide": "Ohodnotit tuto jízdu",
+  "rideDetail.rideCompleted": "Tato jízda byla dokončena.",
+  "rideDetail.opening": "Otevírám...",
+  "rideDetail.message": "Napsat {name}",
+  "rideDetail.couldNotOpenConversation": "Nepodařilo se otevřít konverzaci",
+  "rideDetail.failedToStartRide": "Nepodařilo se spustit jízdu",
+  "rideDetail.failedToCompleteRide": "Nepodařilo se dokončit jízdu",
+  "rideDetail.onlyDriverCanComplete": "Pouze řidič může dokončit tuto jízdu",
+  "rideDetail.cannotCompleteStatus": "Tuto jízdu nelze dokončit z aktuálního stavu",
+  "rideDetail.rideCompletedToast": "Jízda dokončena!",
+  "rideDetail.locationSharingStarted": "Sdílení polohy zahájeno",
+  "rideDetail.seatSingular": "místo",
+  "rideDetail.seatPlural": "místa",
+
+  // My Rides
+  "myRides.title": "Moje jízdy",
+  "myRides.asDriver": "Jako řidič",
+  "myRides.asPassenger": "Jako cestující",
+  "myRides.upcoming": "Nadcházející",
+  "myRides.past": "Minulé",
+  "myRides.noUpcomingRides": "Žádné nadcházející jízdy",
+  "myRides.noPastRides": "Žádné minulé jízdy",
+  "myRides.postRideHint": "Nabídněte jízdu a začněte!",
+  "myRides.pastRidesHint": "Vaše dokončené a zrušené jízdy se zobrazí zde.",
+  "myRides.postARide": "Nabídnout jízdu",
+  "myRides.noUpcomingRidesPassenger": "Žádné nadcházející jízdy",
+  "myRides.noRideHistory": "Zatím žádná historie jízd",
+  "myRides.searchHint": "Vyhledejte jízdu a začněte!",
+  "myRides.pastRidesPassengerHint": "Vaše minulé jízdy jako cestující se zobrazí zde.",
+  "myRides.searchForARide": "Hledat jízdu",
+  "myRides.cancelBooking": "Zrušit rezervaci",
+  "myRides.seats": "míst",
+  "myRides.seatSingular": "místo",
+  "myRides.seatPlural": "místa",
+
+  // Booking button
+  "bookingButton.requestPending": "Žádost čeká",
+  "bookingButton.booked": "Rezervováno ({seats} {seatWord})",
+  "bookingButton.fullyBooked": "Plně obsazeno",
+  "bookingButton.seats": "Místa",
+  "bookingButton.bookSeats": "Rezervovat {count} {seatWord}",
+  "bookingButton.requestSeats": "Požádat o {count} {seatWord}",
+  "bookingButton.processing": "Zpracovávám...",
+  "bookingButton.seatBooked": "Místo rezervováno!",
+  "bookingButton.requestSent": "Žádost odeslána!",
+  "bookingButton.notEnoughSeats": "Nedostatek volných míst",
+  "bookingButton.alreadyBooked": "Na této jízdě již máte rezervaci",
+  "bookingButton.cantBookOwn": "Nemůžete si rezervovat vlastní jízdu",
+  "bookingButton.bookingFailed": "Rezervace selhala. Zkuste to znovu.",
 };
 
 const sk: TranslationKeys = {
@@ -860,6 +1024,88 @@ const sk: TranslationKeys = {
   "auth.privacyPolicy": "Zásadami ochrany osobných údajov",
   "auth.mustAcceptTerms": "Musíte súhlasiť s obchodnými podmienkami a zásadami ochrany osobných údajov",
   "common.and": "a",
+
+  // Ride detail
+  "rideDetail.tripDetails": "Detaily jazdy",
+  "rideDetail.distance": "Vzdialenosť",
+  "rideDetail.duration": "Doba jazdy",
+  "rideDetail.price": "Cena",
+  "rideDetail.driver": "Vodič",
+  "rideDetail.vehicle": "Vozidlo",
+  "rideDetail.preferences": "Preferencie",
+  "rideDetail.prefSmoking": "Fajčenie povolené",
+  "rideDetail.prefPets": "Zvieratá vítané",
+  "rideDetail.prefMusic": "Hudba zapnutá",
+  "rideDetail.prefChat": "Rozprávanie",
+  "rideDetail.notes": "Poznámky",
+  "rideDetail.booking": "Rezervácia",
+  "rideDetail.seatsAvailable": "{available} z {total} {seats} voľných",
+  "rideDetail.instant": "Okamžitá",
+  "rideDetail.request": "Na žiadosť",
+  "rideDetail.cancelBooking": "Zrušiť rezerváciu",
+  "rideDetail.manageBookings": "Spravovať rezervácie",
+  "rideDetail.pendingRequest": "čakajúca žiadosť",
+  "rideDetail.pendingRequests": "čakajúce žiadosti",
+  "rideDetail.liveLocation": "Živá poloha",
+  "rideDetail.shareMyLocation": "Zdieľať moju polohu",
+  "rideDetail.starting": "Spúšťam...",
+  "rideDetail.stopSharing": "Zastaviť zdieľanie",
+  "rideDetail.waitingForDriver": "Jazda prebieha — čakám na polohu vodiča...",
+  "rideDetail.completeRide": "Dokončiť jazdu",
+  "rideDetail.completing": "Dokončujem...",
+  "rideDetail.confirmComplete": "Potvrdiť dokončenie?",
+  "rideDetail.cannotCompleteBefore": "Nemožno dokončiť pred odchodom ({date} o {time})",
+  "rideDetail.editRide": "Upraviť jazdu",
+  "rideDetail.cancelRide": "Zrušiť jazdu",
+  "rideDetail.rateThisRide": "Ohodnotiť túto jazdu",
+  "rideDetail.rideCompleted": "Táto jazda bola dokončená.",
+  "rideDetail.opening": "Otváram...",
+  "rideDetail.message": "Napísať {name}",
+  "rideDetail.couldNotOpenConversation": "Nepodarilo sa otvoriť konverzáciu",
+  "rideDetail.failedToStartRide": "Nepodarilo sa spustiť jazdu",
+  "rideDetail.failedToCompleteRide": "Nepodarilo sa dokončiť jazdu",
+  "rideDetail.onlyDriverCanComplete": "Iba vodič môže dokončiť túto jazdu",
+  "rideDetail.cannotCompleteStatus": "Túto jazdu nemožno dokončiť z aktuálneho stavu",
+  "rideDetail.rideCompletedToast": "Jazda dokončená!",
+  "rideDetail.locationSharingStarted": "Zdieľanie polohy spustené",
+  "rideDetail.seatSingular": "miesto",
+  "rideDetail.seatPlural": "miesta",
+
+  // My Rides
+  "myRides.title": "Moje jazdy",
+  "myRides.asDriver": "Ako vodič",
+  "myRides.asPassenger": "Ako cestujúci",
+  "myRides.upcoming": "Nadchádzajúce",
+  "myRides.past": "Minulé",
+  "myRides.noUpcomingRides": "Žiadne nadchádzajúce jazdy",
+  "myRides.noPastRides": "Žiadne minulé jazdy",
+  "myRides.postRideHint": "Ponúknite jazdu a začnite!",
+  "myRides.pastRidesHint": "Vaše dokončené a zrušené jazdy sa zobrazia tu.",
+  "myRides.postARide": "Ponúknuť jazdu",
+  "myRides.noUpcomingRidesPassenger": "Žiadne nadchádzajúce jazdy",
+  "myRides.noRideHistory": "Zatiaľ žiadna história jázd",
+  "myRides.searchHint": "Vyhľadajte jazdu a začnite!",
+  "myRides.pastRidesPassengerHint": "Vaše minulé jazdy ako cestujúci sa zobrazia tu.",
+  "myRides.searchForARide": "Hľadať jazdu",
+  "myRides.cancelBooking": "Zrušiť rezerváciu",
+  "myRides.seats": "miest",
+  "myRides.seatSingular": "miesto",
+  "myRides.seatPlural": "miesta",
+
+  // Booking button
+  "bookingButton.requestPending": "Žiadosť čaká",
+  "bookingButton.booked": "Rezervované ({seats} {seatWord})",
+  "bookingButton.fullyBooked": "Plne obsadené",
+  "bookingButton.seats": "Miesta",
+  "bookingButton.bookSeats": "Rezervovať {count} {seatWord}",
+  "bookingButton.requestSeats": "Požiadať o {count} {seatWord}",
+  "bookingButton.processing": "Spracovávam...",
+  "bookingButton.seatBooked": "Miesto rezervované!",
+  "bookingButton.requestSent": "Žiadosť odoslaná!",
+  "bookingButton.notEnoughSeats": "Nedostatok voľných miest",
+  "bookingButton.alreadyBooked": "Na tejto jazde už máte rezerváciu",
+  "bookingButton.cantBookOwn": "Nemôžete si rezervovať vlastnú jazdu",
+  "bookingButton.bookingFailed": "Rezervácia zlyhala. Skúste to znova.",
 };
 
 const en: TranslationKeys = {
@@ -1145,6 +1391,88 @@ const en: TranslationKeys = {
   "auth.privacyPolicy": "Privacy Policy",
   "auth.mustAcceptTerms": "You must accept the Terms of Service and Privacy Policy",
   "common.and": "and",
+
+  // Ride detail
+  "rideDetail.tripDetails": "Trip Details",
+  "rideDetail.distance": "Distance",
+  "rideDetail.duration": "Duration",
+  "rideDetail.price": "Price",
+  "rideDetail.driver": "Driver",
+  "rideDetail.vehicle": "Vehicle",
+  "rideDetail.preferences": "Preferences",
+  "rideDetail.prefSmoking": "Smoking allowed",
+  "rideDetail.prefPets": "Pets welcome",
+  "rideDetail.prefMusic": "Music on",
+  "rideDetail.prefChat": "Chatty",
+  "rideDetail.notes": "Notes",
+  "rideDetail.booking": "Booking",
+  "rideDetail.seatsAvailable": "{available} of {total} {seats} available",
+  "rideDetail.instant": "Instant",
+  "rideDetail.request": "Request",
+  "rideDetail.cancelBooking": "Cancel Booking",
+  "rideDetail.manageBookings": "Manage Bookings",
+  "rideDetail.pendingRequest": "pending request",
+  "rideDetail.pendingRequests": "pending requests",
+  "rideDetail.liveLocation": "Live Location",
+  "rideDetail.shareMyLocation": "Share My Location",
+  "rideDetail.starting": "Starting...",
+  "rideDetail.stopSharing": "Stop Sharing",
+  "rideDetail.waitingForDriver": "Ride is in progress -- waiting for driver's location...",
+  "rideDetail.completeRide": "Complete Ride",
+  "rideDetail.completing": "Completing...",
+  "rideDetail.confirmComplete": "Confirm Complete?",
+  "rideDetail.cannotCompleteBefore": "Cannot complete before departure ({date} at {time})",
+  "rideDetail.editRide": "Edit Ride",
+  "rideDetail.cancelRide": "Cancel Ride",
+  "rideDetail.rateThisRide": "Rate this ride",
+  "rideDetail.rideCompleted": "This ride has been completed.",
+  "rideDetail.opening": "Opening...",
+  "rideDetail.message": "Message {name}",
+  "rideDetail.couldNotOpenConversation": "Could not open conversation",
+  "rideDetail.failedToStartRide": "Failed to start ride",
+  "rideDetail.failedToCompleteRide": "Failed to complete ride",
+  "rideDetail.onlyDriverCanComplete": "Only the ride driver can complete this ride",
+  "rideDetail.cannotCompleteStatus": "This ride cannot be completed from its current status",
+  "rideDetail.rideCompletedToast": "Ride completed!",
+  "rideDetail.locationSharingStarted": "Location sharing started",
+  "rideDetail.seatSingular": "seat",
+  "rideDetail.seatPlural": "seats",
+
+  // My Rides
+  "myRides.title": "My Rides",
+  "myRides.asDriver": "As Driver",
+  "myRides.asPassenger": "As Passenger",
+  "myRides.upcoming": "Upcoming",
+  "myRides.past": "Past",
+  "myRides.noUpcomingRides": "No upcoming rides",
+  "myRides.noPastRides": "No past rides",
+  "myRides.postRideHint": "Post a ride to get started!",
+  "myRides.pastRidesHint": "Your completed and cancelled rides will appear here.",
+  "myRides.postARide": "Post a Ride",
+  "myRides.noUpcomingRidesPassenger": "No upcoming rides",
+  "myRides.noRideHistory": "No ride history yet",
+  "myRides.searchHint": "Search for a ride to get started!",
+  "myRides.pastRidesPassengerHint": "Your past rides as a passenger will appear here.",
+  "myRides.searchForARide": "Search for a Ride",
+  "myRides.cancelBooking": "Cancel Booking",
+  "myRides.seats": "seats",
+  "myRides.seatSingular": "seat",
+  "myRides.seatPlural": "seats",
+
+  // Booking button
+  "bookingButton.requestPending": "Request pending",
+  "bookingButton.booked": "Booked ({seats} {seatWord})",
+  "bookingButton.fullyBooked": "Fully booked",
+  "bookingButton.seats": "Seats",
+  "bookingButton.bookSeats": "Book {count} {seatWord}",
+  "bookingButton.requestSeats": "Request {count} {seatWord}",
+  "bookingButton.processing": "Processing...",
+  "bookingButton.seatBooked": "Seat booked!",
+  "bookingButton.requestSent": "Request sent!",
+  "bookingButton.notEnoughSeats": "Not enough seats available",
+  "bookingButton.alreadyBooked": "You already have a booking on this ride",
+  "bookingButton.cantBookOwn": "You can't book your own ride",
+  "bookingButton.bookingFailed": "Booking failed. Please try again.",
 };
 
 export const translations: Record<SupportedLocale, TranslationKeys> = {

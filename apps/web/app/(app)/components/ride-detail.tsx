@@ -7,6 +7,7 @@ import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 import { RIDE_STATUS, type BookingStatus, formatPrice } from "@festapp/shared";
 import { createClient } from "@/lib/supabase/client";
+import { useI18n } from "@/lib/i18n/provider";
 import { useLiveLocation } from "@/app/(app)/hooks/use-live-location";
 import { RouteMap } from "./route-map";
 import { LiveLocationMap } from "./live-location-map";
@@ -106,20 +107,6 @@ function formatDistance(meters: number): string {
   return `${(meters / 1000).toFixed(1)} km`;
 }
 
-const preferenceIconMap: Record<string, React.ReactNode> = {
-  smoking: <Cigarette className="h-4 w-4" />,
-  pets: <PawPrint className="h-4 w-4" />,
-  music: <Music className="h-4 w-4" />,
-  chat: <MessageCircle className="h-4 w-4" />,
-};
-
-const preferenceIcons: { key: string; label: string; icon: React.ReactNode }[] = [
-  { key: "smoking", label: "Smoking allowed", icon: preferenceIconMap.smoking },
-  { key: "pets", label: "Pets welcome", icon: preferenceIconMap.pets },
-  { key: "music", label: "Music on", icon: preferenceIconMap.music },
-  { key: "chat", label: "Chatty", icon: preferenceIconMap.chat },
-];
-
 /** Button that creates/opens a conversation from a ride detail page (CHAT-04). */
 function MessageRideButton({
   bookingId,
@@ -130,6 +117,7 @@ function MessageRideButton({
 }) {
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useI18n();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = useCallback(async () => {
@@ -140,16 +128,16 @@ function MessageRideButton({
         { p_booking_id: bookingId },
       );
       if (error) {
-        toast.error("Could not open conversation");
+        toast.error(t("rideDetail.couldNotOpenConversation"));
         return;
       }
       router.push(`/messages/${conversationId}`);
     } catch {
-      toast.error("Could not open conversation");
+      toast.error(t("rideDetail.couldNotOpenConversation"));
     } finally {
       setIsLoading(false);
     }
-  }, [bookingId, router, supabase]);
+  }, [bookingId, router, supabase, t]);
 
   return (
     <button
@@ -170,7 +158,7 @@ function MessageRideButton({
           d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
         />
       </svg>
-      {isLoading ? "Opening..." : `Message ${otherPartyName}`}
+      {isLoading ? t("rideDetail.opening") : t("rideDetail.message", { name: otherPartyName })}
     </button>
   );
 }
@@ -196,6 +184,7 @@ export function RideDetail({
 }: RideDetailProps) {
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useI18n();
   const [cancelDialogType, setCancelDialogType] = useState<"booking" | "ride" | null>(null);
   const [cancelDialogId, setCancelDialogId] = useState<string>("");
   const [completeConfirm, setCompleteConfirm] = useState(false);
@@ -212,6 +201,17 @@ export function RideDetail({
   const profile = ride.profiles;
   const vehicle = ride.vehicles;
   const isPastDeparture = new Date() > departureDate;
+
+  const seatWord = (count: number) =>
+    count === 1 ? t("rideDetail.seatSingular") : t("rideDetail.seatPlural");
+
+  // Preference icons with translated labels
+  const preferenceIcons: { key: string; label: string; icon: React.ReactNode }[] = [
+    { key: "smoking", label: t("rideDetail.prefSmoking"), icon: <Cigarette className="h-4 w-4" /> },
+    { key: "pets", label: t("rideDetail.prefPets"), icon: <PawPrint className="h-4 w-4" /> },
+    { key: "music", label: t("rideDetail.prefMusic"), icon: <Music className="h-4 w-4" /> },
+    { key: "chat", label: t("rideDetail.prefChat"), icon: <MessageCircle className="h-4 w-4" /> },
+  ];
 
   // Passenger auto-enables live location when ride is in_progress and they have a confirmed booking
   const passengerAutoEnabled =
@@ -292,14 +292,14 @@ export function RideDetail({
         p_driver_id: currentUserId!,
       });
       if (error) {
-        toast.error("Failed to start ride");
+        toast.error(t("rideDetail.failedToStartRide"));
         return;
       }
       setLocalRideStatus("in_progress");
       setLiveLocationEnabled(true);
-      toast.success("Location sharing started");
+      toast.success(t("rideDetail.locationSharingStarted"));
     } catch {
-      toast.error("Failed to start ride");
+      toast.error(t("rideDetail.failedToStartRide"));
     } finally {
       setIsStartingRide(false);
     }
@@ -319,25 +319,27 @@ export function RideDetail({
       });
       if (error) {
         if (error.message.includes("Only the driver")) {
-          toast.error("Only the ride driver can complete this ride");
+          toast.error(t("rideDetail.onlyDriverCanComplete"));
         } else if (error.message.includes("cannot be completed")) {
-          toast.error("This ride cannot be completed from its current status");
+          toast.error(t("rideDetail.cannotCompleteStatus"));
         } else {
-          toast.error("Failed to complete ride");
+          toast.error(t("rideDetail.failedToCompleteRide"));
         }
         setCompleteConfirm(false);
         return;
       }
       stopSharing();
-      toast.success("Ride completed!");
+      toast.success(t("rideDetail.rideCompletedToast"));
       router.push(`/rides/${ride.id}?justCompleted=true`);
     } catch {
-      toast.error("Failed to complete ride");
+      toast.error(t("rideDetail.failedToCompleteRide"));
       setCompleteConfirm(false);
     } finally {
       setIsCompleting(false);
     }
   }
+
+  const pendingCount = bookings.filter((b) => b.status === "pending").length;
 
   return (
     <div className="space-y-6">
@@ -371,7 +373,7 @@ export function RideDetail({
       {/* Completed banner */}
       {isCompleted && (
         <div className="rounded-xl bg-success/10 p-4 text-sm font-medium text-success">
-          This ride has been completed.
+          {t("rideDetail.rideCompleted")}
         </div>
       )}
 
@@ -398,12 +400,12 @@ export function RideDetail({
       {/* Trip info */}
       <section className="rounded-2xl border border-border-pastel bg-surface p-5">
         <h2 className="mb-3 text-base font-semibold text-text-main">
-          Trip Details
+          {t("rideDetail.tripDetails")}
         </h2>
         <div className="flex flex-wrap gap-4 text-sm">
           {ride.distance_meters && (
             <div className="rounded-lg bg-primary/5 px-3 py-1.5">
-              <span className="text-text-secondary">Distance: </span>
+              <span className="text-text-secondary">{t("rideDetail.distance")}: </span>
               <span className="font-medium text-text-main">
                 {formatDistance(ride.distance_meters)}
               </span>
@@ -411,7 +413,7 @@ export function RideDetail({
           )}
           {ride.duration_seconds && (
             <div className="rounded-lg bg-primary/5 px-3 py-1.5">
-              <span className="text-text-secondary">Duration: </span>
+              <span className="text-text-secondary">{t("rideDetail.duration")}: </span>
               <span className="font-medium text-text-main">
                 {formatDuration(ride.duration_seconds)}
               </span>
@@ -423,7 +425,7 @@ export function RideDetail({
       {/* Price */}
       <section className="rounded-2xl border border-border-pastel bg-surface p-5">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-text-main">Price</h2>
+          <h2 className="text-base font-semibold text-text-main">{t("rideDetail.price")}</h2>
           <span className="text-2xl font-bold text-primary">
             {formatPrice(ride.price_czk)}
           </span>
@@ -434,7 +436,7 @@ export function RideDetail({
       {profile && (
         <section className="rounded-2xl border border-border-pastel bg-surface p-5">
           <h2 className="mb-3 text-base font-semibold text-text-main">
-            Driver
+            {t("rideDetail.driver")}
           </h2>
           <Link
             href={`/profile/${ride.driver_id}`}
@@ -484,7 +486,7 @@ export function RideDetail({
       {vehicle && (
         <section className="rounded-2xl border border-border-pastel bg-surface p-5">
           <h2 className="mb-3 text-base font-semibold text-text-main">
-            Vehicle
+            {t("rideDetail.vehicle")}
           </h2>
           <div className="flex items-center gap-4">
             {vehicle.photo_url ? (
@@ -515,7 +517,7 @@ export function RideDetail({
         Object.keys(ride.preferences).length > 0 && (
           <section className="rounded-2xl border border-border-pastel bg-surface p-5">
             <h2 className="mb-3 text-base font-semibold text-text-main">
-              Preferences
+              {t("rideDetail.preferences")}
             </h2>
             <div className="flex flex-wrap gap-3">
               {preferenceIcons.map(({ key, label, icon }) => {
@@ -543,7 +545,7 @@ export function RideDetail({
       {ride.notes && (
         <section className="rounded-2xl border border-border-pastel bg-surface p-5">
           <h2 className="mb-2 text-base font-semibold text-text-main">
-            Notes
+            {t("rideDetail.notes")}
           </h2>
           <p className="whitespace-pre-wrap text-sm text-text-secondary">
             {ride.notes}
@@ -556,11 +558,14 @@ export function RideDetail({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-base font-semibold text-text-main">
-              Booking
+              {t("rideDetail.booking")}
             </h2>
             <p className="mt-1 text-sm text-text-secondary">
-              {ride.seats_available} of {ride.seats_total}{" "}
-              {ride.seats_available === 1 ? "seat" : "seats"} available
+              {t("rideDetail.seatsAvailable", {
+                available: ride.seats_available,
+                total: ride.seats_total,
+                seats: seatWord(ride.seats_available),
+              })}
             </p>
           </div>
           <span
@@ -570,7 +575,7 @@ export function RideDetail({
                 : "bg-warning/15 text-warning"
             }`}
           >
-            {ride.booking_mode === "instant" ? "Instant" : "Request"}
+            {ride.booking_mode === "instant" ? t("rideDetail.instant") : t("rideDetail.request")}
           </span>
         </div>
         {!isOwner && ride.status === RIDE_STATUS.upcoming && (
@@ -595,7 +600,7 @@ export function RideDetail({
               }}
               className="mt-3 w-full rounded-xl border border-red-300 px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
             >
-              Cancel Booking
+              {t("rideDetail.cancelBooking")}
             </button>
           )}
       </section>
@@ -650,15 +655,14 @@ export function RideDetail({
           >
             <div className="flex items-center gap-2">
               <span className="font-semibold text-primary">
-                Manage Bookings
+                {t("rideDetail.manageBookings")}
               </span>
-              {bookings.filter((b) => b.status === "pending").length > 0 && (
+              {pendingCount > 0 && (
                 <span className="rounded-full bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning">
-                  {bookings.filter((b) => b.status === "pending").length}{" "}
-                  pending{" "}
-                  {bookings.filter((b) => b.status === "pending").length === 1
-                    ? "request"
-                    : "requests"}
+                  {pendingCount}{" "}
+                  {pendingCount === 1
+                    ? t("rideDetail.pendingRequest")
+                    : t("rideDetail.pendingRequests")}
                 </span>
               )}
             </div>
@@ -682,7 +686,7 @@ export function RideDetail({
       {canShareLocation && (
         <section className="rounded-2xl border border-border-pastel bg-surface p-5">
           <h2 className="mb-3 text-base font-semibold text-text-main">
-            Live Location
+            {t("rideDetail.liveLocation")}
           </h2>
           {!liveLocationEnabled || !isSharing ? (
             <button
@@ -708,7 +712,7 @@ export function RideDetail({
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              {isStartingRide ? "Starting..." : "Share My Location"}
+              {isStartingRide ? t("rideDetail.starting") : t("rideDetail.shareMyLocation")}
             </button>
           ) : (
             <button
@@ -718,7 +722,7 @@ export function RideDetail({
               }}
               className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-300 px-6 py-3 font-semibold text-red-600 transition-colors hover:bg-red-50"
             >
-              Stop Sharing
+              {t("rideDetail.stopSharing")}
             </button>
           )}
         </section>
@@ -750,7 +754,7 @@ export function RideDetail({
                 />
               </svg>
               <span className="font-medium">
-                Ride is in progress -- waiting for driver&apos;s location...
+                {t("rideDetail.waitingForDriver")}
               </span>
             </div>
           </section>
@@ -773,21 +777,21 @@ export function RideDetail({
               } disabled:opacity-50`}
             >
               {isCompleting
-                ? "Completing..."
+                ? t("rideDetail.completing")
                 : completeConfirm
-                  ? "Confirm Complete?"
-                  : "Complete Ride"}
+                  ? t("rideDetail.confirmComplete")
+                  : t("rideDetail.completeRide")}
             </button>
           ) : (
             isOwner &&
             !isPastDeparture && (
               <div
                 className="w-full rounded-xl border border-gray-300 px-6 py-3 text-center font-semibold text-gray-400 cursor-not-allowed"
-                title="Available after departure time"
+                title={t("rideDetail.cannotCompleteBefore", { date: formattedDate, time: formattedTime })}
               >
-                Complete Ride
+                {t("rideDetail.completeRide")}
                 <span className="block text-xs font-normal mt-0.5">
-                  Cannot complete before departure ({formattedDate} at {formattedTime})
+                  {t("rideDetail.cannotCompleteBefore", { date: formattedDate, time: formattedTime })}
                 </span>
               </div>
             )
@@ -798,7 +802,7 @@ export function RideDetail({
               href={`/rides/${ride.id}/edit`}
               className="flex-1 rounded-xl border border-primary bg-surface px-6 py-3 text-center font-semibold text-primary transition-colors hover:bg-primary/5"
             >
-              Edit Ride
+              {t("rideDetail.editRide")}
             </Link>
             <button
               onClick={() => {
@@ -807,7 +811,7 @@ export function RideDetail({
               }}
               className="flex-1 rounded-xl border border-red-300 px-6 py-3 font-semibold text-red-600 transition-colors hover:bg-red-50"
             >
-              Cancel Ride
+              {t("rideDetail.cancelRide")}
             </button>
           </div>
         </div>
@@ -822,7 +826,7 @@ export function RideDetail({
             onClick={() => setShowRating(true)}
             className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-white transition-colors hover:bg-primary/90"
           >
-            Rate this ride
+            {t("rideDetail.rateThisRide")}
           </button>
         )}
 
