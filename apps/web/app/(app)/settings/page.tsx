@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslations } from "@/lib/i18n/use-translations";
+import { SITE_URL } from "@festapp/shared";
 
 /**
  * Settings page (NAV-06).
@@ -72,6 +73,28 @@ export default function SettingsPage() {
   const { t } = useTranslations();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleInviteFriends = async () => {
+    const shareData = {
+      title: "Join Festapp Rideshare",
+      text: "Find shared rides easily. Join me on Festapp Rideshare!",
+      url: SITE_URL,
+    };
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch {
+        // User cancelled or share failed -- fall through to clipboard
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(SITE_URL);
+      alert("Link copied to clipboard!");
+    } catch {
+      // Clipboard not available
+    }
+  };
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -179,7 +202,15 @@ export default function SettingsPage() {
           },
           {
             label: t("settings.legal"),
-            onClick: () => router.push("/legal"),
+            onClick: () => router.push("/terms"),
+          },
+          {
+            label: "Invite Friends",
+            onClick: handleInviteFriends,
+          },
+          {
+            label: "Support Us",
+            onClick: () => router.push("/donate"),
           },
         ]}
       />
