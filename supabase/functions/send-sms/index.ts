@@ -90,10 +90,17 @@ Deno.serve(async (req) => {
     const payload = await req.json();
     const { user, sms } = payload;
 
-    await sendSNS(
-      user.phone,
-      `Your spolujizda.online code is: ${sms.otp}`,
-    );
+    // Locale-aware SMS templates
+    const smsTemplates: Record<string, string> = {
+      cs: "Váš ověřovací kód spolujizda.online: ",
+      sk: "Váš overovací kód spolujizda.online: ",
+      en: "Your spolujizda.online verification code: ",
+    };
+
+    const locale = user?.user_metadata?.locale ?? "cs";
+    const template = smsTemplates[locale] ?? smsTemplates.cs;
+
+    await sendSNS(user.phone, `${template}${sms.otp}`);
 
     // Store OTP for E2E test retrieval (RLS-protected, service_role only)
     try {

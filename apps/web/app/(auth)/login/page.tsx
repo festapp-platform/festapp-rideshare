@@ -31,7 +31,7 @@ type OtpVerifyValues = z.infer<typeof OtpVerifySchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [activeTab, setActiveTab] = useState<"phone" | "email">("phone");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -83,6 +83,9 @@ export default function LoginPage() {
     try {
       const { error } = await supabase.auth.signInWithOtp({
         phone: values.phone,
+        options: {
+          data: { locale },
+        },
       });
       if (error) {
         setError(error.message);

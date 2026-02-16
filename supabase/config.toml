@@ -261,6 +261,12 @@ enabled = true
 uri = "https://xamctptqmpruhovhjcgm.supabase.co/functions/v1/send-sms"
 secrets = "env(AUTH_HOOK_SEND_SMS_SECRET)"
 
+# Send Email Hook — localized auth emails via AWS SES
+[auth.hook.send_email]
+enabled = true
+uri = "https://xamctptqmpruhovhjcgm.supabase.co/functions/v1/send-email"
+secrets = "env(AUTH_HOOK_SEND_EMAIL_SECRET)"
+
 # This hook runs before a new user is created and allows developers to reject the request based on the incoming user object.
 # [auth.hook.before_user_created]
 # enabled = true

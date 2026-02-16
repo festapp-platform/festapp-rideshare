@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { ConfirmDialog } from "./confirm-dialog";
 
 interface BlockButtonProps {
   userId: string;
@@ -113,34 +114,16 @@ export function BlockButton({
         {isLoading ? "..." : isBlocked ? "Unblock" : "Block"}
       </button>
 
-      {/* Confirmation dialog for blocking */}
-      {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-sm rounded-2xl bg-surface p-6 shadow-xl">
-            <h3 className="mb-2 text-lg font-bold text-text-main">
-              Block {userName || "this user"}?
-            </h3>
-            <p className="mb-6 text-sm text-text-secondary">
-              They won&apos;t be notified, but their rides and messages will become
-              invisible to you.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowConfirm(false)}
-                className="flex-1 rounded-xl border border-border-pastel px-4 py-2.5 text-sm font-semibold text-text-main transition-colors hover:bg-background"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleBlock}
-                className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700"
-              >
-                Block
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={handleBlock}
+        title={`Block ${userName || "this user"}?`}
+        message="They won't be notified, but their rides and messages will become invisible to you."
+        confirmLabel="Block"
+        cancelLabel="Cancel"
+        variant="danger"
+      />
     </>
   );
 }

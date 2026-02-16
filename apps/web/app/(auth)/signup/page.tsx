@@ -16,6 +16,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { EyeIcon, EyeSlashIcon } from "@/components/icons";
+import { DialogOverlay } from "@/components/dialog-overlay";
 import { useI18n } from "@/lib/i18n/provider";
 
 // --- Email signup schema ---
@@ -39,7 +40,7 @@ type OtpVerifyValues = z.infer<typeof OtpVerifySchema>;
 
 export default function SignupPage() {
   const router = useRouter();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [activeTab, setActiveTab] = useState<"phone" | "email">("phone");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +68,7 @@ export default function SignupPage() {
         email: values.email,
         password: values.password,
         options: {
-          data: { display_name: values.display_name },
+          data: { display_name: values.display_name, locale },
         },
       });
       if (error) {
@@ -97,6 +98,9 @@ export default function SignupPage() {
     try {
       const { error } = await supabase.auth.signInWithOtp({
         phone: values.phone,
+        options: {
+          data: { locale },
+        },
       });
       if (error) {
         setError(error.message);
@@ -170,32 +174,36 @@ export default function SignupPage() {
   return (
     <>
       {/* Full-screen email confirmation dialog */}
-      {showEmailDialog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="mx-4 w-full max-w-sm rounded-2xl bg-surface p-8 text-center shadow-xl">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-              <svg className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-              </svg>
-            </div>
-            <h3 className="mb-2 text-lg font-bold text-text-main">
-              {t("auth.checkEmailTitle")}
-            </h3>
-            <p className="mb-6 text-sm text-text-secondary">
-              {t("auth.checkEmailMessage")}
-            </p>
-            <button
-              onClick={() => {
-                setShowEmailDialog(false);
-                router.replace("/search");
-              }}
-              className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
-            >
-              {t("auth.checkEmailOk")}
-            </button>
+      <DialogOverlay
+        open={showEmailDialog}
+        onClose={() => {
+          setShowEmailDialog(false);
+          router.replace("/search");
+        }}
+      >
+        <div className="mx-4 w-full max-w-sm rounded-2xl bg-surface p-8 text-center shadow-xl">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <svg className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+            </svg>
           </div>
+          <h3 className="mb-2 text-lg font-bold text-text-main">
+            {t("auth.checkEmailTitle")}
+          </h3>
+          <p className="mb-6 text-sm text-text-secondary">
+            {t("auth.checkEmailMessage")}
+          </p>
+          <button
+            onClick={() => {
+              setShowEmailDialog(false);
+              router.replace("/search");
+            }}
+            className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
+          >
+            {t("auth.checkEmailOk")}
+          </button>
         </div>
-      )}
+      </DialogOverlay>
 
       <div>
         <h2 className="mb-6 text-xl font-semibold text-text-main">

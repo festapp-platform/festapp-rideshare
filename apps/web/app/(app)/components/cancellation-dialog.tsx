@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { DialogOverlay } from "@/components/dialog-overlay";
 
 interface CancellationDialogProps {
   type: "booking" | "ride";
@@ -26,8 +27,6 @@ export function CancellationDialog({
   const supabase = createClient();
   const [reason, setReason] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  if (!isOpen) return null;
 
   const title = type === "booking" ? "Cancel Booking" : "Cancel Ride";
 
@@ -71,7 +70,7 @@ export function CancellationDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <DialogOverlay open={isOpen} onClose={onClose}>
       <div className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-xl">
         <h2 className="mb-4 text-lg font-bold text-text-main">{title}</h2>
 
@@ -113,6 +112,6 @@ export function CancellationDialog({
           </button>
         </div>
       </div>
-    </div>
+    </DialogOverlay>
   );
 }

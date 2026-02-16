@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { REVIEW_MAX_COMMENT_LENGTH } from "@festapp/shared";
+import { DialogOverlay } from "@/components/dialog-overlay";
 
 /**
  * Post-ride rating modal with 1-5 star picker and optional comment textarea.
@@ -38,8 +39,6 @@ export function RatingModal({
   const [hoveredStar, setHoveredStar] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  if (!isOpen) return null;
 
   async function handleSubmit() {
     if (rating === 0) {
@@ -76,7 +75,7 @@ export function RatingModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <DialogOverlay open={isOpen} onClose={onClose}>
       <div className="relative w-full max-w-md rounded-2xl bg-surface p-6 shadow-xl">
         {/* Close button */}
         <button
@@ -176,6 +175,6 @@ export function RatingModal({
           {isSubmitting ? "Submitting..." : "Submit Rating"}
         </button>
       </div>
-    </div>
+    </DialogOverlay>
   );
 }

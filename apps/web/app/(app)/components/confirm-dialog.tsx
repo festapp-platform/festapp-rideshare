@@ -1,5 +1,7 @@
 "use client";
 
+import { DialogOverlay } from "@/components/dialog-overlay";
+
 interface ConfirmDialogProps {
   open: boolean;
   onClose: () => void;
@@ -27,10 +29,8 @@ export function ConfirmDialog({
   variant = "default",
   loading = false,
 }: ConfirmDialogProps) {
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <DialogOverlay open={open} onClose={onClose}>
       <div className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-xl">
         <h2 className="mb-2 text-lg font-bold text-text-main">{title}</h2>
         <p className="mb-6 text-sm text-text-secondary">{message}</p>
@@ -63,6 +63,6 @@ export function ConfirmDialog({
           </button>
         </div>
       </div>
-    </div>
+    </DialogOverlay>
   );
 }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { ReportUserSchema } from "@festapp/shared";
+import { DialogOverlay } from "@/components/dialog-overlay";
 
 interface ReportDialogProps {
   reportedUserId: string;
@@ -31,8 +32,6 @@ export function ReportDialog({
   const supabase = createClient();
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  if (!isOpen) return null;
 
   const charCount = description.length;
   const isValid = charCount >= 10 && charCount <= 2000;
@@ -75,7 +74,7 @@ export function ReportDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <DialogOverlay open={isOpen} onClose={onClose}>
       <div className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-xl">
         <h2 className="mb-4 text-lg font-bold text-text-main">
           Report {reportedUserName}
@@ -118,6 +117,6 @@ export function ReportDialog({
           </button>
         </div>
       </div>
-    </div>
+    </DialogOverlay>
   );
 }
