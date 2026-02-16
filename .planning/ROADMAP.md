@@ -36,7 +36,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 ### 🚧 v1.1 UX Improvements & Bug Fixes
 
-- [ ] **Phase 12: Critical Bug Fixes & Admin Setup** - Fix AI ride creation, chat duplicates, map picker, past time selection; configure admin accounts
+- [x] **Phase 12: Critical Bug Fixes & Admin Setup** - Fix AI ride creation, chat duplicates, map picker, past time selection; configure admin accounts (completed 2026-02-16)
 - [ ] **Phase 13: Legal, Privacy & Observability** - ToS acceptance at signup, location sharing indicator, email/SMS/push logging, audit trail
 - [ ] **Phase 14: Price Formatting, Chat Optimization & AI Tests** - Locale-aware price display, cash-friendly rounding, chat pagination/archival, AI integration tests
 - [ ] **Phase 15: i18n Coverage** - Complete translation of all 171 remaining strings, interpolation support, cookie consent i18n, language settings
@@ -266,7 +266,7 @@ Plans:
   3. User can click a location on the map picker and the selected address appears immediately without the button getting stuck in a loading state
   4. Time picker only allows selecting dates and times in the future -- past options are disabled or filtered out
   5. bujnmi@gmail.com has admin access and can reach the admin panel
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 12-01-PLAN.md -- Map picker, time picker, and chat dedup fixes (BUG-02, BUG-03, BUG-04)
@@ -282,7 +282,12 @@ Plans:
   2. When a driver shares their live location, a persistent banner is visible on all pages showing who can see the location and providing a stop button
   3. Every email, SMS, and push notification sent by the platform is logged with recipient, type, status, and timestamp in dedicated log tables
   4. All significant user and admin actions (ride CRUD, booking changes, moderation actions, profile changes) are recorded in an audit_log table
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 13-01-PLAN.md -- Database migration (audit enhanced with JSON diff + actor_id), SMS logging, auth email logging (LOG-01, LOG-02, LOG-03, ADMIN-07)
+- [ ] 13-02-PLAN.md -- ToS consent checkbox on all signup flows, Czech legal content for Terms/Privacy pages (LEGAL-01, LEGAL-02)
+- [ ] 13-03-PLAN.md -- Global location sharing banner with context, stop button, layout integration (LEGAL-03)
 
 ### Phase 14: Price Formatting, Chat Optimization & AI Tests
 **Goal**: Prices display consistently in locale-aware format across the entire app, chat scales efficiently, and AI functionality has test coverage
@@ -342,7 +347,7 @@ Plans:
 | 9. AI & Voice | v1.0 | 4/4 | ✓ Complete | 2026-02-16 |
 | 10. Web Platform & SEO | v1.0 | 4/4 | ✓ Complete | 2026-02-16 |
 | 11. Polish, Testing & Launch | v1.0 | 5/5 | ✓ Complete | 2026-02-16 |
-| 12. Critical Bug Fixes & Admin Setup | v1.1 | 0/? | Not started | - |
+| 12. Critical Bug Fixes & Admin Setup | v1.1 | Complete    | 2026-02-16 | - |
 | 13. Legal, Privacy & Observability | v1.1 | 0/? | Not started | - |
 | 14. Price Formatting, Chat Optimization & AI Tests | v1.1 | 0/? | Not started | - |
 | 15. i18n Coverage | v1.1 | 0/? | Not started | - |
