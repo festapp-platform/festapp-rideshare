@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Help & FAQ | Festapp Rideshare",
+  title: "Help & FAQ | spolujizda.online",
   description:
-    "Frequently asked questions about Festapp Rideshare. Get help with rides, bookings, safety, payments, and your account.",
+    "Frequently asked questions about spolujizda.online. Get help with rides, bookings, safety, payments, and your account.",
 };
 
 function FaqItem({
@@ -115,7 +115,7 @@ const faqData = [
       {
         question: "Is the platform free?",
         answer:
-          "Yes, Festapp Rideshare is completely free to use. We do not charge any commissions or fees. Prices shown on rides are voluntary cost-sharing suggestions for fuel and tolls.",
+          "Yes, spolujizda.online is completely free to use. We do not charge any commissions or fees. Prices shown on rides are voluntary cost-sharing suggestions for fuel and tolls.",
       },
       {
         question: "How are prices calculated?",
@@ -156,7 +156,7 @@ export default function HelpPage() {
     <div className="mx-auto max-w-3xl px-4 py-12">
       <h1 className="mb-2 text-2xl font-bold text-gray-900">Help & FAQ</h1>
       <p className="mb-8 text-gray-600">
-        Find answers to the most common questions about Festapp Rideshare.
+        Find answers to the most common questions about spolujizda.online.
       </p>
 
       {faqData.map((category) => (

@@ -109,7 +109,7 @@ export function ImpactDashboard({
           </div>
           <ShareButton
             title="My Rideshare Impact"
-            text={`I've saved ${impact?.total_co2_saved_kg?.toFixed(1) ?? 0} kg CO2 and completed ${impact?.total_rides_completed ?? 0} shared rides on Festapp!`}
+            text={`I've saved ${impact?.total_co2_saved_kg?.toFixed(1) ?? 0} kg CO2 and completed ${impact?.total_rides_completed ?? 0} shared rides on spolujizda.online!`}
             url="/impact"
             label="Share Impact"
           />

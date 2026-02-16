@@ -11,11 +11,11 @@ export default function DonatePage() {
         </div>
 
         <h1 className="mb-2 text-xl font-bold text-text-main">
-          Support Festapp Rideshare
+          Support spolujizda.online
         </h1>
 
         <p className="mb-6 text-sm leading-relaxed text-text-secondary">
-          Festapp Rideshare is completely free. If you find it useful, consider
+          spolujizda.online is completely free. If you find it useful, consider
           buying us a coffee to help keep it running.
         </p>
 

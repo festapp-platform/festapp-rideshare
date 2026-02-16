@@ -1,7 +1,7 @@
 /**
- * Claude tool definitions for AI assistant ride operations.
+ * AI tool definitions for ride operations.
  *
- * Each tool maps to a ride action. Claude uses tool_use to parse
+ * Each tool maps to a ride action. Gemini uses function calling to parse
  * natural language into structured function calls with typed parameters.
  *
  * Tool names match AI_ACTIONS keys from @festapp/shared.
@@ -10,13 +10,13 @@
 /**
  * System prompt for the rideshare AI assistant.
  *
- * Instructs Claude to:
+ * Instructs the model to:
  * - Act as a Czech/Slovak rideshare assistant
  * - Detect user language and respond in the same language
- * - Use tool_use for actionable intents
+ * - Use function calling for actionable intents
  * - Handle relative dates and Czech date expressions
  */
-export const SYSTEM_PROMPT = `You are a helpful rideshare assistant for a Czech/Slovak carpooling app called FestApp Rideshare. You help users create rides, search for rides, book seats, cancel bookings, edit rides, and complete rides.
+export const SYSTEM_PROMPT = `You are a helpful rideshare assistant for a Czech/Slovak carpooling app called spolujizda.online. You help users create rides, search for rides, book seats, cancel bookings, edit rides, and complete rides.
 
 LANGUAGE RULES:
 - Detect the user's language from their message (Czech, Slovak, or English).
@@ -36,7 +36,7 @@ BEHAVIOR RULES:
 TODAY'S DATE: {today}`;
 
 /**
- * Claude tool definitions in Anthropic tool_use format.
+ * AI tool definitions (Anthropic tool_use format, converted to Gemini at runtime).
  * Each tool corresponds to a ride operation.
  */
 export const AI_TOOL_DEFINITIONS = [

@@ -98,7 +98,7 @@ export default function DataExportPage() {
         Export Your Data
       </h1>
       <p className="mb-6 text-sm text-text-secondary">
-        Download a copy of all your personal data stored in Festapp Rideshare.
+        Download a copy of all your personal data stored in spolujizda.online.
         This includes your profile, vehicles, rides, bookings, reviews, and
         notification preferences.
       </p>

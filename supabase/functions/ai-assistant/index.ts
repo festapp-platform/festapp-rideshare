@@ -2,7 +2,7 @@
  * AI Assistant Edge Function.
  *
  * Receives natural language text (Czech, Slovak, or English) and uses
- * Claude's tool_use feature to parse it into structured ride operation
+ * Gemini's function calling to parse it into structured ride operation
  * intents. Returns confirmation-ready structured data for mutations,
  * or direct results for queries.
  *
@@ -14,7 +14,6 @@
  *   401 - Unauthorized
  *   500 - AI processing error
  */
-import Anthropic from "https://esm.sh/@anthropic-ai/sdk@0.52.0";
 import { createUserClient } from "../_shared/supabase-client.ts";
 import { AI_TOOL_DEFINITIONS, SYSTEM_PROMPT } from "../_shared/ai-tools.ts";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
@@ -145,7 +144,7 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: "Method not allowed" }, 405);
   }
 
-  // Rate limit: 20 requests per 60 seconds (expensive Claude API calls)
+  // Rate limit: 20 requests per 60 seconds
   const { limited, retryAfter } = await checkRateLimit(req, "ai-assistant", {
     maxRequests: 20,
     windowSeconds: 60,
@@ -189,47 +188,70 @@ Deno.serve(async (req) => {
 
     const { message, conversation_history = [] } = validated;
 
-    // Check for Anthropic API key
-    const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    // Check for Google AI API key
+    const apiKey = Deno.env.get("GOOGLE_AI_API_KEY");
     if (!apiKey) {
-      console.error("ANTHROPIC_API_KEY not configured");
+      console.error("GOOGLE_AI_API_KEY not configured");
       return jsonResponse({ error: "AI service not configured" }, 500);
     }
 
-    // Build messages array from conversation history
-    const messages: Array<{ role: "user" | "assistant"; content: string }> = [
-      ...conversation_history.map((entry) => ({
-        role: entry.role as "user" | "assistant",
-        content: entry.content,
-      })),
-      { role: "user" as const, content: message },
-    ];
+    // Build Gemini messages from conversation history
+    const geminiHistory = conversation_history.map((entry) => ({
+      role: entry.role === "assistant" ? "model" : "user",
+      parts: [{ text: entry.content }],
+    }));
 
     // Inject today's date into system prompt
     const today = new Date().toISOString().split("T")[0];
     const systemPrompt = SYSTEM_PROMPT.replace("{today}", today);
 
-    // Call Claude API with tool_use
-    const anthropic = new Anthropic({ apiKey });
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1024,
-      system: systemPrompt,
-      tools: AI_TOOL_DEFINITIONS,
-      messages,
+    // Convert tool definitions to Gemini format
+    const geminiTools = [{
+      functionDeclarations: AI_TOOL_DEFINITIONS.map((tool) => ({
+        name: tool.name,
+        description: tool.description,
+        parameters: tool.input_schema,
+      })),
+    }];
+
+    // Call Gemini API
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const geminiResponse = await fetch(geminiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: systemPrompt }] },
+        contents: [
+          ...geminiHistory,
+          { role: "user", parts: [{ text: message }] },
+        ],
+        tools: geminiTools,
+        tool_config: { function_calling_config: { mode: "AUTO" } },
+        generationConfig: { maxOutputTokens: 1024 },
+      }),
     });
 
-    // Parse response: look for tool_use and text content blocks
+    if (!geminiResponse.ok) {
+      const errBody = await geminiResponse.text();
+      console.error("Gemini API error:", geminiResponse.status, errBody);
+      return jsonResponse({ error: "AI service error" }, 500);
+    }
+
+    const geminiData = await geminiResponse.json();
+    const candidate = geminiData.candidates?.[0];
+    const parts = candidate?.content?.parts ?? [];
+
+    // Parse response: look for functionCall and text parts
     let toolAction: string | null = null;
     let toolParams: Record<string, unknown> = {};
     let assistantText = "";
 
-    for (const block of response.content) {
-      if (block.type === "tool_use") {
-        toolAction = block.name;
-        toolParams = (block.input as Record<string, unknown>) ?? {};
-      } else if (block.type === "text") {
-        assistantText += block.text;
+    for (const part of parts) {
+      if (part.functionCall) {
+        toolAction = part.functionCall.name;
+        toolParams = part.functionCall.args ?? {};
+      } else if (part.text) {
+        assistantText += part.text;
       }
     }
 
@@ -261,12 +283,11 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error("ai-assistant error:", error);
 
-    // Check for Anthropic-specific errors
     if (error instanceof Error) {
-      if (error.message?.includes("authentication") || error.message?.includes("api_key")) {
+      if (error.message?.includes("API key") || error.message?.includes("403")) {
         return jsonResponse({ error: "AI service authentication error" }, 500);
       }
-      if (error.message?.includes("rate_limit")) {
+      if (error.message?.includes("429") || error.message?.includes("quota")) {
         return jsonResponse({ error: "AI service rate limited. Please try again later." }, 429);
       }
     }

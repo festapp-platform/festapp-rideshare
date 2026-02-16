@@ -119,8 +119,8 @@ export function CommunityStats({
 
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <ShareButton
-              title="Festapp Rideshare Community Impact"
-              text={`Our community has saved ${co2.toFixed(1)} kg CO2 by sharing rides on Festapp!`}
+              title="spolujizda.online Community Impact"
+              text={`Our community has saved ${co2.toFixed(1)} kg CO2 by sharing rides on spolujizda.online!`}
               url="/community"
               label="Share Impact"
               className="flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-green-700"

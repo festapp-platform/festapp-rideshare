@@ -56,7 +56,7 @@ export default async function Home() {
               <Car className="h-4 w-4 text-white" />
             </div>
             <span className="text-lg font-bold text-text-main">
-              Festapp Rideshare
+              spolujizda.online
             </span>
           </Link>
           <nav className="flex items-center gap-3">
@@ -163,7 +163,7 @@ export default async function Home() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="mb-14 text-center">
             <h2 className="mb-3 text-3xl font-bold text-text-main sm:text-4xl">
-              Proc Festapp Rideshare
+              Proc spolujizda.online
             </h2>
             <p className="mx-auto max-w-md text-text-secondary">
               Postaveno komunitou, pro komunitu
@@ -315,7 +315,7 @@ export default async function Home() {
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-2 text-sm text-text-secondary">
             <Car className="h-4 w-4" />
-            <span>Festapp Rideshare</span>
+            <span>spolujizda.online</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-text-secondary">
             <Link

@@ -107,7 +107,7 @@ export default function LoginScreen() {
         {/* Logo / title */}
         <View style={{ alignItems: "center", marginBottom: 40 }}>
           <Text style={{ fontSize: 28, fontWeight: "bold", color: "#111827" }}>
-            Festapp Rideshare
+            spolujizda.online
           </Text>
           <Text style={{ fontSize: 14, color: "#6b7280", marginTop: 4 }}>
             Free community ride-sharing

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Festapp Rideshare",
+  title: "Privacy Policy | spolujizda.online",
   description:
-    "Privacy policy for Festapp Rideshare. Learn how we collect, use, and protect your data.",
+    "Privacy policy for spolujizda.online. Learn how we collect, use, and protect your data.",
 };
 
 export default function PrivacyPage() {
@@ -128,7 +128,7 @@ export default function PrivacyPage() {
 
       <h2>10. Children</h2>
       <p>
-        Festapp Rideshare is not intended for users under 18 years of age. We do
+        spolujizda.online is not intended for users under 18 years of age. We do
         not knowingly collect personal data from children. If you believe a child
         has provided us with personal data, please contact us so we can remove
         it.

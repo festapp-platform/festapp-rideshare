@@ -11,8 +11,8 @@ describe("PWA manifest.json", () => {
     fs.readFileSync(path.join(publicDir, "manifest.json"), "utf-8"),
   );
 
-  it("has name set to Festapp Rideshare", () => {
-    expect(manifest.name).toBe("Festapp Rideshare");
+  it("has name set to spolujizda.online", () => {
+    expect(manifest.name).toBe("spolujizda.online");
   });
 
   it("has display mode standalone", () => {

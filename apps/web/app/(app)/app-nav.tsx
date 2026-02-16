@@ -91,7 +91,7 @@ export function AppNav() {
       {/* Desktop/Tablet sidebar -- icons-only on md, full labels on lg */}
       <nav role="navigation" aria-label="Main navigation" className="hidden md:flex md:w-16 lg:w-64 md:flex-col md:border-r md:border-border-pastel md:bg-surface transition-all duration-200">
         <div className="px-3 lg:px-6 py-6">
-          <h1 className="hidden lg:block text-lg font-bold text-primary">Festapp Rideshare</h1>
+          <h1 className="hidden lg:block text-lg font-bold text-primary">spolujizda.online</h1>
           <h1 className="lg:hidden text-center text-lg font-bold text-primary">FR</h1>
           <p className="hidden lg:block text-xs text-text-secondary">Free community rides</p>
         </div>

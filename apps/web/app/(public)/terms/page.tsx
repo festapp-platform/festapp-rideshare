@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Festapp Rideshare",
+  title: "Terms of Service | spolujizda.online",
   description:
-    "Terms of service for Festapp Rideshare, the free community carpooling platform.",
+    "Terms of service for spolujizda.online, the free community carpooling platform.",
 };
 
 export default function TermsPage() {
@@ -14,15 +14,15 @@ export default function TermsPage() {
 
       <h2>1. Introduction</h2>
       <p>
-        Festapp Rideshare is a free carpooling platform that connects drivers
+        spolujizda.online is a free carpooling platform that connects drivers
         with empty seats to passengers heading in the same direction. By using
-        Festapp Rideshare, you agree to these Terms of Service. If you do not
+        spolujizda.online, you agree to these Terms of Service. If you do not
         agree, please do not use the platform.
       </p>
 
       <h2>2. Eligibility</h2>
       <p>
-        You must be at least 18 years old to use Festapp Rideshare. Drivers must
+        You must be at least 18 years old to use spolujizda.online. Drivers must
         hold a valid driver&apos;s license and have appropriate insurance for
         their vehicle. By creating an account, you confirm that you meet these
         requirements.
@@ -46,7 +46,7 @@ export default function TermsPage() {
 
       <h2>4. Ride Agreements</h2>
       <p>
-        Rides arranged through Festapp Rideshare are agreements between the
+        Rides arranged through spolujizda.online are agreements between the
         driver and passenger(s). The platform facilitates connections but is not
         a party to any ride agreement. We do not provide transportation services.
       </p>
@@ -54,7 +54,7 @@ export default function TermsPage() {
       <h2>5. Cost Sharing</h2>
       <p>
         Prices displayed on the platform are suggested contributions for fuel
-        cost sharing only. Festapp Rideshare is not a commercial transport
+        cost sharing only. spolujizda.online is not a commercial transport
         service. Drivers should not profit from rides &mdash; cost sharing is
         intended to cover fuel and tolls only.
       </p>
@@ -68,7 +68,7 @@ export default function TermsPage() {
 
       <h2>7. Content and Conduct</h2>
       <p>
-        The following are prohibited on Festapp Rideshare:
+        The following are prohibited on spolujizda.online:
       </p>
       <ul>
         <li>Harassment, threats, or abusive behavior toward other users.</li>
@@ -89,7 +89,7 @@ export default function TermsPage() {
 
       <h2>9. Limitation of Liability</h2>
       <p>
-        Festapp Rideshare provides the platform &ldquo;as is&rdquo; and does not
+        spolujizda.online provides the platform &ldquo;as is&rdquo; and does not
         guarantee the behavior, safety, or reliability of any user. The platform
         is not liable for any incidents, damages, or losses that occur during
         rides arranged through the service.
@@ -98,7 +98,7 @@ export default function TermsPage() {
       <h2>10. Changes to These Terms</h2>
       <p>
         We may update these Terms of Service from time to time. Continued use of
-        Festapp Rideshare after changes are published constitutes acceptance of
+        spolujizda.online after changes are published constitutes acceptance of
         the updated terms. We will notify users of significant changes through
         the platform.
       </p>

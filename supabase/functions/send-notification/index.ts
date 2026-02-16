@@ -79,8 +79,8 @@ const EMAIL_TEMPLATE_TYPES: NotificationType[] = [
   "ride_reminder",
 ];
 
-const APP_NAME = "FestApp Rideshare";
-const APP_URL = Deno.env.get("APP_URL") ?? "https://rideshare.festapp.io";
+const APP_NAME = "spolujizda.online";
+const APP_URL = Deno.env.get("APP_URL") ?? "https://spolujizda.online";
 
 // ---------------------------------------------------------------------------
 // Email template generation

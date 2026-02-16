@@ -1,4 +1,4 @@
--- Seed data for Festapp Rideshare
+-- Seed data for spolujizda.online
 --
 -- Test data is created via auth signup (profiles are auto-created by the
 -- on_auth_user_created trigger). No manual seed data needed for the profiles table.

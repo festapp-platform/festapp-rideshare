@@ -17,13 +17,13 @@ export async function generateMetadata({
   const { data: profile } = await getProfileByShortId(supabase, shortId);
 
   if (!profile) {
-    return { title: "Profile Not Found | Festapp Rideshare" };
+    return { title: "Profile Not Found | spolujizda.online" };
   }
 
   const title = `${profile.display_name} | ${SITE_NAME}`;
   const description = profile.bio
     ? profile.bio.slice(0, 160)
-    : `${profile.display_name} on Festapp Rideshare`;
+    : `${profile.display_name} on spolujizda.online`;
   const url = `${SITE_URL}/u/${shortId}`;
 
   return {

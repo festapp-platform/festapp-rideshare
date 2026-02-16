@@ -15,7 +15,7 @@ export default function PublicLayout({
       <header className="border-b bg-white px-4 py-3">
         <div className="mx-auto flex max-w-4xl items-center gap-2">
           <Link href="/search" className="flex items-center gap-2 font-semibold text-gray-900">
-            <span className="text-lg">Festapp Rideshare</span>
+            <span className="text-lg">spolujizda.online</span>
           </Link>
         </div>
       </header>
@@ -32,7 +32,7 @@ export default function PublicLayout({
           href="/signup"
           className="inline-block rounded-lg bg-gray-900 px-6 py-2.5 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
         >
-          Join Festapp Rideshare
+          Join spolujizda.online
         </Link>
       </footer>
     </div>

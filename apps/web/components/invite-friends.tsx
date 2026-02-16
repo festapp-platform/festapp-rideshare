@@ -17,8 +17,8 @@ export function InviteFriends({ variant = "button" }: InviteFriendsProps) {
 
   const handleShare = useCallback(async () => {
     const shareData = {
-      title: "Join Festapp Rideshare",
-      text: "Find shared rides easily. Join me on Festapp Rideshare!",
+      title: "Join spolujizda.online",
+      text: "Find shared rides easily. Join me on spolujizda.online!",
       url: SITE_URL,
     };
 

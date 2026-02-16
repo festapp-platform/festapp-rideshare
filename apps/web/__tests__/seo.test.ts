@@ -54,7 +54,7 @@ describe("SEO constants", () => {
     const { SITE_NAME } = await import("@festapp/shared");
     expect(SITE_NAME).toBeTruthy();
     expect(typeof SITE_NAME).toBe("string");
-    expect(SITE_NAME).toBe("Festapp Rideshare");
+    expect(SITE_NAME).toBe("spolujizda.online");
   });
 
   it("SITE_DESCRIPTION is a non-empty string", async () => {
@@ -90,7 +90,7 @@ describe("OG meta generation for rides", () => {
 
   // Replicate the metadata generation logic from the public ride page
   function generateRideMetadata(ride: typeof mockRide) {
-    const SITE_NAME = "Festapp Rideshare";
+    const SITE_NAME = "spolujizda.online";
     const SITE_URL = "https://rideshare.festapp.cz";
     const DEFAULT_OG_IMAGE = "/og-default.png";
 

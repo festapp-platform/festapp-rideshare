@@ -18,7 +18,7 @@ export async function generateMetadata({
   const { data: ride } = await getRideByShortId(supabase, shortId);
 
   if (!ride) {
-    return { title: "Ride Not Found | Festapp Rideshare" };
+    return { title: "Ride Not Found | spolujizda.online" };
   }
 
   const departureDate = parseISO(ride.departure_time);

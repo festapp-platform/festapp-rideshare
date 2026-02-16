@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * FestApp Rideshare MCP Server
+ * Festapp Rideshare MCP Server
  *
  * Exposes ride operations as tools for external AI assistants
  * (Claude Desktop, ChatGPT, etc.) via the Model Context Protocol.
@@ -22,7 +22,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   // Log to stderr -- stdout is reserved for MCP protocol messages
-  console.error("FestApp Rideshare MCP server started (stdio transport)");
+  console.error("spolujizda.online MCP server started (stdio transport)");
 }
 
 main().catch((error) => {

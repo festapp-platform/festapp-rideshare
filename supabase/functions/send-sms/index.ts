@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
     await sns.send(
       new PublishCommand({
         PhoneNumber: user.phone,
-        Message: `Your Festapp Rideshare code is: ${sms.otp}`,
+        Message: `Your spolujizda.online code is: ${sms.otp}`,
         MessageAttributes: {
           "AWS.SNS.SMS.SMSType": {
             DataType: "String",

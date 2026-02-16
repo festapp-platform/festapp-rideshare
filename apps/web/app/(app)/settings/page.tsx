@@ -79,8 +79,8 @@ export default function SettingsPage() {
 
   const handleInviteFriends = async () => {
     const shareData = {
-      title: "Join Festapp Rideshare",
-      text: "Find shared rides easily. Join me on Festapp Rideshare!",
+      title: "Join spolujizda.online",
+      text: "Find shared rides easily. Join me on spolujizda.online!",
       url: SITE_URL,
     };
     if (typeof navigator !== "undefined" && navigator.share) {

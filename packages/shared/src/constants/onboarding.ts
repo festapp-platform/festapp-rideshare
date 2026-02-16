@@ -41,7 +41,7 @@ export const PROFILE_ONBOARDING_COMPLETED_KEY = 'profile_onboarding_completed';
 export const onboardingSteps: OnboardingStep[] = [
   {
     id: 'welcome',
-    title: 'Welcome to Festapp Rideshare',
+    title: 'Welcome to spolujizda.online',
     description:
       'Share rides to festivals, save money, and meet fellow music lovers. Finding and offering rides has never been easier.',
     buttonText: 'Next',
