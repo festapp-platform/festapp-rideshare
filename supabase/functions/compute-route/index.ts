@@ -25,7 +25,7 @@ const FUEL_PRICE_CZK_PER_LITER = parseFloat(
 const AVG_FUEL_CONSUMPTION_L_PER_100KM = parseFloat(
   Deno.env.get("FUEL_CONSUMPTION") ?? "7",
 );
-const COST_SHARING_FACTOR = 0.6;
+const COST_SHARING_FACTOR = 0.327;
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -41,15 +41,21 @@ function jsonResponse(body: unknown, status: number) {
   });
 }
 
+/** Smart rounding: nearest 10 CZK for <=200, nearest 50 CZK for >200 */
+function roundPrice(price: number): number {
+  if (price > 200) return Math.round(price / 50) * 50;
+  return Math.round(price / 10) * 10;
+}
+
 function calculatePrice(distanceMeters: number) {
   const distanceKm = distanceMeters / 1000;
   const fuelCost =
     (distanceKm / 100) *
     AVG_FUEL_CONSUMPTION_L_PER_100KM *
     FUEL_PRICE_CZK_PER_LITER;
-  const suggestedPriceCzk = Math.max(20, Math.round(fuelCost * COST_SHARING_FACTOR));
-  const priceMinCzk = Math.max(20, Math.round(suggestedPriceCzk * 0.5));
-  const priceMaxCzk = Math.round(suggestedPriceCzk * 2.0);
+  const suggestedPriceCzk = Math.max(20, roundPrice(fuelCost * COST_SHARING_FACTOR));
+  const priceMinCzk = Math.max(20, roundPrice(suggestedPriceCzk * 0.5));
+  const priceMaxCzk = roundPrice(suggestedPriceCzk * 2.0);
   return { suggestedPriceCzk, priceMinCzk, priceMaxCzk };
 }
 
