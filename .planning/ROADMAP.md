@@ -206,15 +206,13 @@ Plans:
   3. Ride pages are server-rendered, indexable by search engines, and have Open Graph meta tags for rich social previews
   4. Web app is fully responsive across mobile browsers, tablets, and desktop with short URL structure
   5. Web push notifications work via OneSignal and a smart web-to-app banner prompts mobile users to install the native app
-**Plans**: TBD
+**Plans:** 4 plans
 
 Plans:
-- [ ] 10-01: PWA manifest, service worker, and offline support
-- [ ] 10-02: SSR/SSG for ride pages and SEO optimization
-- [ ] 10-03: Open Graph meta tags and social preview cards
-- [ ] 10-04: Responsive design audit and short URL routing
-- [ ] 10-05: Web push notifications and web-to-app banner
-- [ ] 10-06: API rate limiting on public endpoints
+- [ ] 10-01-PLAN.md — PWA manifest, service worker, offline support, and install prompt banner
+- [ ] 10-02-PLAN.md — Public ride/profile pages with short URLs, OG meta tags, robots.txt, and sitemap
+- [ ] 10-03-PLAN.md — Responsive design audit with tablet breakpoints, API rate limiting on Edge Functions
+- [ ] 10-04-PLAN.md — Unit tests for PWA/SEO/rate-limiting, web push finalization, feature parity check
 
 ### Phase 11: Polish, Testing & Launch
 **Goal**: The app is production-ready with multi-language support, accessibility, error monitoring, and app store assets
