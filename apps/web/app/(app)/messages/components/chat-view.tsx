@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { getMessages } from "@festapp/shared";
 import { MessageBubble } from "./message-bubble";
 import { ChatInput } from "./chat-input";
 import { TypingIndicator } from "./typing-indicator";
@@ -195,13 +196,12 @@ export function ChatView({
     setIsLoadingOlder(true);
     const oldestMessage = messages[0];
 
-    const { data: olderMessages } = await supabase
-      .from("chat_messages")
-      .select("*")
-      .eq("conversation_id", conversationId)
-      .lt("created_at", oldestMessage.created_at)
-      .order("created_at", { ascending: false })
-      .limit(50);
+    const { data: olderMessages } = await getMessages(
+      supabase,
+      conversationId,
+      50,
+      oldestMessage.created_at,
+    );
 
     if (olderMessages && olderMessages.length > 0) {
       setMessages((prev) => [...olderMessages.reverse(), ...prev]);
