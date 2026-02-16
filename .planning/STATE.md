@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 ## Current Position
 
 Phase: 12 - Critical Bug Fixes & Admin Setup
-Plan: --
-Status: Not started (roadmap created, awaiting plan-phase)
-Last activity: 2026-02-16 -- v1.1 roadmap created with 5 phases (12-16), 36 requirements mapped
+Plan: 02 of 3
+Status: In progress
+Last activity: 2026-02-16 -- Completed 12-02-PLAN.md (AI ride creation fix)
 
-Progress: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0%
+Progress: [██████████░░░░░░░░░░░░░░░░░░] 33%
 
 ## Performance Metrics
 
@@ -78,6 +78,7 @@ Progress: [░░░░░░░░░░░░░░░░░░░░░░░
 | Phase 11 P01 | 4min | 2 tasks | 9 files |
 | Phase 11 P02 | 3min | 2 tasks | 8 files |
 | Phase 11 P04 | 4min | 2 tasks | 6 files |
+| Phase 12 P02 | 2min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -240,6 +241,8 @@ Recent decisions affecting current work:
 - [11-02]: OfflineBanner placed outside main flex container for fixed overlay positioning
 - [11-02]: ErrorBoundary as class component (React requirement for getDerivedStateFromError)
 - [11-02]: Inline JSX test pattern reused for UI state component tests (pnpm dual-React workaround)
+- [Phase 12]: AI fix uses forwardGeocode bridge (Mapy.cz /v1/geocode) at module level with parallel Promise.all for origin+destination
+- [Phase 12]: shouldUnregister:false on wizard useForm to preserve AI-set values across step navigation
 
 ### Pending Todos
 
@@ -258,5 +261,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: v1.1 roadmap created -- 5 phases (12-16), 36 requirements mapped, ready for plan-phase 12
+Stopped at: Completed 12-02-PLAN.md
 Resume file: N/A
