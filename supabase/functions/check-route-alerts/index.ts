@@ -16,6 +16,7 @@ import {
   getNotificationPreferences,
   shouldSendPush,
 } from "../_shared/notifications.ts";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -40,6 +41,13 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") {
     return jsonResponse({ error: "Method not allowed" }, 405);
   }
+
+  // Rate limit: 10 requests per 60 seconds (trigger-invoked)
+  const { limited, retryAfter } = await checkRateLimit(req, "check-route-alerts", {
+    maxRequests: 10,
+    windowSeconds: 60,
+  });
+  if (limited) return rateLimitResponse(retryAfter);
 
   try {
     // Authenticate: only service_role callers allowed

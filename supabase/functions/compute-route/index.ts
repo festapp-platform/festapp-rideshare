@@ -16,6 +16,7 @@
  *   500 - Server error
  */
 import { createUserClient } from "../_shared/supabase-client.ts";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 // Czech fuel cost constants (configurable via env)
 const FUEL_PRICE_CZK_PER_LITER = parseFloat(
@@ -151,6 +152,13 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") {
     return jsonResponse({ error: "Method not allowed" }, 405);
   }
+
+  // Rate limit: 30 requests per 60 seconds (Google API quota protection)
+  const { limited, retryAfter } = await checkRateLimit(req, "compute-route", {
+    maxRequests: 30,
+    windowSeconds: 60,
+  });
+  if (limited) return rateLimitResponse(retryAfter);
 
   try {
     // Verify caller identity

@@ -17,6 +17,7 @@
 import Anthropic from "https://esm.sh/@anthropic-ai/sdk@0.52.0";
 import { createUserClient } from "../_shared/supabase-client.ts";
 import { AI_TOOL_DEFINITIONS, SYSTEM_PROMPT } from "../_shared/ai-tools.ts";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -143,6 +144,13 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") {
     return jsonResponse({ error: "Method not allowed" }, 405);
   }
+
+  // Rate limit: 20 requests per 60 seconds (expensive Claude API calls)
+  const { limited, retryAfter } = await checkRateLimit(req, "ai-assistant", {
+    maxRequests: 20,
+    windowSeconds: 60,
+  });
+  if (limited) return rateLimitResponse(retryAfter);
 
   try {
     // Authenticate user via JWT
