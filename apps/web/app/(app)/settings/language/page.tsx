@@ -10,12 +10,12 @@ import {
 import { toast } from "sonner";
 
 export default function LanguageSettingsPage() {
-  const { locale, setLocale } = useI18n();
+  const { locale, setLocale, t } = useI18n();
 
   const handleSelect = (newLocale: SupportedLocale) => {
     if (newLocale !== locale) {
       setLocale(newLocale);
-      toast.success("Language changed");
+      toast.success(t("settings.languageChanged"));
     }
   };
 
@@ -38,10 +38,10 @@ export default function LanguageSettingsPage() {
             d="M15 19l-7-7 7-7"
           />
         </svg>
-        Back
+        {t("common.back")}
       </Link>
 
-      <h1 className="mb-6 text-2xl font-bold text-text-main">Language</h1>
+      <h1 className="mb-6 text-2xl font-bold text-text-main">{t("settings.language")}</h1>
 
       <div className="overflow-hidden rounded-xl border border-border-pastel bg-surface">
         {SUPPORTED_LOCALES.map((loc, index) => (
