@@ -13,8 +13,8 @@ export const PRICING = {
   /** Average car fuel consumption in liters per 100km */
   AVG_CONSUMPTION_L_PER_100KM: 7,
 
-  /** Suggested price = 36% of fuel cost (driver shares savings) */
-  COST_SHARING_FACTOR: 0.36,
+  /** Suggested price = ~33% of fuel cost (yields ~0.80 CZK/km) */
+  COST_SHARING_FACTOR: 0.327,
   /** Minimum price = 50% of suggested */
   MIN_PRICE_FACTOR: 0.5,
   /** Maximum price = 200% of suggested */
@@ -29,10 +29,19 @@ export const PRICING = {
 } as const;
 
 /**
+ * Smart rounding for user-friendly prices.
+ * Rounds to nearest 10 CZK for prices <= 200, nearest 50 CZK for prices > 200.
+ */
+export function roundPrice(price: number): number {
+  if (price > 200) return Math.round(price / 50) * 50;
+  return Math.round(price / 10) * 10;
+}
+
+/**
  * Calculate suggested ride price from distance.
  *
  * Formula: (distanceKm / 100) * consumption * fuelPrice * sharingFactor
- * Returns suggested, min, and max prices in CZK (whole numbers).
+ * Returns suggested, min, and max prices in CZK with smart rounding.
  */
 export function calculateSuggestedPrice(distanceMeters: number): {
   suggested: number;
@@ -46,15 +55,15 @@ export function calculateSuggestedPrice(distanceMeters: number): {
     PRICING.FUEL_PRICE_CZK_PER_LITER;
   const suggested = Math.max(
     PRICING.MIN_PRICE_CZK,
-    Math.round(fuelCost * PRICING.COST_SHARING_FACTOR),
+    roundPrice(fuelCost * PRICING.COST_SHARING_FACTOR),
   );
 
   return {
     suggested,
     min: Math.max(
       PRICING.MIN_PRICE_CZK,
-      Math.round(suggested * PRICING.MIN_PRICE_FACTOR),
+      roundPrice(suggested * PRICING.MIN_PRICE_FACTOR),
     ),
-    max: Math.round(suggested * PRICING.MAX_PRICE_FACTOR),
+    max: roundPrice(suggested * PRICING.MAX_PRICE_FACTOR),
   };
 }

@@ -53,7 +53,10 @@ export {
 } from './constants/storage';
 
 // Constants - pricing
-export { PRICING, calculateSuggestedPrice } from './constants/pricing';
+export { PRICING, calculateSuggestedPrice, roundPrice } from './constants/pricing';
+
+// Utils - formatting
+export { formatPrice } from './utils/format-price';
 
 // Constants - ride
 export {
