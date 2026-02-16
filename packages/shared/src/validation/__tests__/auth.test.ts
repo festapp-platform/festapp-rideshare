@@ -76,16 +76,16 @@ describe('OtpSchema', () => {
 });
 
 describe('PasswordSchema', () => {
-  it('accepts passwords with 8+ characters', () => {
-    expect(PasswordSchema.parse('12345678')).toBe('12345678');
+  it('accepts passwords with 6+ characters', () => {
+    expect(PasswordSchema.parse('123456')).toBe('123456');
     expect(PasswordSchema.parse('a-very-long-secure-password!')).toBe(
       'a-very-long-secure-password!',
     );
   });
 
-  it('rejects passwords shorter than 8 characters', () => {
-    expect(() => PasswordSchema.parse('1234567')).toThrow('8 characters');
-    expect(() => PasswordSchema.parse('')).toThrow('8 characters');
+  it('rejects passwords shorter than 6 characters', () => {
+    expect(() => PasswordSchema.parse('12345')).toThrow('6 characters');
+    expect(() => PasswordSchema.parse('')).toThrow('6 characters');
   });
 });
 

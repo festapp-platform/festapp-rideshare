@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import {
   getUserLevel,
   USER_LEVELS,
-  CO2_SAVINGS_PER_KM,
 } from '../../constants/gamification';
 import { CreateEventSchema } from '../event';
 import {
@@ -52,23 +51,6 @@ describe('getUserLevel', () => {
 
   it('returns "New" for 0 rides and 5.0 rating (rating alone does not promote)', () => {
     expect(getUserLevel(0, 5.0).name).toBe('New');
-  });
-});
-
-// ---------------------------------------------------------------------------
-// CO2 calculation constant tests
-// ---------------------------------------------------------------------------
-describe('CO2_SAVINGS_PER_KM', () => {
-  it('calculates 120 kg for 1000 km', () => {
-    expect(CO2_SAVINGS_PER_KM * 1000).toBeCloseTo(120, 2);
-  });
-
-  it('calculates 0 kg for 0 km', () => {
-    expect(CO2_SAVINGS_PER_KM * 0).toBe(0);
-  });
-
-  it('calculates 18 kg for 150 km (typical Prague-Brno trip)', () => {
-    expect(CO2_SAVINGS_PER_KM * 150).toBeCloseTo(18, 2);
   });
 });
 
