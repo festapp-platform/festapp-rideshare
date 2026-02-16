@@ -102,6 +102,28 @@ Deno.serve(async (req) => {
 
     await sendSNS(user.phone, `${template}${sms.otp}`);
 
+    // Log SMS to log_sms table (best-effort, don't fail SMS delivery)
+    try {
+      const sbUrl = Deno.env.get("SUPABASE_URL") ?? "";
+      const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+      if (sbUrl && sbKey) {
+        await fetch(`${sbUrl}/rest/v1/log_sms`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: sbKey,
+            Authorization: `Bearer ${sbKey}`,
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({
+            recipient_phone: user.phone,
+            type: "otp",
+            status: "sent",
+          }),
+        });
+      }
+    } catch { /* best-effort, don't fail SMS delivery */ }
+
     // Store OTP for E2E test retrieval (RLS-protected, service_role only)
     try {
       const sbUrl = Deno.env.get("SUPABASE_URL") ?? "";

@@ -61,6 +61,29 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Log auth email to log_emails table (best-effort)
+    try {
+      const sbUrl = Deno.env.get("SUPABASE_URL") ?? "";
+      const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+      if (sbUrl && sbKey) {
+        await fetch(`${sbUrl}/rest/v1/log_emails`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: sbKey,
+            Authorization: `Bearer ${sbKey}`,
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({
+            user_id: user?.id ?? null,
+            type: `auth_${actionType}`,
+            recipient_email: recipientEmail,
+            status: sent ? "sent" : "failed",
+          }),
+        });
+      }
+    } catch { /* best-effort logging */ }
+
     return new Response(JSON.stringify({}), {
       status: 200,
       headers: { "Content-Type": "application/json" },
