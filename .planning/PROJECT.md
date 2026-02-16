@@ -8,6 +8,21 @@ A free, community-driven ride-sharing platform that connects drivers with empty 
 
 Drivers and passengers can find each other for shared rides quickly and effortlessly — simpler, more trustworthy, and completely free.
 
+## Current Milestone: v1.1 UX Improvements & Bug Fixes
+
+**Goal:** Fix critical bugs (AI, messenger, map picker), add legal compliance (ToS), complete i18n coverage, polish pricing/ratings/location UX, and add advanced route features.
+
+**Target features:**
+- Fix AI ride creation, messenger duplicates, map picker stuck, past time selection
+- Terms of Service acceptance at signup
+- Global location sharing indicator
+- Locale-aware price formatting with cash-friendly rounding
+- Complete i18n coverage (171 strings across 19 files)
+- Language settings, cookie consent translation
+- Map zoom to selection, hide empty stars, hide money saved
+- Multiple route alternatives, editable routes with waypoints
+- AI integration tests
+
 ## Requirements
 
 ### Validated
@@ -88,4 +103,4 @@ Drivers and passengers can find each other for shared rides quickly and effortle
 | Web + PWA first, app stores later | Launch web as PWA first. Mobile native apps released to stores in a later phase. Faster to market, iterate on web, then polish for stores | — Pending |
 
 ---
-*Last updated: 2026-02-15 after initialization*
+*Last updated: 2026-02-16 after milestone v1.1 start*
