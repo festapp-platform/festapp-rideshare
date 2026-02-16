@@ -7,21 +7,14 @@
  *
  * Uses stdio transport for local process communication.
  */
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { registerTools } from "./tools.js";
 
-const server = new Server(
-  {
-    name: "festapp-rideshare",
-    version: "0.1.0",
-  },
-  {
-    capabilities: {
-      tools: {},
-    },
-  },
-);
+const server = new McpServer({
+  name: "festapp-rideshare",
+  version: "0.1.0",
+});
 
 registerTools(server);
 
