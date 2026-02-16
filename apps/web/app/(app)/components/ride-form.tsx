@@ -10,6 +10,7 @@ import {
   PRICING,
   calculateSuggestedPrice,
   getApprovedEvents,
+  formatPrice,
 } from "@festapp/shared";
 import { createRide } from "@festapp/shared";
 import { decode as decodePolyline } from "@googlemaps/polyline-codec";
@@ -549,7 +550,7 @@ export function RideForm({ linkedEvent }: RideFormProps) {
                 <div className="rounded-lg bg-primary/5 px-3 py-1.5">
                   <span className="text-text-secondary">{t("rideForm.suggested")}: </span>
                   <span className="font-medium text-text-main">
-                    {routeInfo.suggestedPriceCzk} {PRICING.CURRENCY_SYMBOL}
+                    {formatPrice(routeInfo.suggestedPriceCzk)}
                   </span>
                 </div>
               </div>
@@ -682,12 +683,11 @@ export function RideForm({ linkedEvent }: RideFormProps) {
               htmlFor="price"
               className="mb-1 block text-sm font-medium text-text-main"
             >
-              {t("rides.price")} ({PRICING.CURRENCY_SYMBOL})
+              {t("rides.price")}
             </label>
             {routeInfo && (
               <p className="mb-2 text-xs text-text-secondary">
-                {t("rideForm.suggested")}: {routeInfo.suggestedPriceCzk}{" "}
-                {PRICING.CURRENCY_SYMBOL}
+                {t("rideForm.suggested")}: {formatPrice(routeInfo.suggestedPriceCzk)}
               </p>
             )}
             <Controller
@@ -705,17 +705,13 @@ export function RideForm({ linkedEvent }: RideFormProps) {
                     onChange={(e) => field.onChange(Number(e.target.value))}
                     className="w-full accent-primary"
                   />
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-text-secondary">
-                      {priceRange.min} {PRICING.CURRENCY_SYMBOL}
-                    </span>
-                    <span className="text-lg font-bold text-primary">
-                      {field.value ?? 0} {PRICING.CURRENCY_SYMBOL}
-                    </span>
-                    <span className="text-text-secondary">
-                      {priceRange.max} {PRICING.CURRENCY_SYMBOL}
-                    </span>
+                  <div className="flex items-center justify-between text-xs text-text-secondary">
+                    <span>{formatPrice(priceRange.min)}</span>
+                    <span>{formatPrice(priceRange.max)}</span>
                   </div>
+                  <p className="text-center text-2xl font-bold text-primary">
+                    {formatPrice(field.value ?? 0)}
+                  </p>
                 </div>
               )}
             />
