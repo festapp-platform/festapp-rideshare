@@ -93,7 +93,7 @@ export function AppNav() {
         <div className="px-3 lg:px-6 py-6">
           <h1 className="hidden lg:block text-lg font-bold text-primary">spolujizda.online</h1>
           <h1 className="lg:hidden text-center text-lg font-bold text-primary">FR</h1>
-          <p className="hidden lg:block text-xs text-text-secondary">Free community rides</p>
+          <p className="hidden lg:block text-xs text-text-secondary">Bezplatná komunitní spolujízda</p>
         </div>
         <div className="flex flex-1 flex-col gap-1 px-1.5 lg:px-3">
           {navItems.map((item) => (
