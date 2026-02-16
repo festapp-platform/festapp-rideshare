@@ -335,7 +335,7 @@ export default function SignupPage() {
             className="space-y-4"
           >
             <p className="text-sm text-text-secondary">
-              {t("auth.otpSent").replace("{length}", String(OTP_LENGTH))}{" "}
+              {t("auth.otpSent", { length: OTP_LENGTH })}{" "}
               <strong>{phoneForOtp}</strong>
             </p>
 

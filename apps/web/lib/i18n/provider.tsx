@@ -8,7 +8,7 @@ import { translations, type TranslationKeys } from "./translations";
 type I18nContextValue = {
   locale: SupportedLocale;
   setLocale: (locale: SupportedLocale) => void;
-  t: (key: string) => string;
+  t: (key: string, vars?: Record<string, string | number>) => string;
 };
 
 const I18nContext = createContext<I18nContextValue | null>(null);
@@ -37,9 +37,15 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const t = useCallback(
-    (key: string): string => {
+    (key: string, vars?: Record<string, string | number>): string => {
       const dict = translations[locale];
-      return (dict as Record<string, string>)[key] ?? key;
+      let value = (dict as Record<string, string>)[key] ?? key;
+      if (vars) {
+        for (const [k, v] of Object.entries(vars)) {
+          value = value.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
+        }
+      }
+      return value;
     },
     [locale],
   );
