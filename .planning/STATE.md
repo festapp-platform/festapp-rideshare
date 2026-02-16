@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 ## Current Position
 
 Phase: 15 - i18n Coverage
-Plan: 01 of 3
+Plan: 02 of 3
 Status: Executing
-Last activity: 2026-02-17 -- Completed 15-01-PLAN.md (i18n interpolation & core component translation)
+Last activity: 2026-02-17 -- Completed 15-02-PLAN.md (core flow & settings i18n)
 
-Progress: [█████████████████████████████] 33%
+Progress: [███████████████████████████████████████] 67%
 
 ## Performance Metrics
 
@@ -89,6 +89,7 @@ Progress: [███████████████████████
 | Phase 14 P03 | 3min | 2 tasks | 2 files |
 | Phase 14 P02 | 4min | 2 tasks | 17 files |
 | Phase 15 P01 | 7min | 2 tasks | 8 files |
+| Phase 15 P02 | 5min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -265,6 +266,7 @@ Recent decisions affecting current work:
 - [Phase 14-03]: No duplicate index: existing idx_chat_messages_conversation covers pagination and archival
 - [Phase 14]: [14-02]: Form labels kept as plain text CZK
 - [15-01]: t() interpolation uses regex {var} replace with global flag; preference labels moved inside component render for locale reactivity (input currency label, not price display); formatPrice() is single source for all user-facing price strings
+- [15-02]: ride-status-badge converted to client component for useI18n; public ride page split into server (metadata) + PublicRideContent client sub-component for translated UI; SEO metadata stays English server-side
 
 ### Pending Todos
 
@@ -283,5 +285,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 15-01-PLAN.md (i18n interpolation & core component translation)
+Stopped at: Completed 15-02-PLAN.md (core flow & settings i18n)
 Resume file: N/A
