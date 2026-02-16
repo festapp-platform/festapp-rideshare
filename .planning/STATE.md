@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 ## Current Position
 
-Phase: 8 of 11 (Events & Flexible Gamification)
-Plan: 5 of 5 in current phase
-Status: In Progress
-Last activity: 2026-02-16 -- Completed 08-02 (events UI and admin management)
+Phase: 8 of 11 (Events & Flexible Gamification) -- COMPLETE
+Plan: 5 of 5 in current phase -- COMPLETE
+Status: Phase Complete
+Last activity: 2026-02-16 -- Completed 08-05 (community stats, sharing, tests)
 
-Progress: [████████████████░] 70%
+Progress: [██████████████████] 75%
 
 ## Performance Metrics
 
@@ -65,6 +65,7 @@ Progress: [████████████████░] 70%
 | Phase 08 P04 | 6min | 2 tasks | 12 files |
 | Phase 08 P03 | 6min | 2 tasks | 16 files |
 | Phase 08 P02 | 6min | 2 tasks | 11 files |
+| Phase 08 P05 | 4min | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -188,6 +189,9 @@ Recent decisions affecting current work:
 - [08-02]: PostgREST FK hint profiles!events_creator_id_fkey needed for events table (two FKs to profiles)
 - [08-02]: Admin event detail uses two-click confirm pattern consistent with moderation actions
 - [08-02]: Ride form fetches approved events client-side for optional linking dropdown
+- [08-05]: Community and My Impact added as secondary sidebar items (not bottom tab bar) to keep mobile nav clean
+- [08-05]: ShareButton uses navigator.share first, clipboard fallback second for cross-platform sharing
+- [08-05]: Community stats RPC uses SECURITY DEFINER + GRANT to anon for public access without auth
 
 ### Pending Todos
 
@@ -206,5 +210,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 08-02-PLAN.md (events UI and admin management)
-Resume file: .planning/phases/08-events-flexible-gamification/08-02-SUMMARY.md
+Stopped at: Completed 08-05-PLAN.md (community stats, sharing, tests) -- Phase 08 COMPLETE
+Resume file: .planning/phases/08-events-flexible-gamification/08-05-SUMMARY.md
