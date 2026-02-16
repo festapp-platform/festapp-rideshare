@@ -188,14 +188,13 @@ Plans:
   3. Voice input works via speech-to-text on both mobile and web, feeding into the same AI processing pipeline
   4. AI assistant correctly handles Czech, Slovak, and English input
   5. MCP server exposes authenticated tools for ride posting, search, booking, and management that external AI assistants (Claude, ChatGPT) can use
-**Plans**: TBD
+**Plans:** 4 plans
 
 Plans:
-- [ ] 09-01: AI assistant chat UI and natural language processing pipeline
-- [ ] 09-02: AI ride creation and search from natural language
-- [ ] 09-03: AI booking and ride management actions with confirmation flow
-- [ ] 09-04: Speech-to-text integration (mobile + web)
-- [ ] 09-05: MCP server with authenticated ride operation tools
+- [ ] 09-01-PLAN.md — AI processing Edge Function with Claude tool_use for intent parsing + shared AI types
+- [ ] 09-02-PLAN.md — MCP server with authenticated ride operation tools
+- [ ] 09-03-PLAN.md — AI assistant chat UI with voice input and confirmation flow
+- [ ] 09-04-PLAN.md — Unit and integration tests for AI pipeline, MCP, and UI components
 
 ### Phase 10: Web Platform & SEO
 **Goal**: The web app is a fully-featured PWA with SEO-optimized ride pages that drive organic traffic and convert visitors
