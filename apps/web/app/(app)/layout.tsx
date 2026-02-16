@@ -11,6 +11,7 @@ import { PwaInstallBanner } from "./components/pwa-install-banner";
 import { OfflineBanner } from "@/components/offline-banner";
 import { ForceUpdateBanner } from "@/components/force-update-banner";
 import { SkipLink } from "@/components/skip-link";
+import { EmailConfirmationBanner } from "./components/email-confirmation-banner";
 
 /**
  * Authenticated app layout (NAV-01).
@@ -56,6 +57,8 @@ export default async function AppLayout({
 
         {/* Main content */}
         <main id="main-content" className="flex-1 pb-16 md:pb-0">
+          {/* Email confirmation pending banner */}
+          <EmailConfirmationBanner />
           {/* Force-update banner (PLAT-14) */}
           <ForceUpdateBanner />
           {/* Pending rating detection banner (RATE-03) */}
