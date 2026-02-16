@@ -291,6 +291,24 @@ export function RideForm({ linkedEvent }: RideFormProps) {
       const result = await sendAiMessage(aiPrompt, []);
       if (result.intent?.params) {
         const params = result.intent.params;
+
+        // Geocode origin and destination addresses in parallel
+        const [originPlace, destPlace] = await Promise.all([
+          params.origin_address
+            ? forwardGeocode(params.origin_address as string)
+            : Promise.resolve(null),
+          params.destination_address
+            ? forwardGeocode(params.destination_address as string)
+            : Promise.resolve(null),
+        ]);
+
+        if (originPlace) {
+          setOrigin(originPlace);
+        }
+        if (destPlace) {
+          setDestination(destPlace);
+        }
+
         // Fill departure time from AI parsed params
         if (params.departure_date) {
           setSelectedDate(params.departure_date as string);
