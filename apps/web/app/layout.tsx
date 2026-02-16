@@ -6,6 +6,7 @@ import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
 import { CookieConsent } from "@/components/cookie-consent";
 import { SentryInit } from "@/components/sentry-init";
 import { I18nProvider } from "@/lib/i18n/provider";
+import { AuthHashHandler } from "@/app/components/auth-hash-handler";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,7 +45,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
       >
-        <I18nProvider>{children}</I18nProvider>
+        <I18nProvider>
+          <AuthHashHandler />
+          {children}
+        </I18nProvider>
         <PwaInstallPrompt />
         <CookieConsent />
         <SentryInit />

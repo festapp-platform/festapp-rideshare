@@ -35,6 +35,14 @@ function isPublicRoute(pathname: string): boolean {
 }
 
 export async function updateSession(request: NextRequest) {
+  // If there's an auth code on any page, redirect to /auth/callback to exchange it
+  const code = request.nextUrl.searchParams.get("code");
+  if (code && !request.nextUrl.pathname.startsWith("/auth/callback")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/callback";
+    return NextResponse.redirect(url);
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   // Skip auth if Supabase is not configured (allows local dev without Supabase)
