@@ -1,8 +1,8 @@
 "use client";
 
-import { getUserLevel, USER_LEVELS, formatPrice } from "@festapp/shared";
+import { getUserLevel, USER_LEVELS } from "@festapp/shared";
 import type { UserLevelKey } from "@festapp/shared";
-import { Wallet, Car, Route, Users, Flame } from "lucide-react";
+import { Car, Route, Users, Flame } from "lucide-react";
 import { ShareButton } from "../components/share-button";
 
 interface ImpactStats {
@@ -137,18 +137,12 @@ export function ImpactDashboard({
       </div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="grid grid-cols-3 gap-3">
         <StatCard
           icon={<Car className="h-5 w-5 text-primary" />}
           label="Rides"
           value={String(impact?.total_rides_completed ?? 0)}
           gradient="from-purple-50 to-fuchsia-50 dark:from-purple-950/30 dark:to-fuchsia-950/30"
-        />
-        <StatCard
-          icon={<Wallet className="h-5 w-5 text-secondary" />}
-          label="Money Saved"
-          value={formatPrice(impact?.total_money_saved_czk ?? 0)}
-          gradient="from-blue-50 to-sky-50 dark:from-blue-950/30 dark:to-sky-950/30"
         />
         <StatCard
           icon={<Route className="h-5 w-5 text-accent" />}

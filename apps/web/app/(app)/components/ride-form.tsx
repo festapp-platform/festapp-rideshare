@@ -871,6 +871,8 @@ export function RideForm({ linkedEvent }: RideFormProps) {
         <MapLocationPicker
           onConfirm={handleMapConfirm}
           onCancel={() => setShowMapPicker(null)}
+          initialLat={showMapPicker === "origin" ? origin?.lat : destination?.lat}
+          initialLng={showMapPicker === "origin" ? origin?.lng : destination?.lng}
         />
       )}
     </form>

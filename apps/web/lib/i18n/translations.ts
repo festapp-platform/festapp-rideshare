@@ -133,6 +133,7 @@ export type TranslationKeys = {
   "common.close": string;
   "common.share": string;
   "common.unexpectedError": string;
+  "common.newUser": string;
 
   // Empty states
   "empty.noRides": string;
@@ -357,6 +358,19 @@ export type TranslationKeys = {
   "myRides.seats": string;
   "myRides.seatSingular": string;
   "myRides.seatPlural": string;
+  "myRides.pastRides": string;
+
+  // Notifications settings (grouped)
+  "notifications.pushGroup": string;
+  "notifications.pushGroupDesc": string;
+  "notifications.emailGroup": string;
+  "notifications.emailGroupDesc": string;
+  "notifications.remindersGroup": string;
+  "notifications.remindersGroupDesc": string;
+  "notifications.title": string;
+  "notifications.preferenceSaved": string;
+  "notifications.preferenceFailed": string;
+  "notifications.loadFailed": string;
 
   // Booking button
   "bookingButton.requestPending": string;
@@ -607,6 +621,7 @@ const cs: TranslationKeys = {
   "common.close": "Zavřít",
   "common.share": "Sdílet",
   "common.unexpectedError": "Nastala neočekávaná chyba",
+  "common.newUser": "Nový",
 
   // Empty states
   "empty.noRides": "Žádné jízdy k zobrazení",
@@ -831,6 +846,19 @@ const cs: TranslationKeys = {
   "myRides.seats": "míst",
   "myRides.seatSingular": "místo",
   "myRides.seatPlural": "místa",
+  "myRides.pastRides": "Minulé jízdy",
+
+  // Notifications settings (grouped)
+  "notifications.pushGroup": "Push oznámení",
+  "notifications.pushGroupDesc": "Žádosti o rezervaci, potvrzení, zrušení, zprávy, připomínky, upozornění na trasy",
+  "notifications.emailGroup": "E-mailová oznámení",
+  "notifications.emailGroupDesc": "Potvrzení rezervací, připomínky jízd, zrušení",
+  "notifications.remindersGroup": "Připomínky jízd",
+  "notifications.remindersGroupDesc": "Push a e-mailové připomínky před odjezdem",
+  "notifications.title": "Oznámení",
+  "notifications.preferenceSaved": "Nastavení uloženo",
+  "notifications.preferenceFailed": "Nepodařilo se uložit nastavení",
+  "notifications.loadFailed": "Nepodařilo se načíst nastavení oznámení",
 
   // Booking button
   "bookingButton.requestPending": "Žádost čeká",
@@ -1081,6 +1109,7 @@ const sk: TranslationKeys = {
   "common.close": "Zavrieť",
   "common.share": "Zdieľať",
   "common.unexpectedError": "Nastala neočakávaná chyba",
+  "common.newUser": "Nový",
 
   // Empty states
   "empty.noRides": "Žiadne jazdy na zobrazenie",
@@ -1305,6 +1334,19 @@ const sk: TranslationKeys = {
   "myRides.seats": "miest",
   "myRides.seatSingular": "miesto",
   "myRides.seatPlural": "miesta",
+  "myRides.pastRides": "Minulé jazdy",
+
+  // Notifications settings (grouped)
+  "notifications.pushGroup": "Push upozornenia",
+  "notifications.pushGroupDesc": "Žiadosti o rezerváciu, potvrdenia, zrušenia, správy, pripomienky, upozornenia na trasy",
+  "notifications.emailGroup": "E-mailové upozornenia",
+  "notifications.emailGroupDesc": "Potvrdenia rezervácií, pripomienky jázd, zrušenia",
+  "notifications.remindersGroup": "Pripomienky jázd",
+  "notifications.remindersGroupDesc": "Push a e-mailové pripomienky pred odchodom",
+  "notifications.title": "Upozornenia",
+  "notifications.preferenceSaved": "Nastavenie uložené",
+  "notifications.preferenceFailed": "Nepodarilo sa uložiť nastavenie",
+  "notifications.loadFailed": "Nepodarilo sa načítať nastavenia upozornení",
 
   // Booking button
   "bookingButton.requestPending": "Žiadosť čaká",
@@ -1555,6 +1597,7 @@ const en: TranslationKeys = {
   "common.close": "Close",
   "common.share": "Share",
   "common.unexpectedError": "An unexpected error occurred",
+  "common.newUser": "New",
 
   // Empty states
   "empty.noRides": "No rides to display",
@@ -1779,6 +1822,19 @@ const en: TranslationKeys = {
   "myRides.seats": "seats",
   "myRides.seatSingular": "seat",
   "myRides.seatPlural": "seats",
+  "myRides.pastRides": "Past rides",
+
+  // Notifications settings (grouped)
+  "notifications.pushGroup": "Push Notifications",
+  "notifications.pushGroupDesc": "Booking requests, confirmations, cancellations, messages, reminders, route alerts",
+  "notifications.emailGroup": "Email Notifications",
+  "notifications.emailGroupDesc": "Booking confirmations, ride reminders, cancellations",
+  "notifications.remindersGroup": "Ride Reminders",
+  "notifications.remindersGroupDesc": "Push and email reminders before departure",
+  "notifications.title": "Notifications",
+  "notifications.preferenceSaved": "Preference updated",
+  "notifications.preferenceFailed": "Failed to update preference",
+  "notifications.loadFailed": "Failed to load notification preferences",
 
   // Booking button
   "bookingButton.requestPending": "Request pending",

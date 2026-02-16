@@ -11,6 +11,8 @@ const TILE_URL = `https://api.mapy.cz/v1/maptiles/basic/256/{z}/{x}/{y}?apikey=$
 interface MapLocationPickerProps {
   onConfirm: (lat: number, lng: number, address: string) => void;
   onCancel: () => void;
+  initialLat?: number;
+  initialLng?: number;
 }
 
 /**
@@ -19,7 +21,7 @@ interface MapLocationPickerProps {
  * Reverse geocodes the selected point to an address.
  * (GROUP-F1)
  */
-export function MapLocationPicker({ onConfirm, onCancel }: MapLocationPickerProps) {
+export function MapLocationPicker({ onConfirm, onCancel, initialLat, initialLng }: MapLocationPickerProps) {
   const { t } = useI18n();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -56,9 +58,10 @@ export function MapLocationPicker({ onConfirm, onCancel }: MapLocationPickerProp
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
+    const hasInitialCoords = initialLat != null && initialLng != null;
     const map = L.map(mapContainerRef.current, {
-      center: [49.8, 15.5], // Czech Republic center
-      zoom: 7,
+      center: hasInitialCoords ? [initialLat, initialLng] : [49.8, 15.5],
+      zoom: hasInitialCoords ? 14 : 7,
       zoomControl: true,
     });
 
@@ -68,6 +71,19 @@ export function MapLocationPicker({ onConfirm, onCancel }: MapLocationPickerProp
       attribution:
         '&copy; <a href="https://www.seznam.cz" target="_blank">Seznam.cz, a.s.</a>',
     }).addTo(map);
+
+    // Place initial marker if coordinates provided
+    if (hasInitialCoords) {
+      markerRef.current = L.circleMarker([initialLat, initialLng], {
+        radius: 8,
+        fillColor: "#6C63FF",
+        color: "#ffffff",
+        weight: 3,
+        fillOpacity: 1,
+      }).addTo(map);
+      setSelectedPoint({ lat: initialLat, lng: initialLng });
+      reverseGeocode(initialLat, initialLng);
+    }
 
     map.on("click", (e: L.LeafletMouseEvent) => {
       const { lat, lng } = e.latlng;
