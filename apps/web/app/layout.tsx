@@ -3,6 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@festapp/shared";
 import "./globals.css";
 import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
+import { CookieConsent } from "@/components/cookie-consent";
+import { SentryInit } from "@/components/sentry-init";
+import { I18nProvider } from "@/lib/i18n/provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,8 +44,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
       >
-        {children}
+        <I18nProvider>{children}</I18nProvider>
         <PwaInstallPrompt />
+        <CookieConsent />
+        <SentryInit />
       </body>
     </html>
   );

@@ -299,6 +299,15 @@ export {
   DEFAULT_OG_IMAGE,
 } from './constants/seo';
 
+// Constants - i18n
+export {
+  SUPPORTED_LOCALES,
+  DEFAULT_LOCALE,
+  LOCALE_NAMES,
+  LOCALE_STORAGE_KEY,
+} from './constants/i18n';
+export type { SupportedLocale } from './constants/i18n';
+
 // Types
 export type {
   Database,
