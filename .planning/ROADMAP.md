@@ -266,7 +266,12 @@ Plans:
   3. User can click a location on the map picker and the selected address appears immediately without the button getting stuck in a loading state
   4. Time picker only allows selecting dates and times in the future -- past options are disabled or filtered out
   5. bujnmi@gmail.com has admin access and can reach the admin panel
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 12-01-PLAN.md -- Map picker, time picker, and chat dedup fixes (BUG-02, BUG-03, BUG-04)
+- [ ] 12-02-PLAN.md -- AI ride creation fix with geocoding bridge (BUG-01)
+- [ ] 12-03-PLAN.md -- Admin setup script for bujnmi@gmail.com (ADMIN-05, ADMIN-06)
 
 ### Phase 13: Legal, Privacy & Observability
 **Goal**: The platform meets legal requirements for user consent and privacy disclosure, and all outbound communications are logged for debugging and compliance
