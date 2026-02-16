@@ -37,7 +37,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ### 🚧 v1.1 UX Improvements & Bug Fixes
 
 - [x] **Phase 12: Critical Bug Fixes & Admin Setup** - Fix AI ride creation, chat duplicates, map picker, past time selection; configure admin accounts (completed 2026-02-16)
-- [ ] **Phase 13: Legal, Privacy & Observability** - ToS acceptance at signup, location sharing indicator, email/SMS/push logging, audit trail
+- [x] **Phase 13: Legal, Privacy & Observability** - ToS acceptance at signup, location sharing indicator, email/SMS/push logging, audit trail (completed 2026-02-16)
 - [ ] **Phase 14: Price Formatting, Chat Optimization & AI Tests** - Locale-aware price display, cash-friendly rounding, chat pagination/archival, AI integration tests
 - [ ] **Phase 15: i18n Coverage** - Complete translation of all 171 remaining strings, interpolation support, cookie consent i18n, language settings
 - [ ] **Phase 16: UI Polish & Route Features** - Map zoom, rating badges, simplified My Rides and notifications, waypoint management
@@ -282,7 +282,7 @@ Plans:
   2. When a driver shares their live location, a persistent banner is visible on all pages showing who can see the location and providing a stop button
   3. Every email, SMS, and push notification sent by the platform is logged with recipient, type, status, and timestamp in dedicated log tables
   4. All significant user and admin actions (ride CRUD, booking changes, moderation actions, profile changes) are recorded in an audit_log table
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 13-01-PLAN.md -- Database migration (audit enhanced with JSON diff + actor_id), SMS logging, auth email logging (LOG-01, LOG-02, LOG-03, ADMIN-07)
@@ -298,7 +298,13 @@ Plans:
   2. Suggested prices round to nearest 10 CZK (or 50 CZK for trips over 200 CZK) and the price value appears directly below the slider on the ride creation form
   3. Chat message history loads via cursor-based pagination and completed ride messages have an archival/cleanup strategy
   4. Integration tests verify the AI Edge Function handles ride creation intents in Czech, Slovak, and English, and gracefully handles ambiguous, incomplete, and invalid inputs
-**Plans**: TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 14-01-PLAN.md — Create formatPrice() utility, align COST_SHARING_FACTOR to 0.327, add smart rounding (PRICE-01, PRICE-02, PRICE-04)
+- [ ] 14-02-PLAN.md — Deploy formatPrice() across all 17+ display files, price slider value below (PRICE-01, PRICE-03)
+- [ ] 14-03-PLAN.md — Chat cursor pagination refactor, archival migration for completed rides (CHAT-05, CHAT-06)
+- [ ] 14-04-PLAN.md — AI Edge Function integration tests for multilingual intents and error handling (TEST-11, TEST-12)
 
 ### Phase 15: i18n Coverage
 **Goal**: Every user-facing string in the app is translated to Czech, Slovak, and English with working variable interpolation
@@ -348,8 +354,8 @@ Plans:
 | 10. Web Platform & SEO | v1.0 | 4/4 | ✓ Complete | 2026-02-16 |
 | 11. Polish, Testing & Launch | v1.0 | 5/5 | ✓ Complete | 2026-02-16 |
 | 12. Critical Bug Fixes & Admin Setup | v1.1 | Complete    | 2026-02-16 | - |
-| 13. Legal, Privacy & Observability | v1.1 | 0/? | Not started | - |
-| 14. Price Formatting, Chat Optimization & AI Tests | v1.1 | 0/? | Not started | - |
+| 13. Legal, Privacy & Observability | v1.1 | Complete    | 2026-02-16 | - |
+| 14. Price Formatting, Chat Optimization & AI Tests | v1.1 | 0/4 | Not started | - |
 | 15. i18n Coverage | v1.1 | 0/? | Not started | - |
 | 16. UI Polish & Route Features | v1.1 | 0/? | Not started | - |
 
