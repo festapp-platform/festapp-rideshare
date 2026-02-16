@@ -229,7 +229,7 @@ Plans:
 Plans:
 - [x] 11-01-PLAN.md — Internationalization (Czech, Slovak, English) with i18n provider and translations
 - [ ] 11-02-PLAN.md — Offline handling, skeleton loading states, empty states, and error pages
-- [ ] 11-03-PLAN.md — Crash reporting (Sentry), analytics, GDPR (cookie consent + data export), force-update
+- [x] 11-03-PLAN.md — Crash reporting (Sentry), analytics, GDPR (cookie consent + data export), force-update
 - [ ] 11-04-PLAN.md — Accessibility audit: ARIA labels, skip navigation, focus indicators, color contrast, touch targets
 - [ ] 11-05-PLAN.md — Legal pages (ToS, privacy), help/FAQ, donation, invite friends, app store metadata
 
@@ -252,4 +252,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -
 | 8. Events, Flexible Rides & Gamification | 0/5 | Not started | - |
 | 9. AI & Voice | 0/5 | Not started | - |
 | 10. Web Platform & SEO | 4/4 | ✓ Complete | 2026-02-16 |
-| 11. Polish, Testing & Launch | 2/5 | In Progress | - |
+| 11. Polish, Testing & Launch | 3/5 | In Progress | - |
