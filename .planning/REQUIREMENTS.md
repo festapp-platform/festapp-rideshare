@@ -214,6 +214,74 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **EVNT-05**: Passenger can browse and search rides for a specific event from the event page
 - [ ] **EVNT-06**: Event can be shared via deep link
 
+## v1.1 Requirements
+
+Requirements for UX improvements & bug fixes milestone. Phases continue from 12.
+
+### Bug Fixes
+
+- [ ] **BUG-01**: AI ride creation parses natural language input and pre-fills form fields (origin, destination, date, time) — fix geocoding bridge and wizard shouldUnregister
+- [ ] **BUG-02**: Chat messages appear exactly once — fix UUID mismatch between optimistic insert and Realtime delivery
+- [ ] **BUG-03**: Map location picker responds to clicks without getting stuck — fix missing setIsGeocoding(false) in success path
+- [ ] **BUG-04**: Time picker only allows selecting future dates and times
+
+### Pricing
+
+- [ ] **PRICE-01**: All prices display consistently via shared formatPrice() utility using locale-aware Intl.NumberFormat with CZK currency
+- [ ] **PRICE-02**: Suggested prices round to nearest 10 CZK (or 50 CZK for trips over 200 CZK) for practical cash amounts
+- [ ] **PRICE-03**: Price value displays directly below the price slider on ride creation form
+- [ ] **PRICE-04**: Suggested price coefficient aligns with BlaBlaCar (~0.80 CZK/km)
+
+### Internationalization
+
+- [ ] **I18N-01**: i18n t() function supports string interpolation for variables (e.g., {name}, {count})
+- [ ] **I18N-02**: All user-facing strings in core flow files are translated (ride-detail, my-rides, booking-button, rating-modal, cancellation-dialog, public ride page, report-dialog, settings) — ~131 strings
+- [ ] **I18N-03**: All user-facing strings in secondary UI files are translated (block-button, ride-card, login, signup, cookie-consent, force-update-banner, pwa-install-banner) — ~26 strings
+- [ ] **I18N-04**: All user-facing strings in minor files are translated (offline-banner, share-button, pending-rating-banner, not-found, reset-password) — ~9 strings
+- [ ] **I18N-05**: Cookie consent banner uses i18n translations instead of hardcoded English
+- [ ] **I18N-06**: User can change app language from a settings page (Czech, Slovak, English)
+
+### Legal & Privacy
+
+- [ ] **LEGAL-01**: User must accept Terms of Service and Privacy Policy checkbox before signup (both email and phone flows)
+- [ ] **LEGAL-02**: ToS acceptance timestamp stored for audit trail (accepted_terms_at in user_metadata)
+- [ ] **LEGAL-03**: Location sharing shows persistent global indicator visible on all pages with who can see location and stop button
+
+### UI Polish
+
+- [ ] **UX-01**: Map location picker zooms to already-selected coordinates when opened
+- [ ] **UX-02**: Star rating shows "Nový" badge instead of 0 stars when user has no ratings
+- [ ] **UX-03**: "Money Saved" metric hidden from impact dashboard and community stats
+- [ ] **UX-04**: Price slider shows current value directly below the slider track
+
+### Route Features
+
+- [ ] **ROUTE-01**: Driver can add intermediate waypoints/stops when creating a ride
+- [ ] **ROUTE-02**: Waypoints displayed on route map and stored in ride data
+- [ ] **ROUTE-03**: Passengers can search for rides where a waypoint is near their origin or destination
+
+### Observability & Logging
+
+- [ ] **LOG-01**: Every email sent (auth + notification) is logged to an email_logs table with recipient, type, status, and timestamp
+- [ ] **LOG-02**: Every SMS sent is logged to an sms_logs table with recipient, type, status, and timestamp
+- [ ] **LOG-03**: Every push notification sent is logged to a notification_logs table with recipient, type, status, and timestamp
+
+### Admin & Moderation
+
+- [ ] **ADMIN-05**: Admin role is set via app_metadata.is_admin on specific user accounts (not self-assignable)
+- [ ] **ADMIN-06**: bujnmi@gmail.com is configured as admin
+- [ ] **ADMIN-07**: Action audit trail — all significant user and admin actions are logged to an audit_log table (ride CRUD, booking changes, moderation actions, profile changes)
+
+### Chat Optimization
+
+- [ ] **CHAT-05**: Chat messages table is optimized for storage efficiency (consider message archival for completed rides, pagination strategy, TTL for old messages)
+- [ ] **CHAT-06**: Chat loading uses cursor-based pagination (not offset) for efficient message history retrieval
+
+### Testing
+
+- [ ] **TEST-11**: Integration tests verify AI Edge Function responds to ride creation intent in Czech, Slovak, and English
+- [ ] **TEST-12**: Integration tests verify AI handles ambiguous, incomplete, and invalid inputs gracefully
+
 ## v2 Requirements
 
 Deferred to future release. Tracked but not in current roadmap.
@@ -224,6 +292,7 @@ Deferred to future release. Tracked but not in current roadmap.
 
 ### Advanced Features
 
+- **ROUTE-04**: Multiple route alternatives displayed on map for driver to choose between
 - **ADVN-01**: Multi-stop rides with intermediate pickup/dropoff points
 - **ADVN-02**: Ride sharing to social media (share ride link to Instagram stories, etc.)
 - **ADVN-03**: Female-only ride option
@@ -232,6 +301,9 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Feature | Reason |
 |---------|--------|
+| Route alternatives display | Mutually exclusive with waypoints in Google Routes API; waypoints chosen as higher priority |
+| Draggable polylines | Requires DirectionsService (different API), high complexity, defer to v1.2 |
+| Bulk i18n migration | Research shows incremental per-phase is safer (avoids key collisions, TS breakage) |
 | In-app payment processing | Users settle in cash. Avoids payment processor complexity and fees. Aligns with free model. |
 | Real-time ride-hailing (Uber-style) | This is pre-planned carpooling, not on-demand taxi service |
 | Bus/public transport integration | Focus on carpooling only |
@@ -404,4 +476,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-15*
-*Last updated: 2026-02-15 after roadmap creation*
+*Last updated: 2026-02-16 after v1.1 requirements added*
