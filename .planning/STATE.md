@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** Drivers and passengers can find each other for shared rides quickly and effortlessly -- simpler, more trustworthy, and completely free.
-**Current focus:** Phase 8 - Events & Flexible Gamification
+**Current focus:** Phase 9 - AI & Voice
 
 ## Current Position
 
-Phase: 8 of 11 (Events & Flexible Gamification) -- COMPLETE
-Plan: 5 of 5 in current phase -- COMPLETE
-Status: Phase Complete
-Last activity: 2026-02-16 -- Completed 08-05 (community stats, sharing, tests)
+Phase: 9 of 11 (AI & Voice)
+Plan: 1 of 4 in current phase
+Status: In Progress
+Last activity: 2026-02-16 -- Completed 09-01 (AI intent parsing Edge Function)
 
-Progress: [██████████████████] 75%
+Progress: [███████████████████] 79%
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Progress: [██████████████████] 75%
 | Phase 08 P03 | 6min | 2 tasks | 16 files |
 | Phase 08 P02 | 6min | 2 tasks | 11 files |
 | Phase 08 P05 | 4min | 2 tasks | 11 files |
+| Phase 09 P01 | 3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -192,6 +193,11 @@ Recent decisions affecting current work:
 - [08-05]: Community and My Impact added as secondary sidebar items (not bottom tab bar) to keep mobile nav clean
 - [08-05]: ShareButton uses navigator.share first, clipboard fallback second for cross-platform sharing
 - [08-05]: Community stats RPC uses SECURITY DEFINER + GRANT to anon for public access without auth
+- [09-01]: Anthropic SDK v0.52.0 via esm.sh for Deno Edge Function compatibility
+- [09-01]: Inline request validation in Edge Function (shared package not importable from Deno)
+- [09-01]: Language detection via diacritics/word heuristic (not separate API call)
+- [09-01]: Mutations always need_confirmation=true; search and general_chat do not
+- [09-01]: System prompt uses {today} placeholder injected at runtime for relative date resolution
 
 ### Pending Todos
 
@@ -210,5 +216,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 08-05-PLAN.md (community stats, sharing, tests) -- Phase 08 COMPLETE
-Resume file: .planning/phases/08-events-flexible-gamification/08-05-SUMMARY.md
+Stopped at: Completed 09-01-PLAN.md (AI intent parsing Edge Function)
+Resume file: .planning/phases/09-ai-voice/09-01-SUMMARY.md
