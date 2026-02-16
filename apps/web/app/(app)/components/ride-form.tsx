@@ -21,6 +21,40 @@ import { useI18n } from "@/lib/i18n/provider";
 import { sendAiMessage } from "../assistant/actions";
 import { MapLocationPicker } from "./map-location-picker";
 
+const MAPY_API_KEY = process.env.NEXT_PUBLIC_MAPY_CZ_API_KEY ?? "";
+
+async function forwardGeocode(address: string): Promise<PlaceResult | null> {
+  if (!MAPY_API_KEY || !address.trim()) return null;
+
+  try {
+    const url = new URL("https://api.mapy.cz/v1/geocode");
+    url.searchParams.set("apikey", MAPY_API_KEY);
+    url.searchParams.set("query", address);
+    url.searchParams.set("lang", "cs");
+    url.searchParams.set("limit", "1");
+    url.searchParams.set("type", "regional");
+    url.searchParams.set("locality", "cz,sk");
+
+    const res = await fetch(url.toString(), {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const item = data?.items?.[0];
+    if (!item?.position) return null;
+
+    return {
+      lat: item.position.lat,
+      lng: item.position.lon, // Mapy.cz uses "lon" -- map to "lng" for PlaceResult
+      address: item.name || address,
+      placeId: `mapy-${item.position.lat}-${item.position.lon}`,
+    };
+  } catch {
+    return null;
+  }
+}
+
 interface RouteInfo {
   distanceMeters: number;
   durationSeconds: number;
@@ -96,6 +130,7 @@ export function RideForm({ linkedEvent }: RideFormProps) {
 
   const form = useForm<CreateRide>({
     resolver: zodResolver(CreateRideSchema),
+    shouldUnregister: false,
     defaultValues: {
       seatsTotal: 4,
       bookingMode: "request",
