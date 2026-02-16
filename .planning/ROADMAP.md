@@ -224,14 +224,14 @@ Plans:
   3. Crash reporting (Sentry), anonymous analytics, GDPR compliance (data export, cookie consent), and force-update mechanism are operational
   4. Accessibility audit passes (screen reader labels, color contrast, touch targets)
   5. App store assets (screenshots, descriptions, metadata), terms of service, privacy policy, help/FAQ, donation prompt, and invite-friends flow are complete
-**Plans**: TBD
+**Plans:** 5 plans
 
 Plans:
-- [ ] 11-01: Internationalization (Czech, Slovak, English)
-- [ ] 11-02: Offline handling, loading states, and error pages
-- [ ] 11-03: Crash reporting, analytics, and GDPR compliance
-- [ ] 11-04: Accessibility audit and polish
-- [ ] 11-05: App store assets, legal pages, help/FAQ, and launch prep
+- [ ] 11-01-PLAN.md — Internationalization (Czech, Slovak, English) with i18n provider and translations
+- [ ] 11-02-PLAN.md — Offline handling, skeleton loading states, empty states, and error pages
+- [ ] 11-03-PLAN.md — Crash reporting (Sentry), analytics, GDPR (cookie consent + data export), force-update
+- [ ] 11-04-PLAN.md — Accessibility audit: ARIA labels, skip navigation, focus indicators, color contrast, touch targets
+- [ ] 11-05-PLAN.md — Legal pages (ToS, privacy), help/FAQ, donation, invite friends, app store metadata
 
 ## Progress
 
