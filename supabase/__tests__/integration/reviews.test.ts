@@ -3,6 +3,7 @@ import { createTestRide, COORDS } from "../helpers/test-ride";
 import { createTestBooking } from "../helpers/test-booking";
 import { createAdminClient } from "../helpers/supabase-client";
 import { cleanupUsers } from "../helpers/cleanup";
+import { execSQL } from "../helpers/db";
 
 describe("reviews", () => {
   let driver: TestUser;
@@ -159,11 +160,11 @@ describe("reviews", () => {
       });
       const oldBookingId = await createTestBooking(oldRideId, passenger.id, "completed");
 
-      const admin = createAdminClient();
-      await admin
-        .from("bookings")
-        .update({ updated_at: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString() })
-        .eq("id", oldBookingId);
+      // Use raw SQL to bypass the set_bookings_updated_at trigger
+      const backdateTs = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString();
+      await execSQL(`ALTER TABLE public.bookings DISABLE TRIGGER set_bookings_updated_at`);
+      await execSQL(`UPDATE public.bookings SET updated_at = $1 WHERE id = $2`, [backdateTs, oldBookingId]);
+      await execSQL(`ALTER TABLE public.bookings ENABLE TRIGGER set_bookings_updated_at`);
 
       const { data, error } = await passenger.client.rpc("submit_review", {
         p_booking_id: oldBookingId,

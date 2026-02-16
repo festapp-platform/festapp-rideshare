@@ -191,7 +191,7 @@ DECLARE
   v_driver_id UUID;
   v_status TEXT;
 BEGIN
-  SELECT b.ride_id, b.seats_booked, b.passenger_id, b.status, r.driver_id
+  SELECT b.ride_id, b.seats_booked, b.passenger_id, r.driver_id, b.status
   INTO v_ride_id, v_seats, v_passenger_id, v_driver_id, v_status
   FROM public.bookings b
   JOIN public.rides r ON r.id = b.ride_id

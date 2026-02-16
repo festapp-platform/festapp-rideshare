@@ -5,11 +5,14 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "pretest": "supabase db execute --local -f ./sql/test-helpers.sql && supabase db execute --local -f ./sql/disable-triggers.sql",
-    "posttest": "supabase db execute --local -f ./sql/enable-triggers.sql"
+    "pretest": "tsx ./scripts/run-sql.ts ./sql/test-helpers.sql ./sql/disable-triggers.sql",
+    "posttest": "tsx ./scripts/run-sql.ts ./sql/enable-triggers.sql"
   },
   "devDependencies": {
     "@supabase/supabase-js": "^2.95.3",
+    "pg": "^8.16.0",
+    "@types/pg": "^8.11.0",
+    "tsx": "^4.19.0",
     "typescript": "^5.7.0",
     "vitest": "^4.0.18"
   }

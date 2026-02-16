@@ -342,6 +342,7 @@ CREATE TRIGGER trg_check_review_badges
 -- ============================================================
 -- 7. Extend nearby_rides with completed_rides_count
 -- ============================================================
+DROP FUNCTION IF EXISTS public.nearby_rides(FLOAT, FLOAT, FLOAT, FLOAT, DATE, FLOAT, INT);
 CREATE OR REPLACE FUNCTION public.nearby_rides(
   origin_lat FLOAT,
   origin_lng FLOAT,
