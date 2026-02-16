@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { Share2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n/provider";
 
 interface ShareButtonProps {
   title: string;
@@ -25,6 +26,7 @@ export function ShareButton({
   label,
   className,
 }: ShareButtonProps) {
+  const { t } = useI18n();
   const [copied, setCopied] = useState(false);
 
   const handleShare = useCallback(async () => {
@@ -60,7 +62,7 @@ export function ShareButton({
       }
     >
       <Share2 className="h-3.5 w-3.5" />
-      {copied ? "Copied!" : label ?? "Share"}
+      {copied ? t("shareButton.copied") : label ?? t("shareButton.share")}
     </button>
   );
 }

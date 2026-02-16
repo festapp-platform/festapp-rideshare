@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useI18n } from "@/lib/i18n/provider";
 
 /**
  * Offline connectivity banner (PLAT-05).
@@ -10,6 +11,7 @@ import { useEffect, useState } from "react";
  */
 
 export function OfflineBanner() {
+  const { t } = useI18n();
   const [isOffline, setIsOffline] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
@@ -44,7 +46,7 @@ export function OfflineBanner() {
       data-testid="offline-banner"
       className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-warning px-4 py-2 text-sm font-medium text-text-main"
     >
-      <span>You&apos;re offline. Some features may not work.</span>
+      <span>{t("offlineBanner.message")}</span>
       <button
         type="button"
         onClick={() => setIsDismissed(true)}

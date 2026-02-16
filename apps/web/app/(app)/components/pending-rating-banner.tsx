@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { PendingReview } from "@festapp/shared";
+import { useI18n } from "@/lib/i18n/provider";
 
 /**
  * App-level pending rating detection banner.
@@ -16,6 +17,7 @@ import type { PendingReview } from "@festapp/shared";
 const DISMISS_KEY = "pending_ratings_dismissed";
 
 export function PendingRatingBanner() {
+  const { t } = useI18n();
   const supabase = createClient();
   const [pendingReviews, setPendingReviews] = useState<PendingReview[]>([]);
   const [dismissed, setDismissed] = useState(true); // Start dismissed to avoid flash
@@ -62,14 +64,14 @@ export function PendingRatingBanner() {
         </svg>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium text-text-main">
-            You have {pendingReviews.length} ride{pendingReviews.length !== 1 ? "s" : ""} to rate
+            {t("pendingRating.ridesToRate", { count: String(pendingReviews.length) })}
           </p>
         </div>
         <Link
           href={`/rides/${firstPending.ride_id}?justCompleted=true`}
           className="flex-shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-primary/90"
         >
-          Rate now
+          {t("pendingRating.rateNow")}
         </Link>
         <button
           onClick={handleDismiss}
