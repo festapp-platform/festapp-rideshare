@@ -85,6 +85,7 @@ Progress: [███████████████████████
 | Phase 13 P01 | 3min | 2 tasks | 3 files |
 | Phase 13 P02 | 6min | 2 tasks | 5 files |
 | Phase 14 P04 | 2min | 1 tasks | 1 files |
+| Phase 14 P03 | 3min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -257,6 +258,7 @@ Recent decisions affecting current work:
 - [13-01]: Best-effort logging in auth hooks: never block auth flow for observability
 - [Phase 13-02]: Single acceptedTerms state above tab switcher gates all signup methods (not per-form Zod); social OAuth consent proven by UI checkbox flow
 - [Phase 14-04]: Vitest 4 requires it(name, {timeout}, fn) instead of deprecated it(name, fn, {timeout})
+- [Phase 14-03]: No duplicate index: existing idx_chat_messages_conversation covers pagination and archival
 
 ### Pending Todos
 
@@ -275,5 +277,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 14-04-PLAN.md (AI integration tests)
+Stopped at: Completed 14-03-PLAN.md (chat optimization -- was missing from phase 14)
 Resume file: N/A
