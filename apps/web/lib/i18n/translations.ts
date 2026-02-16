@@ -55,6 +55,14 @@ export type TranslationKeys = {
   "auth.checkEmailOk": string;
   "auth.pendingConfirmation": string;
   "auth.pendingConfirmationMessage": string;
+  "auth.resetPassword": string;
+  "auth.resetPasswordDescription": string;
+  "auth.sendResetLink": string;
+  "auth.sendingResetLink": string;
+  "auth.resetEmailSentTitle": string;
+  "auth.resetEmailSentMessage": string;
+  "auth.backToSignIn": string;
+  "auth.rememberPassword": string;
 
   // Settings
   "settings.language": string;
@@ -179,6 +187,14 @@ const cs: TranslationKeys = {
   "auth.checkEmailOk": "Rozumím",
   "auth.pendingConfirmation": "Čekáme na potvrzení e-mailu",
   "auth.pendingConfirmationMessage": "Zkontrolujte svůj e-mail a klikněte na potvrzovací odkaz. Do té doby nemůžete používat všechny funkce.",
+  "auth.resetPassword": "Obnovení hesla",
+  "auth.resetPasswordDescription": "Zadejte svůj e-mail a my vám pošleme odkaz pro obnovení hesla.",
+  "auth.sendResetLink": "Odeslat odkaz pro obnovení",
+  "auth.sendingResetLink": "Odesílám...",
+  "auth.resetEmailSentTitle": "Zkontrolujte svůj e-mail",
+  "auth.resetEmailSentMessage": "Poslali jsme vám odkaz pro obnovení hesla. Klikněte na něj a nastavte si nové heslo.",
+  "auth.backToSignIn": "Zpět na přihlášení",
+  "auth.rememberPassword": "Vzpomínáte si na heslo?",
 
   // Settings
   "settings.language": "Jazyk",
@@ -303,6 +319,14 @@ const sk: TranslationKeys = {
   "auth.checkEmailOk": "Rozumiem",
   "auth.pendingConfirmation": "Čakáme na potvrdenie e-mailu",
   "auth.pendingConfirmationMessage": "Skontrolujte svoj e-mail a kliknite na potvrdzovací odkaz. Dovtedy nemôžete používať všetky funkcie.",
+  "auth.resetPassword": "Obnovenie hesla",
+  "auth.resetPasswordDescription": "Zadajte svoj e-mail a my vám pošleme odkaz na obnovenie hesla.",
+  "auth.sendResetLink": "Odoslať odkaz na obnovenie",
+  "auth.sendingResetLink": "Odosielanie...",
+  "auth.resetEmailSentTitle": "Skontrolujte svoj e-mail",
+  "auth.resetEmailSentMessage": "Poslali sme vám odkaz na obnovenie hesla. Kliknite naň a nastavte si nové heslo.",
+  "auth.backToSignIn": "Späť na prihlásenie",
+  "auth.rememberPassword": "Pamätáte si heslo?",
 
   // Settings
   "settings.language": "Jazyk",
@@ -427,6 +451,14 @@ const en: TranslationKeys = {
   "auth.checkEmailOk": "Got it",
   "auth.pendingConfirmation": "Email confirmation pending",
   "auth.pendingConfirmationMessage": "Check your email and click the confirmation link. Until then, some features are unavailable.",
+  "auth.resetPassword": "Reset password",
+  "auth.resetPasswordDescription": "Enter your email and we'll send you a link to reset your password.",
+  "auth.sendResetLink": "Send reset link",
+  "auth.sendingResetLink": "Sending...",
+  "auth.resetEmailSentTitle": "Check your email",
+  "auth.resetEmailSentMessage": "We sent a password reset link to your email address. Click the link to set a new password.",
+  "auth.backToSignIn": "Back to sign in",
+  "auth.rememberPassword": "Remember your password?",
 
   // Settings
   "settings.language": "Language",
