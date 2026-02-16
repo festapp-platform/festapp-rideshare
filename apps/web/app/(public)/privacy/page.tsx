@@ -44,7 +44,7 @@ export default function PrivacyPage() {
           Sending notifications about ride updates, messages, and reminders.
         </li>
         <li>Improving the platform experience and fixing issues.</li>
-        <li>Calculating community impact statistics (CO2 savings).</li>
+        <li>Calculating community statistics (rides shared, distance traveled).</li>
       </ul>
 
       <h2>3. Data Sharing</h2>
