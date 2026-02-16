@@ -38,7 +38,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 12: Critical Bug Fixes & Admin Setup** - Fix AI ride creation, chat duplicates, map picker, past time selection; configure admin accounts (completed 2026-02-16)
 - [x] **Phase 13: Legal, Privacy & Observability** - ToS acceptance at signup, location sharing indicator, email/SMS/push logging, audit trail (completed 2026-02-16)
-- [ ] **Phase 14: Price Formatting, Chat Optimization & AI Tests** - Locale-aware price display, cash-friendly rounding, chat pagination/archival, AI integration tests
+- [x] **Phase 14: Price Formatting, Chat Optimization & AI Tests** - Locale-aware price display, cash-friendly rounding, chat pagination/archival, AI integration tests (completed 2026-02-16)
 - [ ] **Phase 15: i18n Coverage** - Complete translation of all 171 remaining strings, interpolation support, cookie consent i18n, language settings
 - [ ] **Phase 16: UI Polish & Route Features** - Map zoom, rating badges, simplified My Rides and notifications, waypoint management
 
@@ -298,7 +298,7 @@ Plans:
   2. Suggested prices round to nearest 10 CZK (or 50 CZK for trips over 200 CZK) and the price value appears directly below the slider on the ride creation form
   3. Chat message history loads via cursor-based pagination and completed ride messages have an archival/cleanup strategy
   4. Integration tests verify the AI Edge Function handles ride creation intents in Czech, Slovak, and English, and gracefully handles ambiguous, incomplete, and invalid inputs
-**Plans:** 4 plans
+**Plans:** 4/4 plans complete
 
 Plans:
 - [ ] 14-01-PLAN.md — Create formatPrice() utility, align COST_SHARING_FACTOR to 0.327, add smart rounding (PRICE-01, PRICE-02, PRICE-04)
@@ -316,7 +316,12 @@ Plans:
   3. All user-facing strings in secondary and minor files (block-button, ride-card, login, signup, cookie-consent, force-update-banner, pwa-install-banner, offline-banner, share-button, pending-rating-banner, not-found, reset-password) use t() with translations in all three locales
   4. Cookie consent banner displays in the user's selected language instead of hardcoded English
   5. User can change the app language to Czech, Slovak, or English from a language settings page
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 15-01-PLAN.md -- t() interpolation + core flow translations (ride-detail, my-rides, booking-button)
+- [ ] 15-02-PLAN.md -- Core flow part 2 (rating-modal, cancellation-dialog, report-dialog, ride-status-badge, language settings, public ride page)
+- [ ] 15-03-PLAN.md -- Secondary + minor files (block-button, ride-card, cookie-consent, force-update, pwa-install, offline, share, pending-rating, not-found)
 
 ### Phase 16: UI Polish & Route Features
 **Goal**: Visual polish items are resolved and drivers can create rides with intermediate waypoints that passengers can search by
@@ -355,7 +360,7 @@ Plans:
 | 11. Polish, Testing & Launch | v1.0 | 5/5 | ✓ Complete | 2026-02-16 |
 | 12. Critical Bug Fixes & Admin Setup | v1.1 | Complete    | 2026-02-16 | - |
 | 13. Legal, Privacy & Observability | v1.1 | Complete    | 2026-02-16 | - |
-| 14. Price Formatting, Chat Optimization & AI Tests | v1.1 | 0/4 | Not started | - |
+| 14. Price Formatting, Chat Optimization & AI Tests | v1.1 | Complete    | 2026-02-16 | - |
 | 15. i18n Coverage | v1.1 | 0/? | Not started | - |
 | 16. UI Polish & Route Features | v1.1 | 0/? | Not started | - |
 
