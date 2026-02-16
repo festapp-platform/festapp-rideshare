@@ -93,6 +93,7 @@ Progress: [███████████████████████
 | Phase 15 P03 | 6min | 2 tasks | 10 files |
 | Phase 16 P03 | 1min | 1 tasks | 1 files |
 | Phase 16 P02 | 3min | 2 tasks | 3 files |
+| Phase 16 P01 | 4min | 1 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -273,6 +274,7 @@ Recent decisions affecting current work:
 - [15-03]: not-found.tsx converted to client component for useI18n (no server data needs); brand names (Google, Apple) kept untranslated in social login buttons
 - [16-03]: EXISTS subquery (not JOIN) for waypoint proximity to avoid row multiplication; extensions. prefix on all PostGIS functions
 - [Phase 16]: Mixed notification group state shows as ON (at least one sub-value true)
+- [Phase 16]: Impact dashboard grid 4-col to 3-col after Money Saved removal; Czech/Slovak newUser badge uses 'Novy'
 
 ### Pending Todos
 
