@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import { OneSignalInit } from "./components/onesignal-init";
 import { PendingRatingBanner } from "./components/pending-rating-banner";
 import { PwaInstallBanner } from "./components/pwa-install-banner";
+import { OfflineBanner } from "@/components/offline-banner";
 
 /**
  * Authenticated app layout (NAV-01).
@@ -45,6 +46,7 @@ export default async function AppLayout({
 
   return (
     <MapProvider>
+      <OfflineBanner />
       <div className="flex min-h-screen flex-col bg-background md:flex-row">
         {/* Desktop sidebar */}
         <AppNav />
