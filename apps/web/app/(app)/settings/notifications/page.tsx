@@ -8,11 +8,12 @@ import {
   upsertNotificationPreferences,
 } from "@festapp/shared";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n/provider";
 
 /**
- * Notification preferences page (NOTF-06).
- * Toggle switches for push and email notification categories.
- * Preferences persist to notification_preferences table via upsert.
+ * Notification preferences page (UX-06).
+ * Three grouped toggles (Push, Email, Reminders) replacing 9 individual toggles.
+ * Each group toggle sets all underlying DB columns in that group.
  */
 
 interface Preferences {
@@ -39,64 +40,31 @@ const DEFAULT_PREFERENCES: Preferences = {
   email_cancellations: true,
 };
 
-const PUSH_CATEGORIES: {
-  key: keyof Preferences;
-  label: string;
-  description: string;
-}[] = [
-  {
-    key: "push_booking_requests",
-    label: "Booking requests",
-    description: "Get notified when someone wants to join your ride",
-  },
-  {
-    key: "push_booking_confirmations",
-    label: "Booking confirmations",
-    description: "Get notified when your booking is confirmed",
-  },
-  {
-    key: "push_booking_cancellations",
-    label: "Cancellations",
-    description: "Get notified when a booking or ride is cancelled",
-  },
-  {
-    key: "push_new_messages",
-    label: "New messages",
-    description: "Get notified when you receive a chat message",
-  },
-  {
-    key: "push_ride_reminders",
-    label: "Ride reminders",
-    description: "Get reminded before your ride departs",
-  },
-  {
-    key: "push_route_alerts",
-    label: "Route alerts",
-    description: "Get notified when a new ride matches your saved route",
-  },
+/** Column keys that belong to each group */
+const PUSH_KEYS: (keyof Preferences)[] = [
+  "push_booking_requests",
+  "push_booking_confirmations",
+  "push_booking_cancellations",
+  "push_new_messages",
+  "push_ride_reminders",
+  "push_route_alerts",
 ];
 
-const EMAIL_CATEGORIES: {
-  key: keyof Preferences;
-  label: string;
-  description: string;
-}[] = [
-  {
-    key: "email_booking_confirmations",
-    label: "Booking confirmations",
-    description: "Receive email when a booking is confirmed",
-  },
-  {
-    key: "email_ride_reminders",
-    label: "Ride reminders",
-    description: "Receive email reminder before your ride departs",
-  },
-  {
-    key: "email_cancellations",
-    label: "Cancellations",
-    description: "Receive email when a booking or ride is cancelled",
-  },
+const EMAIL_KEYS: (keyof Preferences)[] = [
+  "email_booking_confirmations",
+  "email_ride_reminders",
+  "email_cancellations",
 ];
+
+const REMINDER_KEYS: (keyof Preferences)[] = [
+  "push_ride_reminders",
+  "email_ride_reminders",
+];
+
+/** Compute group state: ON if at least one sub-value is true (mixed = ON), OFF if all false */
+function computeGroupState(prefs: Preferences, keys: (keyof Preferences)[]): boolean {
+  return keys.some((k) => prefs[k]);
+}
 
 function Toggle({
   checked,
@@ -124,48 +92,8 @@ function Toggle({
   );
 }
 
-function PreferenceSection({
-  title,
-  categories,
-  preferences,
-  onToggle,
-}: {
-  title: string;
-  categories: { key: keyof Preferences; label: string; description: string }[];
-  preferences: Preferences;
-  onToggle: (key: keyof Preferences, value: boolean) => void;
-}) {
-  return (
-    <div className="mb-6">
-      <h3 className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-text-secondary">
-        {title}
-      </h3>
-      <div className="overflow-hidden rounded-xl border border-border-pastel bg-surface">
-        {categories.map((cat, index) => (
-          <div
-            key={cat.key}
-            className={`flex items-center justify-between px-4 py-3 ${
-              index < categories.length - 1
-                ? "border-b border-border-pastel"
-                : ""
-            }`}
-          >
-            <div className="mr-4">
-              <p className="text-sm font-medium text-text-main">{cat.label}</p>
-              <p className="text-xs text-text-secondary">{cat.description}</p>
-            </div>
-            <Toggle
-              checked={preferences[cat.key]}
-              onChange={(value) => onToggle(cat.key, value)}
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function NotificationPreferencesPage() {
+  const { t } = useI18n();
   const [preferences, setPreferences] = useState<Preferences>(DEFAULT_PREFERENCES);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
@@ -183,9 +111,8 @@ export default function NotificationPreferencesPage() {
       const { data, error } = await getNotificationPreferences(supabase);
 
       if (error && error.code !== "PGRST116") {
-        // PGRST116 = no rows found (single() with no match)
         console.error("Error loading preferences:", error);
-        toast.error("Failed to load notification preferences");
+        toast.error(t("notifications.loadFailed"));
       }
 
       if (data) {
@@ -201,21 +128,23 @@ export default function NotificationPreferencesPage() {
           email_cancellations: data.email_cancellations,
         });
       }
-      // If no data (null), keep defaults (all ON)
 
       setLoading(false);
     };
 
     loadPreferences();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleToggle = useCallback(
-    async (key: keyof Preferences, value: boolean) => {
+  const handleGroupToggle = useCallback(
+    async (keys: (keyof Preferences)[], value: boolean) => {
       if (!userId) return;
 
-      // Optimistic update
+      // Optimistic update: set all keys in the group
       const prevPreferences = { ...preferences };
-      const updated = { ...preferences, [key]: value };
+      const updated = { ...preferences };
+      for (const key of keys) {
+        updated[key] = value;
+      }
       setPreferences(updated);
 
       const supabase = createClient();
@@ -225,16 +154,19 @@ export default function NotificationPreferencesPage() {
       });
 
       if (error) {
-        // Revert on error
         setPreferences(prevPreferences);
-        toast.error("Failed to update preference");
-        console.error("Error updating preference:", error);
+        toast.error(t("notifications.preferenceFailed"));
+        console.error("Error updating preferences:", error);
       } else {
-        toast.success("Preference updated");
+        toast.success(t("notifications.preferenceSaved"));
       }
     },
-    [preferences, userId],
+    [preferences, userId, t],
   );
+
+  const pushOn = computeGroupState(preferences, PUSH_KEYS);
+  const emailOn = computeGroupState(preferences, EMAIL_KEYS);
+  const remindersOn = computeGroupState(preferences, REMINDER_KEYS);
 
   if (loading) {
     return (
@@ -265,22 +197,64 @@ export default function NotificationPreferencesPage() {
             />
           </svg>
         </Link>
-        <h1 className="text-2xl font-bold text-text-main">Notifications</h1>
+        <h1 className="text-2xl font-bold text-text-main">{t("notifications.title")}</h1>
       </div>
 
-      <PreferenceSection
-        title="Push Notifications"
-        categories={PUSH_CATEGORIES}
-        preferences={preferences}
-        onToggle={handleToggle}
-      />
+      <div className="space-y-4">
+        {/* Push Notifications Group */}
+        <div className="overflow-hidden rounded-xl border border-border-pastel bg-surface">
+          <div className="flex items-center justify-between px-4 py-4">
+            <div className="mr-4">
+              <p className="text-sm font-semibold text-text-main">
+                {t("notifications.pushGroup")}
+              </p>
+              <p className="mt-0.5 text-xs text-text-secondary">
+                {t("notifications.pushGroupDesc")}
+              </p>
+            </div>
+            <Toggle
+              checked={pushOn}
+              onChange={(value) => handleGroupToggle(PUSH_KEYS, value)}
+            />
+          </div>
+        </div>
 
-      <PreferenceSection
-        title="Email Notifications"
-        categories={EMAIL_CATEGORIES}
-        preferences={preferences}
-        onToggle={handleToggle}
-      />
+        {/* Email Notifications Group */}
+        <div className="overflow-hidden rounded-xl border border-border-pastel bg-surface">
+          <div className="flex items-center justify-between px-4 py-4">
+            <div className="mr-4">
+              <p className="text-sm font-semibold text-text-main">
+                {t("notifications.emailGroup")}
+              </p>
+              <p className="mt-0.5 text-xs text-text-secondary">
+                {t("notifications.emailGroupDesc")}
+              </p>
+            </div>
+            <Toggle
+              checked={emailOn}
+              onChange={(value) => handleGroupToggle(EMAIL_KEYS, value)}
+            />
+          </div>
+        </div>
+
+        {/* Ride Reminders Group */}
+        <div className="overflow-hidden rounded-xl border border-border-pastel bg-surface">
+          <div className="flex items-center justify-between px-4 py-4">
+            <div className="mr-4">
+              <p className="text-sm font-semibold text-text-main">
+                {t("notifications.remindersGroup")}
+              </p>
+              <p className="mt-0.5 text-xs text-text-secondary">
+                {t("notifications.remindersGroupDesc")}
+              </p>
+            </div>
+            <Toggle
+              checked={remindersOn}
+              onChange={(value) => handleGroupToggle(REMINDER_KEYS, value)}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
