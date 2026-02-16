@@ -89,7 +89,7 @@ describe("OG meta generation for rides", () => {
   };
 
   // Replicate the metadata generation logic from the public ride page
-  function generateRideMetadata(ride: typeof mockRide) {
+  function generateRideMetadata(ride: Omit<typeof mockRide, 'price_czk'> & { price_czk: number | null }) {
     const SITE_NAME = "spolujizda.online";
     const SITE_URL = "https://rideshare.festapp.cz";
     const DEFAULT_OG_IMAGE = "/og-default.png";
