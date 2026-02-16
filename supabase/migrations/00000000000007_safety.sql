@@ -1,8 +1,50 @@
--- Admin moderation: moderation_actions table, is_admin() helper, admin RPCs,
--- platform_stats_daily, pg_cron jobs, RLS policies, admin notification trigger.
+-- Safety: user blocks, reports, admin moderation, platform stats, pg_cron jobs
+-- Squashed from migrations 030, 031
 
 -- ============================================================
--- 1. is_admin() helper function
+-- 1. Reports table
+-- ============================================================
+CREATE TABLE public.reports (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  reporter_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  reported_user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  ride_id UUID REFERENCES public.rides(id) ON DELETE SET NULL,
+  booking_id UUID REFERENCES public.bookings(id) ON DELETE SET NULL,
+  review_id UUID REFERENCES public.reviews(id) ON DELETE SET NULL,
+  description TEXT NOT NULL CHECK (char_length(description) BETWEEN 10 AND 2000),
+  status TEXT NOT NULL DEFAULT 'open'
+    CHECK (status IN ('open', 'reviewing', 'resolved', 'dismissed')),
+  admin_notes TEXT,
+  resolved_by UUID REFERENCES public.profiles(id),
+  resolved_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_reports_status ON public.reports(status, created_at DESC);
+CREATE INDEX idx_reports_reported_user ON public.reports(reported_user_id);
+
+ALTER TABLE public.reports ENABLE ROW LEVEL SECURITY;
+
+-- ============================================================
+-- 2. User blocks table
+-- ============================================================
+CREATE TABLE public.user_blocks (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  blocker_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  blocked_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+  UNIQUE (blocker_id, blocked_id),
+  CHECK (blocker_id != blocked_id)
+);
+
+CREATE INDEX idx_blocks_blocker ON public.user_blocks(blocker_id);
+CREATE INDEX idx_blocks_blocked ON public.user_blocks(blocked_id);
+
+ALTER TABLE public.user_blocks ENABLE ROW LEVEL SECURITY;
+
+-- ============================================================
+-- 3. is_admin() helper function
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS BOOLEAN
@@ -17,7 +59,127 @@ AS $$
 $$;
 
 -- ============================================================
--- 2. Moderation actions table
+-- 4. RLS policies — reports
+-- ============================================================
+CREATE POLICY "Users can insert own reports"
+  ON public.reports FOR INSERT TO authenticated
+  WITH CHECK (reporter_id = auth.uid());
+
+CREATE POLICY "Users can view own reports or admin sees all"
+  ON public.reports FOR SELECT TO authenticated
+  USING (
+    reporter_id = auth.uid()
+    OR public.is_admin()
+  );
+
+CREATE POLICY "Admin can update reports"
+  ON public.reports FOR UPDATE TO authenticated
+  USING (public.is_admin());
+
+-- ============================================================
+-- 5. RLS policies — user blocks
+-- ============================================================
+CREATE POLICY "Users can manage own blocks"
+  ON public.user_blocks FOR ALL TO authenticated
+  USING (blocker_id = auth.uid())
+  WITH CHECK (blocker_id = auth.uid());
+
+-- ============================================================
+-- 6. report_user RPC
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.report_user(
+  p_reported_user_id UUID,
+  p_description TEXT,
+  p_ride_id UUID DEFAULT NULL,
+  p_booking_id UUID DEFAULT NULL,
+  p_review_id UUID DEFAULT NULL
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = ''
+AS $$
+DECLARE
+  v_user_id UUID;
+  v_report_id UUID;
+BEGIN
+  v_user_id := auth.uid();
+
+  -- Cannot report self
+  IF v_user_id = p_reported_user_id THEN
+    RAISE EXCEPTION 'Cannot report yourself';
+  END IF;
+
+  -- Validate description length
+  IF char_length(p_description) < 10 OR char_length(p_description) > 2000 THEN
+    RAISE EXCEPTION 'Description must be between 10 and 2000 characters';
+  END IF;
+
+  INSERT INTO public.reports (reporter_id, reported_user_id, description, ride_id, booking_id, review_id)
+  VALUES (v_user_id, p_reported_user_id, p_description, p_ride_id, p_booking_id, p_review_id)
+  RETURNING id INTO v_report_id;
+
+  RETURN v_report_id;
+END;
+$$;
+
+-- ============================================================
+-- 7. block_user / unblock_user / get_blocked_users RPCs
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.block_user(p_blocked_id UUID)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = ''
+AS $$
+DECLARE
+  v_user_id UUID;
+BEGIN
+  v_user_id := auth.uid();
+
+  IF v_user_id = p_blocked_id THEN
+    RAISE EXCEPTION 'Cannot block yourself';
+  END IF;
+
+  INSERT INTO public.user_blocks (blocker_id, blocked_id)
+  VALUES (v_user_id, p_blocked_id)
+  ON CONFLICT (blocker_id, blocked_id) DO NOTHING;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.unblock_user(p_blocked_id UUID)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = ''
+AS $$
+BEGIN
+  DELETE FROM public.user_blocks
+  WHERE blocker_id = auth.uid() AND blocked_id = p_blocked_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.get_blocked_users()
+RETURNS TABLE (
+  id UUID,
+  display_name TEXT,
+  avatar_url TEXT,
+  blocked_at TIMESTAMPTZ
+)
+LANGUAGE sql
+STABLE
+SECURITY DEFINER SET search_path = ''
+AS $$
+  SELECT
+    p.id,
+    p.display_name,
+    p.avatar_url,
+    ub.created_at AS blocked_at
+  FROM public.user_blocks ub
+  JOIN public.profiles p ON p.id = ub.blocked_id
+  WHERE ub.blocker_id = auth.uid()
+  ORDER BY ub.created_at DESC;
+$$;
+
+-- ============================================================
+-- 8. Moderation actions table
 -- ============================================================
 CREATE TABLE public.moderation_actions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -35,7 +197,7 @@ CREATE INDEX idx_mod_actions_user ON public.moderation_actions(user_id, created_
 ALTER TABLE public.moderation_actions ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================
--- 3. Platform stats daily table
+-- 9. Platform stats daily table
 -- ============================================================
 CREATE TABLE public.platform_stats_daily (
   date DATE PRIMARY KEY,
@@ -52,10 +214,8 @@ CREATE TABLE public.platform_stats_daily (
 ALTER TABLE public.platform_stats_daily ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================
--- 4. RLS policies
+-- 10. RLS policies — moderation actions & platform stats
 -- ============================================================
-
--- Moderation actions: admins see all, users see own
 CREATE POLICY "Admin can manage moderation actions"
   ON public.moderation_actions FOR ALL TO authenticated
   USING (public.is_admin());
@@ -64,7 +224,6 @@ CREATE POLICY "Users can view own moderation actions"
   ON public.moderation_actions FOR SELECT TO authenticated
   USING (user_id = auth.uid());
 
--- Platform stats: admin only
 CREATE POLICY "Admin can view platform stats"
   ON public.platform_stats_daily FOR SELECT TO authenticated
   USING (public.is_admin());
@@ -79,7 +238,7 @@ CREATE POLICY "Admin can view email logs"
   USING (public.is_admin());
 
 -- ============================================================
--- 5. Admin RPCs
+-- 11. Admin RPCs
 -- ============================================================
 
 -- admin_warn_user
@@ -271,7 +430,7 @@ BEGIN
 END;
 $$;
 
--- admin_hide_review (sets revealed_at = NULL to hide a review)
+-- admin_hide_review
 CREATE OR REPLACE FUNCTION public.admin_hide_review(p_review_id UUID)
 RETURNS void
 LANGUAGE plpgsql
@@ -348,7 +507,50 @@ END;
 $$;
 
 -- ============================================================
--- 6. pg_cron jobs
+-- 12. Admin notification trigger on new reports
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.notify_admins_on_report()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = ''
+AS $$
+DECLARE
+  v_reporter_name TEXT;
+  v_reported_name TEXT;
+  v_admin RECORD;
+BEGIN
+  -- Get reporter and reported user names
+  SELECT display_name INTO v_reporter_name
+  FROM public.profiles WHERE id = NEW.reporter_id;
+
+  SELECT display_name INTO v_reported_name
+  FROM public.profiles WHERE id = NEW.reported_user_id;
+
+  -- Notify all admin users
+  FOR v_admin IN
+    SELECT id FROM auth.users
+    WHERE (raw_app_meta_data ->> 'is_admin')::boolean = true
+  LOOP
+    PERFORM public._notify(
+      v_admin.id,
+      'new_report',
+      'New User Report',
+      COALESCE(v_reporter_name, 'A user') || ' reported ' || COALESCE(v_reported_name, 'a user'),
+      jsonb_build_object('report_id', NEW.id::text)
+    );
+  END LOOP;
+
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER on_new_report_notify_admins
+  AFTER INSERT ON public.reports
+  FOR EACH ROW
+  EXECUTE FUNCTION public.notify_admins_on_report();
+
+-- ============================================================
+-- 13. pg_cron jobs
 -- ============================================================
 
 -- Daily platform stats snapshot (1 AM)
@@ -384,47 +586,3 @@ SELECT cron.schedule(
   '*/15 * * * *',
   $$UPDATE public.profiles SET account_status = 'active', suspended_until = NULL WHERE account_status = 'suspended' AND suspended_until < now()$$
 );
-
--- ============================================================
--- 7. Admin notification trigger on new reports
--- ============================================================
-CREATE OR REPLACE FUNCTION public.notify_admins_on_report()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER SET search_path = ''
-AS $$
-DECLARE
-  v_reporter_name TEXT;
-  v_reported_name TEXT;
-  v_admin RECORD;
-BEGIN
-  -- Get reporter and reported user names
-  SELECT display_name INTO v_reporter_name
-  FROM public.profiles WHERE id = NEW.reporter_id;
-
-  SELECT display_name INTO v_reported_name
-  FROM public.profiles WHERE id = NEW.reported_user_id;
-
-  -- Notify all admin users
-  -- Admin users have is_admin = true in auth.users raw_app_meta_data
-  FOR v_admin IN
-    SELECT id FROM auth.users
-    WHERE (raw_app_meta_data ->> 'is_admin')::boolean = true
-  LOOP
-    PERFORM public._notify(
-      v_admin.id,
-      'new_report',
-      'New User Report',
-      COALESCE(v_reporter_name, 'A user') || ' reported ' || COALESCE(v_reported_name, 'a user'),
-      jsonb_build_object('report_id', NEW.id::text)
-    );
-  END LOOP;
-
-  RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER on_new_report_notify_admins
-  AFTER INSERT ON public.reports
-  FOR EACH ROW
-  EXECUTE FUNCTION public.notify_admins_on_report();

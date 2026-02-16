@@ -1,7 +1,9 @@
--- Notification triggers: fire on booking changes and new chat messages
--- Calls send-notification Edge Function via pg_net (async, non-blocking)
+-- Notification triggers, route alerts, ride reminders, and notification log tables
+-- Fires on booking changes, new chat messages, and new rides via pg_net
 
+-- ============================================================
 -- Enable pg_net extension for async HTTP calls from triggers
+-- ============================================================
 CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;
 
 -- ============================================================
@@ -221,6 +223,77 @@ END;
 $$;
 
 -- ============================================================
+-- find_matching_route_alerts: geospatial matching of rides against alert-enabled favorite routes
+-- Called by check-route-alerts Edge Function
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.find_matching_route_alerts(
+  p_ride_id UUID,
+  p_driver_id UUID
+)
+RETURNS TABLE (user_id UUID)
+SET search_path = ''
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT DISTINCT fr.user_id
+  FROM public.favorite_routes fr
+  JOIN public.rides r ON r.id = p_ride_id
+  WHERE fr.alert_enabled = true
+    AND fr.user_id != p_driver_id
+    AND extensions.ST_DWithin(
+      fr.origin_location,
+      r.origin_location,
+      20000  -- 20km radius
+    )
+    AND extensions.ST_DWithin(
+      fr.destination_location,
+      r.destination_location,
+      20000  -- 20km radius
+    );
+$$;
+
+-- ============================================================
+-- notify_on_new_ride: call check-route-alerts via pg_net on new ride
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.notify_on_new_ride()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = ''
+AS $$
+DECLARE
+  v_url TEXT;
+  v_key TEXT;
+BEGIN
+  -- Only check alerts for upcoming rides (not expired/cancelled)
+  IF NEW.status = 'upcoming' THEN
+    v_url := current_setting('supabase.service_url', true);
+    v_key := current_setting('supabase.service_role_key', true);
+
+    -- Fallback: use hardcoded project URL if setting not available
+    IF v_url IS NULL OR v_url = '' THEN
+      v_url := 'https://xamctptqmpruhovhjcgm.supabase.co';
+    END IF;
+
+    -- Cannot call without service_role key
+    IF v_key IS NULL OR v_key = '' THEN
+      RAISE WARNING 'supabase.service_role_key not available, skipping route alert check';
+      RETURN NEW;
+    END IF;
+
+    PERFORM extensions.net.http_post(
+      url := v_url || '/functions/v1/check-route-alerts',
+      headers := jsonb_build_object(
+        'Content-Type', 'application/json',
+        'Authorization', 'Bearer ' || v_key
+      ),
+      body := jsonb_build_object('ride_id', NEW.id)
+    );
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+-- ============================================================
 -- Create triggers
 -- ============================================================
 CREATE TRIGGER on_booking_change
@@ -232,3 +305,85 @@ CREATE TRIGGER on_new_message
   AFTER INSERT ON public.chat_messages
   FOR EACH ROW
   EXECUTE FUNCTION public.notify_on_new_message();
+
+CREATE TRIGGER on_new_ride_check_alerts
+  AFTER INSERT ON public.rides
+  FOR EACH ROW
+  EXECUTE FUNCTION public.notify_on_new_ride();
+
+-- ============================================================
+-- Ride reminder cron job (every 15 minutes)
+-- ============================================================
+SELECT cron.schedule(
+  'ride-reminders',
+  '*/15 * * * *',
+  $$
+    SELECT extensions.net.http_post(
+      url := 'https://xamctptqmpruhovhjcgm.supabase.co/functions/v1/send-ride-reminders',
+      headers := jsonb_build_object(
+        'Content-Type', 'application/json',
+        'Authorization', 'Bearer ' || current_setting('supabase.service_role_key')
+      ),
+      body := '{}'::jsonb
+    );
+  $$
+);
+
+-- ============================================================
+-- Notification/email/SMS log tables (metadata only, no content)
+-- ============================================================
+
+-- Push notification log
+CREATE TABLE public.log_notifications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  type TEXT NOT NULL,              -- booking_request, booking_confirmation, etc.
+  channel TEXT NOT NULL DEFAULT 'push', -- push, in_app
+  status TEXT NOT NULL DEFAULT 'sent',  -- sent, failed
+  ride_id UUID REFERENCES public.rides(id) ON DELETE SET NULL,
+  booking_id UUID REFERENCES public.bookings(id) ON DELETE SET NULL,
+  error_message TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Email log
+CREATE TABLE public.log_emails (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  type TEXT NOT NULL,              -- booking_confirmation, ride_reminder, booking_cancellation
+  recipient_email TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'sent',  -- sent, failed
+  ride_id UUID REFERENCES public.rides(id) ON DELETE SET NULL,
+  booking_id UUID REFERENCES public.bookings(id) ON DELETE SET NULL,
+  error_message TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- SMS log (for auth OTPs and future SMS notifications)
+CREATE TABLE public.log_sms (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  type TEXT NOT NULL DEFAULT 'otp', -- otp, notification
+  recipient_phone TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'sent',  -- sent, failed
+  error_message TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Indexes for querying by user and time range
+CREATE INDEX idx_log_notifications_user ON public.log_notifications(user_id, created_at DESC);
+CREATE INDEX idx_log_emails_user ON public.log_emails(user_id, created_at DESC);
+CREATE INDEX idx_log_sms_user ON public.log_sms(user_id, created_at DESC);
+
+-- BRIN index for time-range scans (analytics)
+CREATE INDEX idx_log_notifications_ts ON public.log_notifications USING brin(created_at);
+CREATE INDEX idx_log_emails_ts ON public.log_emails USING brin(created_at);
+CREATE INDEX idx_log_sms_ts ON public.log_sms USING brin(created_at);
+
+-- RLS: only admins can read logs (service_role bypasses RLS for Edge Functions)
+ALTER TABLE public.log_notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.log_emails ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.log_sms ENABLE ROW LEVEL SECURITY;
+
+-- No user-facing policies — logs are written by service_role (Edge Functions)
+-- and read by admin dashboard (future Phase 6)

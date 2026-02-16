@@ -1,7 +1,9 @@
--- nearby_rides RPC function: corridor-based geospatial ride search
--- Uses ST_DWithin against route_geometry for corridor matching
--- Falls back to point matching when route_geometry is NULL
+-- Ride search: nearby_rides RPC with block filtering and driver stats
+-- Squashed from migration 038 (final version)
 
+-- ============================================================
+-- nearby_rides() RPC
+-- ============================================================
 CREATE OR REPLACE FUNCTION public.nearby_rides(
   origin_lat FLOAT,
   origin_lng FLOAT,
@@ -18,6 +20,7 @@ RETURNS TABLE (
   driver_avatar TEXT,
   driver_rating NUMERIC,
   driver_rating_count INT,
+  driver_completed_rides_count INT,
   vehicle_make TEXT,
   vehicle_model TEXT,
   vehicle_color TEXT,
@@ -43,6 +46,7 @@ AS $$
     p.avatar_url AS driver_avatar,
     p.rating_avg AS driver_rating,
     p.rating_count AS driver_rating_count,
+    p.completed_rides_count AS driver_completed_rides_count,
     v.make AS vehicle_make,
     v.model AS vehicle_model,
     v.color AS vehicle_color,
@@ -54,12 +58,10 @@ AS $$
     r.distance_meters,
     r.duration_seconds,
     r.booking_mode,
-    -- Distance from search origin to ride origin
     extensions.ST_Distance(
       r.origin_location,
       extensions.ST_SetSRID(extensions.ST_MakePoint(origin_lng, origin_lat), 4326)::extensions.geography
     ) AS origin_distance_m,
-    -- Distance from search destination to ride destination
     extensions.ST_Distance(
       r.destination_location,
       extensions.ST_SetSRID(extensions.ST_MakePoint(dest_lng, dest_lat), 4326)::extensions.geography
@@ -70,10 +72,14 @@ AS $$
   WHERE
     r.status = 'upcoming'
     AND r.seats_available > 0
-    -- Time window: rides departing on search_date to search_date + 2 days
     AND r.departure_time >= (search_date::timestamptz)
     AND r.departure_time < (search_date::timestamptz + interval '2 days')
-    -- Spatial matching: route passes within radius_km of passenger's origin
+    -- Exclude rides from drivers the caller has blocked or who blocked the caller
+    AND NOT EXISTS (
+      SELECT 1 FROM public.user_blocks ub
+      WHERE (ub.blocker_id = auth.uid() AND ub.blocked_id = r.driver_id)
+         OR (ub.blocker_id = r.driver_id AND ub.blocked_id = auth.uid())
+    )
     AND (
       (r.route_geometry IS NOT NULL AND extensions.ST_DWithin(
         r.route_geometry,
@@ -87,7 +93,6 @@ AS $$
         radius_km * 1000
       ))
     )
-    -- Spatial matching: route passes within radius_km of passenger's destination
     AND (
       (r.route_geometry IS NOT NULL AND extensions.ST_DWithin(
         r.route_geometry,

@@ -212,7 +212,7 @@ describe("nearby_rides - route corridor", () => {
     expect(rideIds).not.toContain(corridorRideId);
   });
 
-  it.skip("block-aware: excludes rides from blocked drivers (nearby_rides does not yet filter blocks)", async () => {
+  it("block-aware: excludes rides from blocked drivers", async () => {
     // Passenger blocks driver
     await passenger.client.rpc("block_user", { p_blocked_id: driver.id });
 

@@ -1,8 +1,107 @@
--- Booking RPC functions: all mutations go through SECURITY DEFINER functions
--- to guarantee atomic seat management and prevent race conditions
+-- Squashed bookings migration: bookings table, RLS, all booking RPCs
+-- Sources: 014, 015, 020 (cancel_ride override), 030 (block-aware book/request)
 
 -- ============================================================
--- 1. book_ride_instant: instant booking with atomic seat decrement
+-- 1. Bookings table
+-- ============================================================
+CREATE TABLE public.bookings (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  ride_id UUID NOT NULL REFERENCES public.rides(id) ON DELETE CASCADE,
+  passenger_id UUID NOT NULL REFERENCES public.profiles(id),
+  seats_booked INT NOT NULL DEFAULT 1 CHECK (seats_booked BETWEEN 1 AND 8),
+
+  -- Status lifecycle: pending -> confirmed -> completed/cancelled
+  -- For instant booking: created as 'confirmed' directly
+  -- For request mode: created as 'pending', driver accepts -> 'confirmed'
+  status TEXT NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending', 'confirmed', 'cancelled', 'completed')),
+
+  -- Cancellation tracking (for reliability scoring)
+  cancelled_by UUID REFERENCES public.profiles(id),
+  cancellation_reason TEXT,
+  cancelled_at TIMESTAMPTZ,
+
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+  -- Prevent duplicate bookings per ride per passenger
+  UNIQUE (ride_id, passenger_id)
+);
+
+-- ============================================================
+-- 2. Indexes
+-- ============================================================
+CREATE INDEX idx_bookings_ride_id ON public.bookings(ride_id);
+CREATE INDEX idx_bookings_passenger_id ON public.bookings(passenger_id);
+CREATE INDEX idx_bookings_status ON public.bookings(status);
+
+-- ============================================================
+-- 3. updated_at trigger
+-- ============================================================
+CREATE TRIGGER set_bookings_updated_at
+  BEFORE UPDATE ON public.bookings
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at_column();
+
+-- ============================================================
+-- 4. RLS policies
+-- ============================================================
+ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
+
+-- Passengers can see their own bookings, drivers can see bookings on their rides
+CREATE POLICY "Users can view own bookings or bookings on their rides"
+  ON public.bookings FOR SELECT TO authenticated
+  USING (
+    passenger_id = auth.uid()
+    OR EXISTS (
+      SELECT 1 FROM public.rides
+      WHERE rides.id = bookings.ride_id AND rides.driver_id = auth.uid()
+    )
+  );
+
+-- No INSERT/UPDATE/DELETE policies: all mutations go through SECURITY DEFINER RPCs
+
+-- ============================================================
+-- 5. get_driver_reliability RPC
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.get_driver_reliability(p_driver_id UUID)
+RETURNS TABLE (
+  total_rides_completed INT,
+  total_rides_cancelled INT,
+  cancellation_rate NUMERIC,
+  total_bookings_received INT
+)
+LANGUAGE sql
+STABLE
+SET search_path = ''
+AS $$
+  SELECT
+    COUNT(*) FILTER (WHERE r.status = 'completed')::INT AS total_rides_completed,
+    COUNT(*) FILTER (
+      WHERE r.status = 'cancelled'
+      AND EXISTS (
+        SELECT 1 FROM public.bookings b
+        WHERE b.ride_id = r.id AND b.cancelled_by = r.driver_id
+      )
+    )::INT AS total_rides_cancelled,
+    CASE
+      WHEN COUNT(*) = 0 THEN 0
+      ELSE ROUND(
+        COUNT(*) FILTER (WHERE r.status = 'cancelled')::NUMERIC / COUNT(*)::NUMERIC,
+        2
+      )
+    END AS cancellation_rate,
+    (SELECT COUNT(*)::INT FROM public.bookings b
+     JOIN public.rides r2 ON r2.id = b.ride_id
+     WHERE r2.driver_id = p_driver_id AND b.status = 'confirmed'
+    ) AS total_bookings_received
+  FROM public.rides r
+  WHERE r.driver_id = p_driver_id
+    AND r.status IN ('completed', 'cancelled');
+$$;
+
+-- ============================================================
+-- 6. Block-aware book_ride_instant (from migration 30)
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.book_ride_instant(
   p_ride_id UUID,
@@ -39,6 +138,15 @@ BEGIN
     RAISE EXCEPTION 'Driver cannot book own ride';
   END IF;
 
+  -- Block check: prevent booking if either user has blocked the other
+  IF EXISTS (
+    SELECT 1 FROM public.user_blocks
+    WHERE (blocker_id = p_passenger_id AND blocked_id = v_driver_id)
+       OR (blocker_id = v_driver_id AND blocked_id = p_passenger_id)
+  ) THEN
+    RAISE EXCEPTION 'Unable to book this ride';
+  END IF;
+
   IF v_available < p_seats THEN
     RAISE EXCEPTION 'Not enough seats available';
   END IF;
@@ -67,7 +175,7 @@ END;
 $$;
 
 -- ============================================================
--- 2. request_ride_booking: creates pending booking (no seat decrement)
+-- 7. Block-aware request_ride_booking (from migration 30)
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.request_ride_booking(
   p_ride_id UUID,
@@ -98,6 +206,15 @@ BEGIN
     RAISE EXCEPTION 'Driver cannot book own ride';
   END IF;
 
+  -- Block check: prevent booking if either user has blocked the other
+  IF EXISTS (
+    SELECT 1 FROM public.user_blocks
+    WHERE (blocker_id = p_passenger_id AND blocked_id = v_driver_id)
+       OR (blocker_id = v_driver_id AND blocked_id = p_passenger_id)
+  ) THEN
+    RAISE EXCEPTION 'Unable to book this ride';
+  END IF;
+
   IF v_available < p_seats THEN
     RAISE EXCEPTION 'Not enough seats available';
   END IF;
@@ -119,7 +236,7 @@ END;
 $$;
 
 -- ============================================================
--- 3. respond_to_booking: driver accepts or rejects a pending booking
+-- 8. respond_to_booking (from migration 15)
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.respond_to_booking(
   p_booking_id UUID,
@@ -173,7 +290,7 @@ END;
 $$;
 
 -- ============================================================
--- 4. cancel_booking: cancel by driver or passenger, restore seats if confirmed
+-- 9. cancel_booking (from migration 15 — correct column order)
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.cancel_booking(
   p_booking_id UUID,
@@ -226,7 +343,7 @@ END;
 $$;
 
 -- ============================================================
--- 5. cancel_ride: cancel ride and cascade to all bookings
+-- 10. cancel_ride (from migration 20 — with cancellation metadata)
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.cancel_ride(
   p_ride_id UUID,
@@ -238,7 +355,6 @@ LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = ''
 AS $$
 BEGIN
-  -- Verify ownership and upcoming status
   IF NOT EXISTS (
     SELECT 1 FROM public.rides
     WHERE id = p_ride_id AND driver_id = p_driver_id AND status = 'upcoming'
@@ -246,11 +362,14 @@ BEGIN
     RAISE EXCEPTION 'Cannot cancel this ride';
   END IF;
 
-  -- Cancel the ride
-  UPDATE public.rides SET status = 'cancelled', updated_at = now()
+  UPDATE public.rides
+  SET status = 'cancelled',
+      cancelled_by = p_driver_id,
+      cancellation_reason = p_reason,
+      cancelled_at = now(),
+      updated_at = now()
   WHERE id = p_ride_id;
 
-  -- Cancel all associated bookings
   UPDATE public.bookings
   SET status = 'cancelled',
       cancelled_by = p_driver_id,
@@ -262,7 +381,7 @@ END;
 $$;
 
 -- ============================================================
--- 6. complete_ride: complete ride and transition bookings
+-- 11. complete_ride (from migration 15)
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.complete_ride(
   p_ride_id UUID,
@@ -306,7 +425,7 @@ END;
 $$;
 
 -- ============================================================
--- 7. Update expire_past_rides to handle bookings
+-- 12. expire_past_rides (final version from migration 15 — handles bookings)
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.expire_past_rides()
 RETURNS void
@@ -347,3 +466,49 @@ BEGIN
   END IF;
 END;
 $$;
+
+-- Schedule: run every hour at minute 0
+SELECT cron.schedule(
+  'expire-past-rides',
+  '0 * * * *',
+  $$SELECT public.expire_past_rides();$$
+);
+
+-- ============================================================
+-- 12. start_ride: driver starts a ride (upcoming -> in_progress)
+-- Source: migration 032 (live_location)
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.start_ride(
+  p_ride_id UUID,
+  p_driver_id UUID
+)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = ''
+AS $$
+DECLARE
+  v_status TEXT;
+  v_driver UUID;
+BEGIN
+  SELECT status, driver_id INTO v_status, v_driver
+  FROM public.rides WHERE id = p_ride_id FOR UPDATE;
+
+  IF v_driver IS NULL THEN
+    RAISE EXCEPTION 'Ride not found';
+  END IF;
+
+  IF v_driver != p_driver_id THEN
+    RAISE EXCEPTION 'Only the driver can start a ride';
+  END IF;
+
+  IF v_status != 'upcoming' THEN
+    RAISE EXCEPTION 'Ride can only be started from upcoming status';
+  END IF;
+
+  UPDATE public.rides
+  SET status = 'in_progress', updated_at = now()
+  WHERE id = p_ride_id;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.start_ride(UUID, UUID) TO authenticated;

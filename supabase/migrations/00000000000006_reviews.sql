@@ -1,22 +1,13 @@
 -- Reviews table with dual-reveal mechanism, rating aggregation triggers,
 -- submit_review/get_pending_reviews RPCs, completed_rides_count tracking,
 -- and pg_cron job for revealing expired reviews.
+--
+-- NOTE: Profile columns (rating_avg, rating_count, completed_rides_count,
+-- account_status, suspended_until) are already defined in the profiles table
+-- from migration 001. No ALTER TABLE statements needed here.
 
 -- ============================================================
--- 1. Profile columns for trust & safety
--- ============================================================
-ALTER TABLE public.profiles
-  ADD COLUMN IF NOT EXISTS account_status TEXT DEFAULT 'active'
-  CHECK (account_status IN ('active', 'suspended', 'banned'));
-
-ALTER TABLE public.profiles
-  ADD COLUMN IF NOT EXISTS suspended_until TIMESTAMPTZ;
-
-ALTER TABLE public.profiles
-  ADD COLUMN IF NOT EXISTS completed_rides_count INT DEFAULT 0;
-
--- ============================================================
--- 2. Reviews table
+-- 1. Reviews table
 -- ============================================================
 CREATE TABLE public.reviews (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -45,7 +36,7 @@ CREATE INDEX idx_reviews_unrevealed ON public.reviews(created_at)
 ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================
--- 3. RLS policies on reviews
+-- 2. RLS policies on reviews
 -- ============================================================
 
 -- SELECT: users see revealed reviews + their own unrevealed
@@ -61,128 +52,7 @@ CREATE POLICY "Users can insert own reviews"
 -- No UPDATE/DELETE for regular users (immutable reviews)
 
 -- ============================================================
--- 4. Dual-reveal trigger (check_review_reveal)
--- ============================================================
-CREATE OR REPLACE FUNCTION public.check_review_reveal()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER SET search_path = ''
-AS $$
-DECLARE
-  v_counter_review_id UUID;
-BEGIN
-  -- Find counter-review: same booking, reviewer is our reviewee and vice versa
-  -- FOR UPDATE to prevent race condition with concurrent inserts
-  SELECT id INTO v_counter_review_id
-  FROM public.reviews
-  WHERE booking_id = NEW.booking_id
-    AND reviewer_id = NEW.reviewee_id
-    AND reviewee_id = NEW.reviewer_id
-    AND revealed_at IS NULL
-  FOR UPDATE;
-
-  -- If counter-review found, reveal both
-  IF v_counter_review_id IS NOT NULL THEN
-    UPDATE public.reviews
-    SET revealed_at = now()
-    WHERE id IN (NEW.id, v_counter_review_id);
-  END IF;
-
-  RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER on_review_insert_check_reveal
-  AFTER INSERT ON public.reviews
-  FOR EACH ROW
-  EXECUTE FUNCTION public.check_review_reveal();
-
--- ============================================================
--- 5. Rating aggregation trigger (update_rating_aggregates)
--- ============================================================
-CREATE OR REPLACE FUNCTION public.update_rating_aggregates()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER SET search_path = ''
-AS $$
-BEGIN
-  -- Recalculate rating_avg and rating_count for the reviewee
-  UPDATE public.profiles
-  SET
-    rating_avg = COALESCE((
-      SELECT ROUND(AVG(rating)::numeric, 2)
-      FROM public.reviews
-      WHERE reviewee_id = NEW.reviewee_id
-        AND revealed_at IS NOT NULL
-    ), 0),
-    rating_count = (
-      SELECT COUNT(*)::int
-      FROM public.reviews
-      WHERE reviewee_id = NEW.reviewee_id
-        AND revealed_at IS NOT NULL
-    )
-  WHERE id = NEW.reviewee_id;
-
-  RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER on_review_update_rating
-  AFTER INSERT OR UPDATE OF revealed_at ON public.reviews
-  FOR EACH ROW
-  WHEN (NEW.revealed_at IS NOT NULL)
-  EXECUTE FUNCTION public.update_rating_aggregates();
-
--- ============================================================
--- 6. Completed rides count triggers
--- ============================================================
-
--- Increment for passenger when booking status changes to 'completed'
-CREATE OR REPLACE FUNCTION public.increment_passenger_completed_rides()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER SET search_path = ''
-AS $$
-BEGIN
-  IF NEW.status = 'completed' AND (OLD.status IS DISTINCT FROM 'completed') THEN
-    UPDATE public.profiles
-    SET completed_rides_count = completed_rides_count + 1
-    WHERE id = NEW.passenger_id;
-  END IF;
-  RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER on_booking_completed_increment_passenger
-  AFTER UPDATE OF status ON public.bookings
-  FOR EACH ROW
-  WHEN (NEW.status = 'completed')
-  EXECUTE FUNCTION public.increment_passenger_completed_rides();
-
--- Increment for driver when ride status changes to 'completed'
-CREATE OR REPLACE FUNCTION public.increment_driver_completed_rides()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER SET search_path = ''
-AS $$
-BEGIN
-  IF NEW.status = 'completed' AND (OLD.status IS DISTINCT FROM 'completed') THEN
-    UPDATE public.profiles
-    SET completed_rides_count = completed_rides_count + 1
-    WHERE id = NEW.driver_id;
-  END IF;
-  RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER on_ride_completed_increment_driver
-  AFTER UPDATE OF status ON public.rides
-  FOR EACH ROW
-  WHEN (NEW.status = 'completed')
-  EXECUTE FUNCTION public.increment_driver_completed_rides();
-
--- ============================================================
--- 7. submit_review RPC
+-- 3. submit_review RPC
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.submit_review(
   p_booking_id UUID,
@@ -274,7 +144,7 @@ END;
 $$;
 
 -- ============================================================
--- 8. get_pending_reviews RPC
+-- 4. get_pending_reviews RPC
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.get_pending_reviews()
 RETURNS TABLE (
@@ -339,7 +209,128 @@ AS $$
 $$;
 
 -- ============================================================
--- 9. pg_cron: reveal expired reviews (daily at 3 AM)
+-- 5. Dual-reveal trigger (check_review_reveal)
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.check_review_reveal()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = ''
+AS $$
+DECLARE
+  v_counter_review_id UUID;
+BEGIN
+  -- Find counter-review: same booking, reviewer is our reviewee and vice versa
+  -- FOR UPDATE to prevent race condition with concurrent inserts
+  SELECT id INTO v_counter_review_id
+  FROM public.reviews
+  WHERE booking_id = NEW.booking_id
+    AND reviewer_id = NEW.reviewee_id
+    AND reviewee_id = NEW.reviewer_id
+    AND revealed_at IS NULL
+  FOR UPDATE;
+
+  -- If counter-review found, reveal both
+  IF v_counter_review_id IS NOT NULL THEN
+    UPDATE public.reviews
+    SET revealed_at = now()
+    WHERE id IN (NEW.id, v_counter_review_id);
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER on_review_insert_check_reveal
+  AFTER INSERT ON public.reviews
+  FOR EACH ROW
+  EXECUTE FUNCTION public.check_review_reveal();
+
+-- ============================================================
+-- 6. Rating aggregation trigger (update_rating_aggregates)
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.update_rating_aggregates()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = ''
+AS $$
+BEGIN
+  -- Recalculate rating_avg and rating_count for the reviewee
+  UPDATE public.profiles
+  SET
+    rating_avg = COALESCE((
+      SELECT ROUND(AVG(rating)::numeric, 2)
+      FROM public.reviews
+      WHERE reviewee_id = NEW.reviewee_id
+        AND revealed_at IS NOT NULL
+    ), 0),
+    rating_count = (
+      SELECT COUNT(*)::int
+      FROM public.reviews
+      WHERE reviewee_id = NEW.reviewee_id
+        AND revealed_at IS NOT NULL
+    )
+  WHERE id = NEW.reviewee_id;
+
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER on_review_update_rating
+  AFTER INSERT OR UPDATE OF revealed_at ON public.reviews
+  FOR EACH ROW
+  WHEN (NEW.revealed_at IS NOT NULL)
+  EXECUTE FUNCTION public.update_rating_aggregates();
+
+-- ============================================================
+-- 7. Completed rides count triggers
+-- ============================================================
+
+-- Increment for passenger when booking status changes to 'completed'
+CREATE OR REPLACE FUNCTION public.increment_passenger_completed_rides()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = ''
+AS $$
+BEGIN
+  IF NEW.status = 'completed' AND (OLD.status IS DISTINCT FROM 'completed') THEN
+    UPDATE public.profiles
+    SET completed_rides_count = completed_rides_count + 1
+    WHERE id = NEW.passenger_id;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER on_booking_completed_increment_passenger
+  AFTER UPDATE OF status ON public.bookings
+  FOR EACH ROW
+  WHEN (NEW.status = 'completed')
+  EXECUTE FUNCTION public.increment_passenger_completed_rides();
+
+-- Increment for driver when ride status changes to 'completed'
+CREATE OR REPLACE FUNCTION public.increment_driver_completed_rides()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = ''
+AS $$
+BEGIN
+  IF NEW.status = 'completed' AND (OLD.status IS DISTINCT FROM 'completed') THEN
+    UPDATE public.profiles
+    SET completed_rides_count = completed_rides_count + 1
+    WHERE id = NEW.driver_id;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER on_ride_completed_increment_driver
+  AFTER UPDATE OF status ON public.rides
+  FOR EACH ROW
+  WHEN (NEW.status = 'completed')
+  EXECUTE FUNCTION public.increment_driver_completed_rides();
+
+-- ============================================================
+-- 8. pg_cron: reveal expired reviews (daily at 3 AM)
 -- ============================================================
 SELECT cron.schedule(
   'reveal-expired-reviews',
