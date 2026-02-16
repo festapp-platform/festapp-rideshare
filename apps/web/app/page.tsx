@@ -6,7 +6,6 @@ import {
   MapPin,
   Users,
   Star,
-  Leaf,
   Shield,
   Clock,
   ArrowRight,
@@ -64,7 +63,7 @@ export default async function Home() {
               href="/login"
               className="rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:text-text-main"
             >
-              Prihlasit se
+              Přihlásit se
             </Link>
             <Link
               href="/signup"
@@ -86,20 +85,20 @@ export default async function Home() {
         <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28 lg:py-36">
           <div className="max-w-3xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border-pastel bg-surface px-4 py-1.5 text-sm text-text-secondary">
-              <Leaf className="h-3.5 w-3.5 text-success" />
-              <span>Ekologicka spolujizda pro komunitu</span>
+              <Car className="h-3.5 w-3.5 text-primary" />
+              <span>Sdílená jízda pro komunitu</span>
             </div>
 
             <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight text-text-main sm:text-5xl lg:text-6xl">
-              Spolujizda{" "}
+              Spolujízda{" "}
               <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 zdarma
               </span>
             </h1>
 
             <p className="mb-10 max-w-xl text-lg leading-relaxed text-text-secondary sm:text-xl">
-              Propojujeme ridice a spolucestujici na stejne trase. Zadne
-              poplatky, zadne provize &mdash; proste sdilena jizda.
+              Propojujeme řidiče a spolucestující na stejné trase. Žádné
+              poplatky, žádné provize &mdash; prostě sdílená jízda.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -108,7 +107,7 @@ export default async function Home() {
                 className="group inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 hover:opacity-95"
               >
                 <Search className="h-4 w-4" />
-                Najit jizdu
+                Najít jízdu
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <Link
@@ -116,7 +115,7 @@ export default async function Home() {
                 className="inline-flex items-center gap-2 rounded-xl border-2 border-border-pastel bg-surface px-6 py-3 text-base font-semibold text-text-main transition-colors hover:border-primary/30 hover:bg-primary/5"
               >
                 <Car className="h-4 w-4" />
-                Nabidnout jizdu
+                Nabídnout jízdu
               </Link>
             </div>
           </div>
@@ -128,10 +127,10 @@ export default async function Home() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="mb-14 text-center">
             <h2 className="mb-3 text-3xl font-bold text-text-main sm:text-4xl">
-              Jak to funguje
+              Jak to funguje?
             </h2>
             <p className="mx-auto max-w-md text-text-secondary">
-              Tri jednoduche kroky k vasi prvni sdilene jizde
+              Tři jednoduché kroky k vaší první sdílené jízdě
             </p>
           </div>
 
@@ -140,19 +139,19 @@ export default async function Home() {
               step={1}
               icon={<Search className="h-6 w-6" />}
               title="Najdete trasu"
-              description="Zadejte odkud a kam jedete a vyberte datum. Zobrazime vam vsechny dostupne jizdy na vasi trase."
+              description="Zadejte odkud a kam jedete a vyberte datum. Zobrazíme vám všechny dostupné jízdy na vaší trase."
             />
             <StepCard
               step={2}
               icon={<Zap className="h-6 w-6" />}
-              title="Rezervujete misto"
-              description="Zarezervujte si misto okamzite, nebo poslete zadost ridici. Potvrzeni dostanete behem chvilky."
+              title="Rezervujete místo"
+              description="Zarezervujte si místo okamžitě, nebo pošlete žádost řidiči. Potvrzení dostanete během chvilky."
             />
             <StepCard
               step={3}
               icon={<HandCoins className="h-6 w-6" />}
-              title="Jedete a sdilite naklady"
-              description="Potkejte se na miste, sdilte jizdu a rozdelte naklady v hotovosti. Jednoduche."
+              title="Jedete a sdílíte náklady"
+              description="Potkejte se na místě, sdílte jízdu a rozdělte náklady v hotovosti. Jednoduché."
             />
           </div>
         </div>
@@ -163,39 +162,39 @@ export default async function Home() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="mb-14 text-center">
             <h2 className="mb-3 text-3xl font-bold text-text-main sm:text-4xl">
-              Proc spolujizda.online
+              Proč spolujizda.online
             </h2>
             <p className="mx-auto max-w-md text-text-secondary">
-              Postaveno komunitou, pro komunitu
+              Postaveno komunitou, pro komunitu.
             </p>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <FeatureCard
               icon={<HandCoins className="h-6 w-6 text-success" />}
-              title="Uplne zdarma"
-              description="Zadne poplatky, zadne provize. Vsechny penize zustavaji mezi ridici a spolucestujicimi."
+              title="Úplně zdarma"
+              description="Žádné poplatky, žádné provize. Všechny peníze zůstávají mezi řidiči a spolucestujícími."
               gradient="from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30"
               border="border-green-200 dark:border-green-800/40"
             />
             <FeatureCard
               icon={<Radio className="h-6 w-6 text-primary" />}
-              title="Poloha v realnem case"
-              description="Sdileni polohy pro snazsi koordinaci vyzvednuti. Zadne zbytecne volani."
+              title="Poloha v reálném čase"
+              description="Sdílení polohy pro snazší koordinaci vyzvednutí. Žádné zbytečné volání."
               gradient="from-purple-50 to-fuchsia-50 dark:from-purple-950/30 dark:to-fuchsia-950/30"
               border="border-purple-200 dark:border-purple-800/40"
             />
             <FeatureCard
               icon={<Shield className="h-6 w-6 text-secondary" />}
-              title="Overene profily"
-              description="Hodnoceni a recenze od ostatnich uzivatelu. Vidite, s kym jedete."
+              title="Ověřené profily"
+              description="Hodnocení a recenze od ostatních uživatelů. Víte, s kým jedete."
               gradient="from-teal-50 to-cyan-50 dark:from-teal-950/30 dark:to-cyan-950/30"
               border="border-teal-200 dark:border-teal-800/40"
             />
             <FeatureCard
               icon={<Clock className="h-6 w-6 text-accent" />}
-              title="Flexibilni jizdy"
-              description="Zverejnete svuj zamer a spolucestujici se prihlasi. Nebo si najdete jizdu podle sve trasy."
+              title="Flexibilní jízdy"
+              description="Zveřejněte svůj záměr a spolucestující se přihlásí. Nebo si najdete jízdu podle své trasy."
               gradient="from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30"
               border="border-orange-200 dark:border-orange-800/40"
             />
@@ -209,10 +208,10 @@ export default async function Home() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mb-14 text-center">
               <h2 className="mb-3 text-3xl font-bold text-text-main sm:text-4xl">
-                Nadchazejici jizdy
+                Nadcházející jízdy
               </h2>
               <p className="mx-auto max-w-md text-text-secondary">
-                Podivejte se, kam lide prave miri
+                Podívejte se, kam lidé právě míří
               </p>
             </div>
 
@@ -234,7 +233,7 @@ export default async function Home() {
                 href="/search"
                 className="group inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary-light"
               >
-                Zobrazit vsechny jizdy
+                Zobrazit všechny jízdy
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </div>
@@ -248,35 +247,28 @@ export default async function Home() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mb-14 text-center">
               <h2 className="mb-3 text-3xl font-bold text-text-main sm:text-4xl">
-                Nase komunita v cislech
+                Naše komunita v číslech
               </h2>
               <p className="mx-auto max-w-md text-text-secondary">
-                Kazda sdilena jizda ma smysl
+                Každá sdílená jízda má smysl
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
               <StatCard
                 icon={<Car className="h-5 w-5 text-primary" />}
                 value={impact.total_rides ?? 0}
-                label="Sdilenych jizd"
-              />
-              <StatCard
-                icon={<Leaf className="h-5 w-5 text-success" />}
-                value={impact.total_co2_saved_kg ?? 0}
-                label="kg CO2 usporeno"
-                suffix=" kg"
-                decimals={1}
+                label="Sdílených jízd"
               />
               <StatCard
                 icon={<Users className="h-5 w-5 text-secondary" />}
                 value={impact.active_drivers ?? 0}
-                label="Aktivnich ridicu"
+                label="Aktivních řidičů"
               />
               <StatCard
                 icon={<Star className="h-5 w-5 text-accent" />}
                 value={impact.total_users ?? 0}
-                label="Uzivatelu"
+                label="Uživatelů"
               />
             </div>
           </div>
@@ -292,17 +284,17 @@ export default async function Home() {
 
             <div className="relative">
               <h2 className="mb-4 text-3xl font-bold text-text-main sm:text-4xl">
-                Pripojte se
+                Připojte se
               </h2>
               <p className="mx-auto mb-8 max-w-md text-lg text-text-secondary">
-                Zaregistrujte se a zacnete sdilet jizdy jiz dnes. Je to zdarma
-                &mdash; a vzdy bude.
+                Zaregistrujte se a začněte sdílet jízdy již dnes. Je to zdarma
+                &mdash; a vždy bude.
               </p>
               <Link
                 href="/signup"
                 className="group inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 hover:opacity-95"
               >
-                Vytvorit ucet zdarma
+                Vytvořit účet zdarma
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </div>
@@ -322,7 +314,7 @@ export default async function Home() {
               href="/search"
               className="transition-colors hover:text-text-main"
             >
-              Hledat jizdy
+              Hledat jízdy
             </Link>
             <Link
               href="/community"
@@ -334,7 +326,7 @@ export default async function Home() {
               href="/login"
               className="transition-colors hover:text-text-main"
             >
-              Prihlaseni
+              Přihlášení
             </Link>
           </div>
         </div>
@@ -457,7 +449,7 @@ function RideCard({
             </span>
           )}
           <span className="text-xs text-text-secondary">
-            {seatsAvailable} {seatsAvailable === 1 ? "misto" : "mista"}
+            {seatsAvailable} {seatsAvailable === 1 ? "místo" : "místa"}
           </span>
         </div>
       </div>

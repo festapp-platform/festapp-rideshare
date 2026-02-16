@@ -1,5 +1,5 @@
 /**
- * Gamification constants: user levels, badge categories, CO2 savings.
+ * Gamification constants: user levels and badge categories.
  */
 
 export const USER_LEVELS = {
@@ -29,9 +29,6 @@ export function getUserLevel(completedRides: number, ratingAvg: number): UserLev
   }
   return USER_LEVELS.NEW;
 }
-
-/** kg CO2 saved per km of shared ride (EU average: 120g CO2/km) */
-export const CO2_SAVINGS_PER_KM = 0.120;
 
 export const BADGE_CATEGORIES = {
   RIDES: 'rides',

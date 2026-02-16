@@ -6,7 +6,6 @@
 /** Impact stats returned by get_user_impact RPC */
 export interface UserImpactStats {
   total_rides_completed: number;
-  total_co2_saved_kg: number;
   total_money_saved_czk: number;
   total_distance_km: number;
   total_passengers_carried: number;

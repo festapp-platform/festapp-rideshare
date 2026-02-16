@@ -214,7 +214,6 @@ export {
 export {
   USER_LEVELS,
   getUserLevel,
-  CO2_SAVINGS_PER_KM,
   BADGE_CATEGORIES,
 } from './constants/gamification';
 export type {

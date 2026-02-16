@@ -2,12 +2,11 @@
 
 import { getUserLevel, USER_LEVELS } from "@festapp/shared";
 import type { UserLevelKey } from "@festapp/shared";
-import { Leaf, Wallet, Car, Route, Users, Flame } from "lucide-react";
+import { Wallet, Car, Route, Users, Flame } from "lucide-react";
 import { ShareButton } from "../components/share-button";
 
 interface ImpactStats {
   total_rides_completed: number;
-  total_co2_saved_kg: number;
   total_money_saved_czk: number;
   total_distance_km: number;
   total_passengers_carried: number;
@@ -108,10 +107,10 @@ export function ImpactDashboard({
             </p>
           </div>
           <ShareButton
-            title="My Rideshare Impact"
-            text={`I've saved ${impact?.total_co2_saved_kg?.toFixed(1) ?? 0} kg CO2 and completed ${impact?.total_rides_completed ?? 0} shared rides on spolujizda.online!`}
+            title="My Rideshare Stats"
+            text={`I've completed ${impact?.total_rides_completed ?? 0} shared rides on spolujizda.online!`}
             url="/impact"
-            label="Share Impact"
+            label="Share Stats"
           />
         </div>
         {nextLevel && (
@@ -138,24 +137,18 @@ export function ImpactDashboard({
       </div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard
-          icon={<Leaf className="h-5 w-5 text-green-600" />}
-          label="CO2 Saved"
-          value={`${impact?.total_co2_saved_kg?.toFixed(1) ?? "0"} kg`}
-          gradient="from-green-50 to-emerald-50"
+          icon={<Car className="h-5 w-5 text-purple-600" />}
+          label="Rides"
+          value={String(impact?.total_rides_completed ?? 0)}
+          gradient="from-purple-50 to-fuchsia-50"
         />
         <StatCard
           icon={<Wallet className="h-5 w-5 text-blue-600" />}
           label="Money Saved"
           value={`${impact?.total_money_saved_czk ?? 0} CZK`}
           gradient="from-blue-50 to-sky-50"
-        />
-        <StatCard
-          icon={<Car className="h-5 w-5 text-purple-600" />}
-          label="Rides"
-          value={String(impact?.total_rides_completed ?? 0)}
-          gradient="from-purple-50 to-fuchsia-50"
         />
         <StatCard
           icon={<Route className="h-5 w-5 text-orange-600" />}

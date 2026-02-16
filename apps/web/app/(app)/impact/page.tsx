@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { ImpactDashboard } from "./impact-dashboard";
 
 /**
- * Impact dashboard page -- shows user's environmental and community impact.
- * Server component that fetches impact stats, badges, streaks, and all badge definitions.
+ * Stats dashboard page -- shows user's ridesharing stats, badges, and streaks.
+ * Server component that fetches stats, badges, streaks, and all badge definitions.
  */
 export default async function ImpactPage() {
   const supabase = await createClient();
@@ -37,7 +37,7 @@ export default async function ImpactPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-text-main">Your Impact</h1>
+      <h1 className="mb-6 text-2xl font-bold text-text-main">Your Stats</h1>
       <ImpactDashboard
         impact={impact}
         badges={badges}
