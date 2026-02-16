@@ -2,17 +2,17 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-15)
+See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Drivers and passengers can find each other for shared rides quickly and effortlessly -- simpler, more trustworthy, and completely free.
-**Current focus:** Milestone v1.1 — UX Improvements & Bug Fixes
+**Current focus:** Milestone v1.1 -- UX Improvements & Bug Fixes (Phases 12-16)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-16 — Milestone v1.1 UX Improvements & Bug Fixes started
+Phase: 12 - Critical Bug Fixes & Admin Setup
+Plan: --
+Status: Not started (roadmap created, awaiting plan-phase)
+Last activity: 2026-02-16 -- v1.1 roadmap created with 5 phases (12-16), 36 requirements mapped
 
 Progress: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0%
 
@@ -88,6 +88,12 @@ Recent decisions affecting current work:
 
 - [Roadmap]: Web + PWA first launch strategy; native app store releases in later phase
 - [Roadmap]: Supabase Realtime Broadcast for ephemeral data (location, typing) from day one per research
+- [v1.1 Roadmap]: ride-form.tsx (930 lines) touched by 3 features -- must be modified sequentially across phases 12, 14, 16
+- [v1.1 Roadmap]: Route alternatives OUT OF SCOPE (mutually exclusive with waypoints in Google Routes API)
+- [v1.1 Roadmap]: i18n incremental -- add translations as files are touched per phase, bulk completion in Phase 15
+- [v1.1 Roadmap]: UX-03/UX-04 overlap with PRICE-03 -- price slider display grouped in Phase 14 (PRICE-03) and Phase 16 (UX-04)
+- [v1.1 Roadmap]: Chat dedup fix uses client UUID passed to server RPC (not timestamp-based dedup)
+- [v1.1 Roadmap]: AI fix needs geocoding bridge (Mapy.cz forward geocode) + shouldUnregister:false in wizard form
 - [01-01]: Used Zod v3.25 (not v4.3) -- stable API, v4 was speculative
 - [01-01]: expo-router v6 for SDK 54 (not v5 from plan); corrected all Expo package versions
 - [01-01]: Tailwind v4 for web, v3 for mobile (NativeWind constraint confirmed)
@@ -241,8 +247,8 @@ Recent decisions affecting current work:
 - [ ] SMTP: configure same SMTP as akhweb project (waiting for credentials from user)
 - [ ] Prettier dialogs: delete account confirmation and other modals (polish phase)
 - [ ] Supabase project linked: `xamctptqmpruhovhjcgm` (rideshare) on rawen.dev 2, migrations pushed
-- [x] Fix image uploads via Edge Function: refactor to server-side upload (like akhweb), random UUID filenames, bypass broken RLS (api) — IN PROGRESS
-- [x] Research and implement ride audit trail: event sourcing/CDC/trigger research + ride_events table + RPC updates + cancellation columns (database) — IN PROGRESS
+- [x] Fix image uploads via Edge Function: refactor to server-side upload (like akhweb), random UUID filenames, bypass broken RLS (api) -- IN PROGRESS
+- [x] Research and implement ride audit trail: event sourcing/CDC/trigger research + ride_events table + RPC updates + cancellation columns (database) -- IN PROGRESS
 
 ### Blockers/Concerns
 
@@ -252,5 +258,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Starting milestone v1.1 — defining requirements
+Stopped at: v1.1 roadmap created -- 5 phases (12-16), 36 requirements mapped, ready for plan-phase 12
 Resume file: N/A

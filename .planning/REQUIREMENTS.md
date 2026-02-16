@@ -253,6 +253,8 @@ Requirements for UX improvements & bug fixes milestone. Phases continue from 12.
 - [ ] **UX-02**: Star rating shows "Nový" badge instead of 0 stars when user has no ratings
 - [ ] **UX-03**: "Money Saved" metric hidden from impact dashboard and community stats
 - [ ] **UX-04**: Price slider shows current value directly below the slider track
+- [ ] **UX-05**: My Rides page shows all rides in single list (upcoming first, then past) without Upcoming/Past tab switcher
+- [ ] **UX-06**: Notification settings simplified to 2-3 grouped toggles instead of 9 individual switches
 
 ### Route Features
 
@@ -315,6 +317,8 @@ Deferred to future release. Tracked but not in current roadmap.
 ## Traceability
 
 Which phases cover which requirements. Updated during roadmap creation.
+
+### v1.0 Requirements (Phases 1-11)
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
@@ -469,11 +473,52 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PLAT-17 | Phase 2 | Pending |
 | PLAT-18 | Phase 10 | Pending |
 
+### v1.1 Requirements (Phases 12-16)
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| BUG-01 | Phase 12 | Pending |
+| BUG-02 | Phase 12 | Pending |
+| BUG-03 | Phase 12 | Pending |
+| BUG-04 | Phase 12 | Pending |
+| ADMIN-05 | Phase 12 | Pending |
+| ADMIN-06 | Phase 12 | Pending |
+| LEGAL-01 | Phase 13 | Pending |
+| LEGAL-02 | Phase 13 | Pending |
+| LEGAL-03 | Phase 13 | Pending |
+| LOG-01 | Phase 13 | Pending |
+| LOG-02 | Phase 13 | Pending |
+| LOG-03 | Phase 13 | Pending |
+| ADMIN-07 | Phase 13 | Pending |
+| PRICE-01 | Phase 14 | Pending |
+| PRICE-02 | Phase 14 | Pending |
+| PRICE-03 | Phase 14 | Pending |
+| PRICE-04 | Phase 14 | Pending |
+| CHAT-05 | Phase 14 | Pending |
+| CHAT-06 | Phase 14 | Pending |
+| TEST-11 | Phase 14 | Pending |
+| TEST-12 | Phase 14 | Pending |
+| I18N-01 | Phase 15 | Pending |
+| I18N-02 | Phase 15 | Pending |
+| I18N-03 | Phase 15 | Pending |
+| I18N-04 | Phase 15 | Pending |
+| I18N-05 | Phase 15 | Pending |
+| I18N-06 | Phase 15 | Pending |
+| UX-01 | Phase 16 | Pending |
+| UX-02 | Phase 16 | Pending |
+| UX-03 | Phase 16 | Pending |
+| UX-04 | Phase 16 | Pending |
+| UX-05 | Phase 16 | Pending |
+| UX-06 | Phase 16 | Pending |
+| ROUTE-01 | Phase 16 | Pending |
+| ROUTE-02 | Phase 16 | Pending |
+| ROUTE-03 | Phase 16 | Pending |
+
 **Coverage:**
-- v1 requirements: 151 total
-- Mapped to phases: 151
+- v1 requirements: 151 total, mapped to phases 1-11
+- v1.1 requirements: 36 total, mapped to phases 12-16
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-15*
-*Last updated: 2026-02-16 after v1.1 requirements added*
+*Last updated: 2026-02-16 after v1.1 roadmap created*

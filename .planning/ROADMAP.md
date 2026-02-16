@@ -4,6 +4,11 @@
 
 spolujizda.online (formerly Festapp Rideshare) is built as a web-first PWA with a shared TypeScript monorepo, then extended to native mobile. The roadmap moves from foundation (monorepo + auth) through the core ride marketplace loop (post, search, book), then layers communication, trust, and differentiating features (live location, flexible rides, gamification). An AI & Voice phase adds natural language control and MCP server for external AI assistants. Web-specific optimizations (SEO, PWA) form their own phase since the launch strategy is web-first. The final phase covers internationalization, accessibility, and app store preparation. Testing (unit, integration, UI verification) is continuous — each phase includes tests for the features it delivers, with CI pipeline set up from Phase 1.
 
+## Milestones
+
+- ✅ **v1.0 MVP** - Phases 1-11 (shipped 2026-02-16)
+- 🚧 **v1.1 UX Improvements & Bug Fixes** - Phases 12-16 (in progress)
+
 ## Phases
 
 **Phase Numbering:**
@@ -11,6 +16,9 @@ spolujizda.online (formerly Festapp Rideshare) is built as a web-first PWA with 
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 Decimal phases appear between their surrounding integers in numeric order.
+
+<details>
+<summary>✅ v1.0 MVP (Phases 1-11) - SHIPPED 2026-02-16</summary>
 
 - [x] **Phase 1: Foundation & Auth** - Monorepo scaffolding, Supabase setup, authentication, app shell with navigation
 - [x] **Phase 2: Profiles & Identity** - User profiles, vehicle info, verification badges, social links
@@ -24,7 +32,20 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 10: Web Platform & SEO** - PWA features, SSR for ride pages, social meta tags, web push, service worker
 - [x] **Phase 11: Polish, Testing & Launch** - Test suite, i18n, accessibility, error monitoring, app store assets, launch prep
 
+</details>
+
+### 🚧 v1.1 UX Improvements & Bug Fixes
+
+- [ ] **Phase 12: Critical Bug Fixes & Admin Setup** - Fix AI ride creation, chat duplicates, map picker, past time selection; configure admin accounts
+- [ ] **Phase 13: Legal, Privacy & Observability** - ToS acceptance at signup, location sharing indicator, email/SMS/push logging, audit trail
+- [ ] **Phase 14: Price Formatting, Chat Optimization & AI Tests** - Locale-aware price display, cash-friendly rounding, chat pagination/archival, AI integration tests
+- [ ] **Phase 15: i18n Coverage** - Complete translation of all 171 remaining strings, interpolation support, cookie consent i18n, language settings
+- [ ] **Phase 16: UI Polish & Route Features** - Map zoom, rating badges, simplified My Rides and notifications, waypoint management
+
 ## Phase Details
+
+<details>
+<summary>✅ v1.0 MVP Phase Details (Phases 1-11)</summary>
 
 ### Phase 1: Foundation & Auth
 **Goal**: Users can sign up, log in, and navigate the app shell on both web and mobile
@@ -233,26 +254,94 @@ Plans:
 - [x] 11-04-PLAN.md — Accessibility audit: ARIA labels, skip navigation, focus indicators, color contrast, touch targets
 - [x] 11-05-PLAN.md — Legal pages (ToS, privacy), help/FAQ, donation, invite friends, app store metadata
 
+</details>
+
+### Phase 12: Critical Bug Fixes & Admin Setup
+**Goal**: Core features that are currently broken (AI ride creation, chat, map picker, time picker) work correctly, and admin accounts are operational
+**Depends on**: Phase 11 (v1.0 complete)
+**Requirements**: BUG-01, BUG-02, BUG-03, BUG-04, ADMIN-05, ADMIN-06
+**Success Criteria** (what must be TRUE):
+  1. User can type a natural language ride description (e.g., "z Ostravy do Brna zitra v 8") into the AI input and see origin, destination, date, time, and price pre-filled in the ride form
+  2. Chat messages appear exactly once when sent -- no duplicates in the conversation view for either sender or recipient
+  3. User can click a location on the map picker and the selected address appears immediately without the button getting stuck in a loading state
+  4. Time picker only allows selecting dates and times in the future -- past options are disabled or filtered out
+  5. bujnmi@gmail.com has admin access and can reach the admin panel
+**Plans**: TBD
+
+### Phase 13: Legal, Privacy & Observability
+**Goal**: The platform meets legal requirements for user consent and privacy disclosure, and all outbound communications are logged for debugging and compliance
+**Depends on**: Phase 12
+**Requirements**: LEGAL-01, LEGAL-02, LEGAL-03, LOG-01, LOG-02, LOG-03, ADMIN-07
+**Success Criteria** (what must be TRUE):
+  1. User must check a Terms of Service and Privacy Policy checkbox before completing signup (both email and phone flows), and the acceptance timestamp is stored in user metadata
+  2. When a driver shares their live location, a persistent banner is visible on all pages showing who can see the location and providing a stop button
+  3. Every email, SMS, and push notification sent by the platform is logged with recipient, type, status, and timestamp in dedicated log tables
+  4. All significant user and admin actions (ride CRUD, booking changes, moderation actions, profile changes) are recorded in an audit_log table
+**Plans**: TBD
+
+### Phase 14: Price Formatting, Chat Optimization & AI Tests
+**Goal**: Prices display consistently in locale-aware format across the entire app, chat scales efficiently, and AI functionality has test coverage
+**Depends on**: Phase 12 (bug fixes for AI must land first)
+**Requirements**: PRICE-01, PRICE-02, PRICE-03, PRICE-04, CHAT-05, CHAT-06, TEST-11, TEST-12
+**Success Criteria** (what must be TRUE):
+  1. All prices across the app display via a shared formatPrice() utility using Intl.NumberFormat with CZK currency (e.g., "150 Kc" in Czech locale, not "150 CZK" or "150,00 Kc")
+  2. Suggested prices round to nearest 10 CZK (or 50 CZK for trips over 200 CZK) and the price value appears directly below the slider on the ride creation form
+  3. Chat message history loads via cursor-based pagination and completed ride messages have an archival/cleanup strategy
+  4. Integration tests verify the AI Edge Function handles ride creation intents in Czech, Slovak, and English, and gracefully handles ambiguous, incomplete, and invalid inputs
+**Plans**: TBD
+
+### Phase 15: i18n Coverage
+**Goal**: Every user-facing string in the app is translated to Czech, Slovak, and English with working variable interpolation
+**Depends on**: Phase 12 (i18n keys added incrementally as files are touched in earlier phases, but bulk completion here)
+**Requirements**: I18N-01, I18N-02, I18N-03, I18N-04, I18N-05, I18N-06
+**Success Criteria** (what must be TRUE):
+  1. The i18n t() function supports string interpolation for variables (e.g., t('rating.title', { name: 'Jan' }) renders "Rate your ride with Jan")
+  2. All user-facing strings in core flow files (ride-detail, my-rides, booking-button, rating-modal, cancellation-dialog, public ride page, report-dialog, settings) use t() with translations in all three locales
+  3. All user-facing strings in secondary and minor files (block-button, ride-card, login, signup, cookie-consent, force-update-banner, pwa-install-banner, offline-banner, share-button, pending-rating-banner, not-found, reset-password) use t() with translations in all three locales
+  4. Cookie consent banner displays in the user's selected language instead of hardcoded English
+  5. User can change the app language to Czech, Slovak, or English from a language settings page
+**Plans**: TBD
+
+### Phase 16: UI Polish & Route Features
+**Goal**: Visual polish items are resolved and drivers can create rides with intermediate waypoints that passengers can search by
+**Depends on**: Phase 12 (ride-form.tsx bug fixes must be complete before waypoint modifications)
+**Requirements**: UX-01, UX-02, UX-03, UX-04, UX-05, UX-06, ROUTE-01, ROUTE-02, ROUTE-03
+**Success Criteria** (what must be TRUE):
+  1. Map location picker opens zoomed to the already-selected coordinates instead of default Czech Republic view
+  2. Users with no ratings show a "Novy" badge instead of 0 empty stars on ride cards and profiles
+  3. "Money Saved" metric is hidden from the impact dashboard and community stats page
+  4. My Rides page shows all rides in a single list (upcoming first, then past) without Upcoming/Past tab switcher, and notification settings are simplified to 2-3 grouped toggles
+  5. Driver can add intermediate waypoints when creating a ride, waypoints are displayed on the route map, and passengers can search for rides where a waypoint is near their origin or destination
+**Plans**: TBD
+
+**Note on ride-form.tsx:** This file (930 lines) is modified by Phase 12 (BUG-01 AI fix, BUG-04 time picker), Phase 14 (PRICE-03 slider value display), and Phase 16 (ROUTE-01 waypoints). These phases must execute sequentially -- never plan parallel modifications to ride-form.tsx.
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -> 8 (after 6) -> 9 -> 10 -> 11
+- v1.0: 1 -> 2 -> 3 -> 4 -> 5/6/7 (parallel-eligible) -> 8 (after 6) -> 9 -> 10 -> 11
+- v1.1: 12 -> 13 -> 14 -> 15 -> 16
 
-**Testing Strategy:** Each phase includes unit tests, integration tests, and UI verification as part of its plans. Testing is continuous, not deferred.
+**Testing Strategy:** Each phase includes unit tests, integration tests, and UI verification as part of its plans. Testing is continuous, not deferred. i18n translations are added incrementally as files are touched per phase.
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Foundation & Auth | 5/5 | ✓ Complete | 2026-02-15 |
-| 2. Profiles & Identity | 5/5 | ✓ Complete | 2026-02-15 |
-| 3. Ride Posting & Search | 7/7 | ✓ Complete | 2026-02-15 |
-| 4. Booking & Ride Management | 5/5 | ✓ Complete | 2026-02-15 |
-| 5. Communication & Notifications | 6/6 | ✓ Complete | 2026-02-15 |
-| 6. Ratings, Trust & Safety | 5/5 | ✓ Complete | 2026-02-15 |
-| 7. Live Location | 3/3 | ✓ Complete | 2026-02-15 |
-| 8. Events, Flexible Rides & Gamification | 5/5 | ✓ Complete | 2026-02-15 |
-| 9. AI & Voice | 4/4 | ✓ Complete | 2026-02-16 |
-| 10. Web Platform & SEO | 4/4 | ✓ Complete | 2026-02-16 |
-| 11. Polish, Testing & Launch | 5/5 | ✓ Complete | 2026-02-16 |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Foundation & Auth | v1.0 | 5/5 | ✓ Complete | 2026-02-15 |
+| 2. Profiles & Identity | v1.0 | 5/5 | ✓ Complete | 2026-02-15 |
+| 3. Ride Posting & Search | v1.0 | 7/7 | ✓ Complete | 2026-02-15 |
+| 4. Booking & Ride Management | v1.0 | 5/5 | ✓ Complete | 2026-02-15 |
+| 5. Communication & Notifications | v1.0 | 6/6 | ✓ Complete | 2026-02-15 |
+| 6. Ratings, Trust & Safety | v1.0 | 5/5 | ✓ Complete | 2026-02-15 |
+| 7. Live Location | v1.0 | 3/3 | ✓ Complete | 2026-02-15 |
+| 8. Events, Flexible Rides & Gamification | v1.0 | 5/5 | ✓ Complete | 2026-02-15 |
+| 9. AI & Voice | v1.0 | 4/4 | ✓ Complete | 2026-02-16 |
+| 10. Web Platform & SEO | v1.0 | 4/4 | ✓ Complete | 2026-02-16 |
+| 11. Polish, Testing & Launch | v1.0 | 5/5 | ✓ Complete | 2026-02-16 |
+| 12. Critical Bug Fixes & Admin Setup | v1.1 | 0/? | Not started | - |
+| 13. Legal, Privacy & Observability | v1.1 | 0/? | Not started | - |
+| 14. Price Formatting, Chat Optimization & AI Tests | v1.1 | 0/? | Not started | - |
+| 15. i18n Coverage | v1.1 | 0/? | Not started | - |
+| 16. UI Polish & Route Features | v1.1 | 0/? | Not started | - |
 
 ## Post-Launch: Deployment & Operations
 
