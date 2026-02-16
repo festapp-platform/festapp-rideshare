@@ -16,7 +16,10 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - Public assets (svg, png, jpg, jpeg, gif, webp)
+     * - sw.js (service worker - must not be intercepted by auth middleware)
+     * - manifest.json (PWA manifest)
+     * - OneSignalSDKWorker.js (push notification worker)
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|OneSignalSDKWorker\\.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
