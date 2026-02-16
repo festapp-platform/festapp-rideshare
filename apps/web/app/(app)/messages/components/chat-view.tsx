@@ -159,6 +159,7 @@ export function ChatView({
         p_conversation_id: conversationId,
         p_content: content,
         p_message_type: messageType,
+        p_message_id: optimisticId,
       });
 
       if (error) {
