@@ -84,6 +84,7 @@ Progress: [███████████████████████
 | Phase 13 P03 | 5min | 2 tasks | 5 files |
 | Phase 13 P01 | 3min | 2 tasks | 3 files |
 | Phase 13 P02 | 6min | 2 tasks | 5 files |
+| Phase 14 P01 | 3min | 2 tasks | 4 files |
 | Phase 14 P04 | 2min | 1 tasks | 1 files |
 | Phase 14 P03 | 3min | 2 tasks | 2 files |
 
@@ -102,6 +103,7 @@ Recent decisions affecting current work:
 - [v1.1 Roadmap]: UX-03/UX-04 overlap with PRICE-03 -- price slider display grouped in Phase 14 (PRICE-03) and Phase 16 (UX-04)
 - [v1.1 Roadmap]: Chat dedup fix uses client UUID passed to server RPC (not timestamp-based dedup)
 - [v1.1 Roadmap]: AI fix needs geocoding bridge (Mapy.cz forward geocode) + shouldUnregister:false in wizard form
+- [14-01]: COST_SHARING_FACTOR 0.327 yields ~0.80 CZK/km; roundPrice inlined in Edge Function (Deno can't import shared)
 - [13-03]: rawGpsStop/stopSharing split avoids circular calls between banner and hook
 - [13-03]: try/catch for optional useLocationSharing at hook top level for test compatibility
 - [01-01]: Used Zod v3.25 (not v4.3) -- stable API, v4 was speculative
