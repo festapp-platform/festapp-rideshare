@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 
 ## Current Position
 
-Phase: 14 - Price Formatting, Chat Optimization & AI Tests
-Plan: 04 of 4 (phase complete)
-Status: Phase 14 complete
-Last activity: 2026-02-16 -- Completed 14-04-PLAN.md (AI integration tests)
+Phase: 15 - i18n Coverage
+Plan: 01 of 3
+Status: Executing
+Last activity: 2026-02-17 -- Completed 15-01-PLAN.md (i18n interpolation & core component translation)
 
-Progress: [████████████████████████████] 100%
+Progress: [█████████████████████████████] 33%
 
 ## Performance Metrics
 
@@ -88,6 +88,7 @@ Progress: [███████████████████████
 | Phase 14 P04 | 2min | 1 tasks | 1 files |
 | Phase 14 P03 | 3min | 2 tasks | 2 files |
 | Phase 14 P02 | 4min | 2 tasks | 17 files |
+| Phase 15 P01 | 7min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -262,7 +263,8 @@ Recent decisions affecting current work:
 - [Phase 13-02]: Single acceptedTerms state above tab switcher gates all signup methods (not per-form Zod); social OAuth consent proven by UI checkbox flow
 - [Phase 14-04]: Vitest 4 requires it(name, {timeout}, fn) instead of deprecated it(name, fn, {timeout})
 - [Phase 14-03]: No duplicate index: existing idx_chat_messages_conversation covers pagination and archival
-- [Phase 14]: [14-02]: Form labels kept as plain text CZK (input currency label, not price display); formatPrice() is single source for all user-facing price strings
+- [Phase 14]: [14-02]: Form labels kept as plain text CZK
+- [15-01]: t() interpolation uses regex {var} replace with global flag; preference labels moved inside component render for locale reactivity (input currency label, not price display); formatPrice() is single source for all user-facing price strings
 
 ### Pending Todos
 
@@ -280,6 +282,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-16
-Stopped at: Completed 14-02-PLAN.md (price formatting adoption across all display files)
+Last session: 2026-02-17
+Stopped at: Completed 15-01-PLAN.md (i18n interpolation & core component translation)
 Resume file: N/A
