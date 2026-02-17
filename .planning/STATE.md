@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 
 ## Current Position
 
-Phase: 16 - UI Polish & Route Features (IN PROGRESS)
-Plan: 03 of 4
-Status: Executing Wave 1 (plans 01, 02, 03)
-Last activity: 2026-02-17 -- Completed 16-03-PLAN.md (waypoint proximity search)
+Phase: 16 - UI Polish & Route Features (COMPLETE)
+Plan: 04 of 4
+Status: All plans complete
+Last activity: 2026-02-17 -- Completed 16-04-PLAN.md (waypoints UI + map markers)
 
 Progress: [████████████████████████████████████████] 100%
 
@@ -93,6 +93,7 @@ Progress: [███████████████████████
 | Phase 15 P03 | 6min | 2 tasks | 10 files |
 | Phase 16 P03 | 1min | 1 tasks | 1 files |
 | Phase 16 P02 | 3min | 2 tasks | 3 files |
+| Phase 16 P04 | 4min | 2 tasks | 6 files |
 | Phase 16 P01 | 4min | 1 tasks | 5 files |
 
 ## Accumulated Context
@@ -273,6 +274,8 @@ Recent decisions affecting current work:
 - [15-02]: ride-status-badge converted to client component for useI18n; public ride page split into server (metadata) + PublicRideContent client sub-component for translated UI; SEO metadata stays English server-side
 - [15-03]: not-found.tsx converted to client component for useI18n (no server data needs); brand names (Google, Apple) kept untranslated in social login buttons
 - [16-03]: EXISTS subquery (not JOIN) for waypoint proximity to avoid row multiplication; extensions. prefix on all PostGIS functions
+- [16-04]: Waypoint insert uses try/catch per-waypoint with console.warn on failure (non-blocking ride creation)
+- [16-04]: parseWaypointLocation handles both WKT and GeoJSON formats for waypoint coordinate extraction
 - [Phase 16]: Mixed notification group state shows as ON (at least one sub-value true)
 - [Phase 16]: Impact dashboard grid 4-col to 3-col after Money Saved removal; Czech/Slovak newUser badge uses 'Novy'
 
@@ -293,5 +296,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 16-03-PLAN.md (waypoint proximity search)
+Stopped at: Completed 16-04-PLAN.md (waypoints UI + map markers) -- Phase 16 complete
 Resume file: N/A
