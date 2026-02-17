@@ -106,6 +106,15 @@ export function RideForm({ linkedEvent }: RideFormProps) {
     return localStorage.getItem("ai_suggestions_enabled") !== "false";
   });
 
+  // Waypoint state (ROUTE-01)
+  interface WaypointInput {
+    address: string;
+    lat: number;
+    lng: number;
+  }
+  const [waypoints, setWaypoints] = useState<WaypointInput[]>([]);
+  const MAX_WAYPOINTS = 5;
+
   // Map picker state (GROUP-F1)
   const [showMapPicker, setShowMapPicker] = useState<"origin" | "destination" | null>(null);
 
@@ -386,6 +395,23 @@ export function RideForm({ linkedEvent }: RideFormProps) {
         throw new Error(error.message || "Failed to create ride");
       }
 
+      // Insert waypoints sequentially (ROUTE-01)
+      if (ride?.id && waypoints.length > 0) {
+        for (let i = 0; i < waypoints.length; i++) {
+          try {
+            await supabase.from("ride_waypoints").insert({
+              ride_id: ride.id,
+              location: `POINT(${waypoints[i].lng} ${waypoints[i].lat})`,
+              address: waypoints[i].address,
+              order_index: i,
+              type: "pickup",
+            });
+          } catch (err) {
+            console.warn(`Failed to insert waypoint ${i}:`, err);
+          }
+        }
+      }
+
       if (ride?.id) {
         router.push(`/rides/${ride.id}`);
       } else {
@@ -499,6 +525,71 @@ export function RideForm({ linkedEvent }: RideFormProps) {
               </svg>
               {t("rideForm.chooseOnMap")}
             </button>
+          </div>
+
+          {/* Waypoints (ROUTE-01) */}
+          <div className="mt-4 space-y-2">
+            <span className="block text-sm font-medium text-text-main">
+              {t("rideForm.waypoints")}
+            </span>
+            {waypoints.map((wp, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <svg className="h-4 w-4 flex-shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <div className="flex-1">
+                  <AddressInput
+                    label=""
+                    placeholder={t("rideForm.waypointPlaceholder")}
+                    onPlaceSelect={(place) => {
+                      setWaypoints((prev) => {
+                        const updated = [...prev];
+                        updated[idx] = {
+                          address: place.address,
+                          lat: place.lat,
+                          lng: place.lng,
+                        };
+                        return updated;
+                      });
+                    }}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setWaypoints((prev) => prev.filter((_, i) => i !== idx))
+                  }
+                  className="flex-shrink-0 rounded-lg p-1.5 text-text-secondary hover:bg-red-50 hover:text-red-500 transition-colors"
+                  title={t("rideForm.removeWaypoint")}
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+            {waypoints.length < MAX_WAYPOINTS ? (
+              <button
+                type="button"
+                onClick={() =>
+                  setWaypoints((prev) => [
+                    ...prev,
+                    { address: "", lat: 0, lng: 0 },
+                  ])
+                }
+                className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                {t("rideForm.addWaypoint")}
+              </button>
+            ) : (
+              <p className="text-xs text-text-secondary">
+                {t("rideForm.maxWaypoints")}
+              </p>
+            )}
           </div>
 
           {isComputingRoute && (

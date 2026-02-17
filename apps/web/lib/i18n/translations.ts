@@ -194,6 +194,11 @@ export type TranslationKeys = {
   "rideForm.chooseOnMap": string;
   "rideForm.selectOnMap": string;
   "rideForm.confirmLocation": string;
+  "rideForm.waypoints": string;
+  "rideForm.addWaypoint": string;
+  "rideForm.removeWaypoint": string;
+  "rideForm.maxWaypoints": string;
+  "rideForm.waypointPlaceholder": string;
 
   // Search page
   "search.title": string;
@@ -682,6 +687,11 @@ const cs: TranslationKeys = {
   "rideForm.chooseOnMap": "Vybrat na mapě",
   "rideForm.selectOnMap": "Klepněte na mapu pro výběr místa",
   "rideForm.confirmLocation": "Potvrdit místo",
+  "rideForm.waypoints": "Zastávky",
+  "rideForm.addWaypoint": "Přidat zastávku",
+  "rideForm.removeWaypoint": "Odebrat zastávku",
+  "rideForm.maxWaypoints": "Maximálně 5 zastávek",
+  "rideForm.waypointPlaceholder": "Adresa zastávky",
 
   // Search page
   "search.title": "Hledat jízdy",
@@ -1170,6 +1180,11 @@ const sk: TranslationKeys = {
   "rideForm.chooseOnMap": "Vybrať na mape",
   "rideForm.selectOnMap": "Klepnite na mapu pre výber miesta",
   "rideForm.confirmLocation": "Potvrdiť miesto",
+  "rideForm.waypoints": "Zastávky",
+  "rideForm.addWaypoint": "Pridať zastávku",
+  "rideForm.removeWaypoint": "Odstrániť zastávku",
+  "rideForm.maxWaypoints": "Maximálne 5 zastávok",
+  "rideForm.waypointPlaceholder": "Adresa zastávky",
 
   // Search page
   "search.title": "Hľadať jazdy",
@@ -1658,6 +1673,11 @@ const en: TranslationKeys = {
   "rideForm.chooseOnMap": "Choose on map",
   "rideForm.selectOnMap": "Tap the map to select a location",
   "rideForm.confirmLocation": "Confirm location",
+  "rideForm.waypoints": "Waypoints",
+  "rideForm.addWaypoint": "Add waypoint",
+  "rideForm.removeWaypoint": "Remove waypoint",
+  "rideForm.maxWaypoints": "Maximum 5 waypoints",
+  "rideForm.waypointPlaceholder": "Waypoint address",
 
   // Search page
   "search.title": "Search Rides",
