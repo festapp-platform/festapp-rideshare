@@ -5,6 +5,12 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { decode } from "@googlemaps/polyline-codec";
 
+interface WaypointMarker {
+  lat: number;
+  lng: number;
+  address: string;
+}
+
 interface RideMapMapyProps {
   /** Encoded polyline string (Google format — both providers use it) */
   encodedPolyline: string;
@@ -12,6 +18,7 @@ interface RideMapMapyProps {
   originLng: number;
   destLat: number;
   destLng: number;
+  waypoints?: WaypointMarker[];
 }
 
 const MAPY_API_KEY = process.env.NEXT_PUBLIC_MAPY_CZ_API_KEY ?? "";
@@ -28,6 +35,7 @@ export function RideMapMapy({
   originLng,
   destLat,
   destLng,
+  waypoints,
 }: RideMapMapyProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -104,10 +112,29 @@ export function RideMapMapy({
       fillOpacity: 1,
     }).addTo(map);
 
+    // Waypoint markers (blue circles) (ROUTE-02)
+    if (waypoints && waypoints.length > 0) {
+      const bounds = map.getBounds();
+      for (const wp of waypoints) {
+        if (wp.lat === 0 && wp.lng === 0) continue;
+        L.circleMarker([wp.lat, wp.lng], {
+          radius: 8,
+          fillColor: "#3B82F6",
+          color: "#2563EB",
+          weight: 2,
+          fillOpacity: 1,
+        })
+          .bindTooltip(wp.address, { direction: "top", offset: [0, -10] })
+          .addTo(map);
+        bounds.extend([wp.lat, wp.lng]);
+      }
+      map.fitBounds(bounds, { padding: [30, 30] });
+    }
+
     return () => {
       // Don't destroy map on re-render, just clear layers next time
     };
-  }, [encodedPolyline, originLat, originLng, destLat, destLng]);
+  }, [encodedPolyline, originLat, originLng, destLat, destLng, waypoints]);
 
   // Cleanup on unmount
   useEffect(() => {

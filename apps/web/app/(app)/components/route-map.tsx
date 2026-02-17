@@ -4,12 +4,19 @@ import { getMapProvider } from "@/lib/map-provider";
 import { RideMap as GoogleRideMap } from "./ride-map";
 import { RideMapMapy } from "./ride-map-mapy";
 
+interface WaypointMarker {
+  lat: number;
+  lng: number;
+  address: string;
+}
+
 interface RouteMapProps {
   encodedPolyline: string;
   originLat: number;
   originLng: number;
   destLat: number;
   destLng: number;
+  waypoints?: WaypointMarker[];
 }
 
 /**

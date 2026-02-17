@@ -96,6 +96,23 @@ interface RideDetailProps {
   rideStatus?: string;
 }
 
+/** Parse PostGIS point from WKT string or GeoJSON object */
+function parseWaypointLocation(value: unknown): { lat: number; lng: number } | null {
+  if (!value) return null;
+  if (typeof value === "string") {
+    const match = value.match(/POINT\(\s*([-\d.]+)\s+([-\d.]+)\s*\)/i);
+    if (match) return { lng: parseFloat(match[1]), lat: parseFloat(match[2]) };
+    return null;
+  }
+  if (typeof value === "object" && value !== null && "coordinates" in value) {
+    const coords = (value as { coordinates: number[] }).coordinates;
+    if (Array.isArray(coords) && coords.length >= 2) {
+      return { lng: coords[0], lat: coords[1] };
+    }
+  }
+  return null;
+}
+
 function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -194,6 +211,15 @@ export function RideDetail({
   const [liveLocationEnabled, setLiveLocationEnabled] = useState(false);
   const [isStartingRide, setIsStartingRide] = useState(false);
   const [localRideStatus, setLocalRideStatus] = useState(ride.status);
+
+  // Transform waypoints for map display (ROUTE-02)
+  const mapWaypoints = waypoints
+    .map((wp) => {
+      const parsed = parseWaypointLocation(wp.location);
+      if (!parsed) return null;
+      return { lat: parsed.lat, lng: parsed.lng, address: wp.address };
+    })
+    .filter((wp): wp is { lat: number; lng: number; address: string } => wp !== null);
 
   const departureDate = parseISO(ride.departure_time);
   const formattedDate = format(departureDate, "EEE, MMM d, yyyy");
@@ -393,6 +419,7 @@ export function RideDetail({
             originLng={originLng}
             destLat={destLat}
             destLng={destLng}
+            waypoints={mapWaypoints}
           />
         )
       )}

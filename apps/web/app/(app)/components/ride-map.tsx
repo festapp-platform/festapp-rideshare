@@ -4,6 +4,12 @@ import { useEffect, useRef } from "react";
 import { Map, useMap } from "@vis.gl/react-google-maps";
 import { decode } from "@googlemaps/polyline-codec";
 
+interface WaypointMarker {
+  lat: number;
+  lng: number;
+  address: string;
+}
+
 interface RideMapProps {
   /** Encoded polyline string from Google Routes API */
   encodedPolyline: string;
@@ -11,6 +17,7 @@ interface RideMapProps {
   originLng: number;
   destLat: number;
   destLng: number;
+  waypoints?: WaypointMarker[];
 }
 
 /**
@@ -24,11 +31,13 @@ export function RideMap({
   originLng,
   destLat,
   destLng,
+  waypoints,
 }: RideMapProps) {
   const map = useMap();
   const polylineRef = useRef<google.maps.Polyline | null>(null);
   const originMarkerRef = useRef<google.maps.marker.AdvancedMarkerElement | null>(null);
   const destMarkerRef = useRef<google.maps.marker.AdvancedMarkerElement | null>(null);
+  const waypointMarkersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
 
   useEffect(() => {
     if (!map || !encodedPolyline) return;
@@ -43,6 +52,10 @@ export function RideMap({
     if (destMarkerRef.current) {
       destMarkerRef.current.map = null;
     }
+    for (const m of waypointMarkersRef.current) {
+      m.map = null;
+    }
+    waypointMarkersRef.current = [];
 
     // Decode polyline to array of [lat, lng]
     const decodedPath = decode(encodedPolyline);
@@ -95,19 +108,51 @@ export function RideMap({
     });
     destMarkerRef.current = destMarker;
 
+    // Waypoint markers (blue circles) (ROUTE-02)
+    const wpMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
+    if (waypoints && waypoints.length > 0) {
+      for (const wp of waypoints) {
+        if (wp.lat === 0 && wp.lng === 0) continue;
+        const wpPin = document.createElement("div");
+        wpPin.style.width = "16px";
+        wpPin.style.height = "16px";
+        wpPin.style.borderRadius = "50%";
+        wpPin.style.backgroundColor = "#3B82F6";
+        wpPin.style.border = "2px solid #2563EB";
+        wpPin.style.boxShadow = "0 1px 3px rgba(0,0,0,0.3)";
+
+        const wpMarker = new google.maps.marker.AdvancedMarkerElement({
+          map,
+          position: { lat: wp.lat, lng: wp.lng },
+          content: wpPin,
+          title: wp.address,
+        });
+        wpMarkers.push(wpMarker);
+      }
+    }
+    waypointMarkersRef.current = wpMarkers;
+
     // Fit bounds to show entire route
     const bounds = new google.maps.LatLngBounds();
     path.forEach((point) => bounds.extend(point));
     bounds.extend({ lat: originLat, lng: originLng });
     bounds.extend({ lat: destLat, lng: destLng });
+    for (const wp of (waypoints ?? [])) {
+      if (wp.lat !== 0 || wp.lng !== 0) {
+        bounds.extend({ lat: wp.lat, lng: wp.lng });
+      }
+    }
     map.fitBounds(bounds, { top: 30, right: 30, bottom: 30, left: 30 });
 
     return () => {
       polyline.setMap(null);
       originMarker.map = null;
       destMarker.map = null;
+      for (const m of wpMarkers) {
+        m.map = null;
+      }
     };
-  }, [map, encodedPolyline, originLat, originLng, destLat, destLng]);
+  }, [map, encodedPolyline, originLat, originLng, destLat, destLng, waypoints]);
 
   // Center on Czech Republic as default
   const defaultCenter = {
